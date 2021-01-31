@@ -1,0 +1,37 @@
+{
+  "name": "fise-api",
+  "version": "2.0.0",
+  "author": "UCL FISE",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@emotion/core": "^10.0.34",
+    "@emotion/styled": "^10.0.27",
+    "@hapi/iron": "6.0.0",
+    "connect-mongo": "^3.2.0",
+    "cookie": "0.4.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "emotion-theming": "^10.0.27",
+    "formik": "^2.1.5",
+    "ibm-watson": "^5.6.2",
+    "mongodb": "^3.6.0",
+    "next": "latest",
+    "next-connect": "^0.9.0",
+    "node-uuid": "^1.4.8",
+    "nodemailer": "^6.4.11",
+    "passport": "0.4.1",
+    "passport-local": "^1.0.0",
+    "random-words": "1.1.1",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "sqlite3": "^4.2.0",
+    "string-similarity": "^4.0.2",
+    "swr": "0.3.0"
+  }
+}
