@@ -1,0 +1,424 @@
+{
+  "intents": [
+    {
+      "intent": "Call_Contact",
+      "examples": [
+        {
+          "text": "Buzz Miley",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Andrea",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call CJ",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Indri",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call John",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                9
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Matthew",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Nathan",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Oliver",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Radu",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                9
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call Sofia",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Call up Maria",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                8,
+                13
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Phone Ariana",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                6,
+                12
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Phone Tate",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                6,
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Phone Taylor Swift",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                6,
+                12
+              ]
+            },
+            {
+              "entity": "Contact",
+              "location": [
+                13,
+                18
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Ring Olivia Andersen",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                11
+              ]
+            },
+            {
+              "entity": "Contact",
+              "location": [
+                12,
+                20
+              ]
+            }
+          ]
+        },
+        {
+          "text": "Ring Shawn",
+          "mentions": [
+            {
+              "entity": "Contact",
+              "location": [
+                5,
+                10
+              ]
+            }
+          ]
+        }
+      ],
+      "description": "Attempting to call a contact in the lobby"
+    },
+    {
+      "intent": "Change_Background",
+      "examples": [
+        {
+          "text": "Another background"
+        },
+        {
+          "text": "Another image"
+        },
+        {
+          "text": "Change background"
+        },
+        {
+          "text": "Change the background"
+        },
+        {
+          "text": "Different background"
+        },
+        {
+          "text": "Different image"
+        },
+        {
+          "text": "Different picture"
+        },
+        {
+          "text": "Go to the next background"
+        },
+        {
+          "text": "New background"
+        },
+        {
+          "text": "New photo"
+        },
+        {
+          "text": "Next background"
+        },
+        {
+          "text": "Next image"
+        },
+        {
+          "text": "Next picture"
+        },
+        {
+          "text": "Use a different background"
+        },
+        {
+          "text": "Use another image"
+        },
+        {
+          "text": "Use another picture"
+        },
+        {
+          "text": "Use the other photo"
+        }
+      ],
+      "description": "Attempting to change lobby background"
+    }
+  ],
+  "entities": [
+    {
+      "entity": "Contact",
+      "values": [
+        {
+          "type": "synonyms",
+          "value": "Andersen",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Andrea",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Ariana",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "CJ",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Indri",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "John",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Maria",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Matthew",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Miley",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Nathan",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Oliver",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Olivia",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Radu",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Shawn",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Sofia",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Swift",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Tate",
+          "synonyms": []
+        },
+        {
+          "type": "synonyms",
+          "value": "Taylor",
+          "synonyms": []
+        }
+      ],
+      "fuzzy_match": true
+    }
+  ],
+  "metadata": {
+    "api_version": {
+      "major_version": "v2",
+      "minor_version": "2018-11-08"
+    }
+  },
+  "dialog_nodes": [
+    {
+      "type": "standard",
+      "output": {
+        "generic": []
+      },
+      "conditions": "#Call_Contact && @Contact",
+      "dialog_node": "node_3_1612285482654",
+      "previous_sibling": "node_4_1612285440628"
+    },
+    {
+      "type": "standard",
+      "output": {
+        "generic": []
+      },
+      "conditions": "#Change_Background",
+      "dialog_node": "node_4_1612285440628"
+    }
+  ],
+  "counterexamples": [],
+  "system_settings": {
+    "off_topic": {
+      "enabled": true
+    },
+    "disambiguation": {
+      "prompt": "Did you mean:",
+      "enabled": true,
+      "randomize": true,
+      "max_suggestions": 5,
+      "suggestion_text_policy": "title",
+      "none_of_the_above_prompt": "None of the above"
+    },
+    "system_entities": {
+      "enabled": true
+    },
+    "human_agent_assist": {
+      "prompt": "Did you mean:"
+    },
+    "intent_classification": {
+      "training_backend_version": "v2"
+    },
+    "spelling_auto_correct": true
+  },
+  "learning_opt_out": false,
+  "name": "FISE Voice Commands",
+  "language": "en",
+  "description": ""
+}
