@@ -1,6 +1,6 @@
 # IBM FISE Lounge
 
-> IBM FISE Lounge is an application that acts as a smart, collaborative workout coach for the elderly to use in the current pandemic, where loneliness is becoming a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly to use in the current pandemic, where loneliness is becoming a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
 
 ## Contributors:
 
@@ -205,3 +205,18 @@ Parse audio through IBM Watson API
 Parameters:
 
 - `req.body` should be `Base64` encoded `audio/mp3`
+
+# IBM Watson voice commands
+
+## Setup
+
+- Register an IBM Cloud account
+- Create *Watson Assistant*, *Speech-To-Text* and *Text-To-Speech* resources
+- Add service credentials for respective resource in server `.env.local`. 
+- For `WATSON_ASSISTANT_ID` only add key following ServiceId-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
+- Launch Watson Assistant inside IBM Cloud
+- Create *dialog skill* by uploading `watson-skill.json`
+
+## Valid commands
+- Changing background
+- Calling contact
