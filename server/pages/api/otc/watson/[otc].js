@@ -124,7 +124,7 @@ const handler = async (req, res) => {
                 case "Call_Contact":
                   data.action = "startCall";
 
-                  const contactToCall = output.generic[0].text.toLowerCase();
+                  const contactToCall = output.entities[0].value.toLowerCase();
 
                   const contactNames = consumer.contacts.map((c) => c.name);
                   const { bestMatchIndex } = stringSimilarity.findBestMatch(
