@@ -32,6 +32,7 @@ const handler = async (req, res) => {
             otc: randomWords(3).join("-"),
             ar_scenes: [],
             contacts: [],
+            logs: [],
           };
 
           user.consumers.push(consumer);
