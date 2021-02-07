@@ -4,6 +4,7 @@ import Cors from "cors";
 import nodemailer from "nodemailer";
 import { connectToDatabase } from "../../../utils/mongodb";
 import { capitalize } from "../../../utils";
+import { MongoNetworkError } from "mongodb";
 
 const cors = Cors({
   methods: ["GET", "HEAD", "POST"],
@@ -63,7 +64,7 @@ const handler = async (req, res) => {
           return res
             .status(200)
             .json({ message: "Data found", data: consumer });
-        } catch (err) {
+        } catch (err) { 
           console.error(`api.otc.consumer.GET: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });
         }
@@ -79,6 +80,11 @@ const handler = async (req, res) => {
 
           if (!contact)
             return res.status(400).json({ message: "Missing Params" });
+
+          // add call to logs
+          await usersDB.updateOne({_id:user._id, "consumers._id": consumer._id},
+          {$push:{"consumers.$.logs":{call: {calledAt: Date.now(), contactCalled:contact.name, contactID:contact._id}}}});
+          //console.log(await usersDB.find({"consumers._id" : consumer._id}).toArray());
 
           let transporter = nodemailer.createTransport(
             process.env.EMAIL_SERVER
