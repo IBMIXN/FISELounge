@@ -7,6 +7,7 @@ const configOverwrite = {
   disableDeepLinking: true,
   enableWelcomePage: false,
   enableClosePage: false,
+  prejoinPageEnabled: false,
 };
 
 const interfaceConfigOverwrite = {
