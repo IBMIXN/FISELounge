@@ -3,10 +3,10 @@
 import Cors from "cors";
 import AssistantV2 from "ibm-watson/assistant/v2";
 import SpeechToTextV1 from "ibm-watson/speech-to-text/v1";
+import TextToSpeechV1 from "ibm-watson/text-to-speech/v1";
 import { IamAuthenticator } from "ibm-watson/auth";
 import { connectToDatabase } from "../../../../utils/mongodb";
 import stringSimilarity from "string-similarity";
-
 import relations from "../../../../utils/relations";
 
 const watsonId = process.env.WATSON_ASSISTANT_ID;
@@ -32,6 +32,13 @@ const stt = new SpeechToTextV1({
     apikey: process.env.STT_API_KEY,
   }),
   url: process.env.STT_ENDPOINT,
+});
+
+const tts = new TextToSpeechV1({
+  authenticator: new IamAuthenticator({
+    apikey: process.env.TTS_API_KEY,
+  }),
+  url: process.env.TTS_ENDPOINT,
 });
 
 const assistant = new AssistantV2({
@@ -90,6 +97,12 @@ const handler = async (req, res) => {
             contentType: "audio/mp3",
           };
 
+          const tts_options = {
+            text: "Hello there",
+            accept: "audio/wav",
+            voice: "en-US_MichaelVoice",
+          };
+
           const data = {
             action: "",
             contact_id: "",
@@ -117,43 +130,42 @@ const handler = async (req, res) => {
 
             data.text = transcript;
 
-            if (output.intents[0]) {
-              const { intent } = output.intents[0];
+            const intent = output.intents ? output.intents[0] : null;
 
-              switch (intent) {
-                case "Call_Contact":
-                  data.action = "startCall";
+            switch (intent) {
+              case "Call_Contact":
+                data.action = "startCall";
 
-                  const contactToCall = output.generic[0].text.toLowerCase();
+                const contactToCall = output.generic[0].text.toLowerCase();
 
-                  const contactNames = consumer.contacts.map((c) => c.name);
-                  const { bestMatchIndex } = stringSimilarity.findBestMatch(
-                    contactToCall,
-                    contactNames
-                  );
-                  const contact_id = consumer.contacts[bestMatchIndex]._id;
-                  data.contact_id = contact_id;
-                  break;
-                case "Change_Background":
-                  data.action = "changeBackground";
-                  break;
-                case "Start_Exercise":
-                  data.action = "startExercise";
-                  break;
-                default:
-                  break;
-              }
+                const contactNames = consumer.contacts.map((c) => c.name);
+                const { bestMatchIndex } = stringSimilarity.findBestMatch(
+                  contactToCall,
+                  contactNames
+                );
+                const contact_id = consumer.contacts[bestMatchIndex]._id;
+                data.contact_id = contact_id;
+                break;
+              case "Change_Background":
+                data.action = "changeBackground";
+                break;
+              case "Start_Exercise":
+                data.action = "startExercise";
+                break;
+              default:
+                data.action = "askBob";
+                break;
             }
           }
 
           if (data.action) {
             return res.status(200).json({
-              message: "Watson recognized your request",
+              message: "AskBob recognized your request",
               data,
             });
           } else {
             return res.status(200).json({
-              message: "Watson couldn't recognize intents",
+              message: "AskBob couldn't recognize intents",
               data,
             });
           }
