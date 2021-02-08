@@ -34,13 +34,6 @@ const stt = new SpeechToTextV1({
   url: process.env.STT_ENDPOINT,
 });
 
-const tts = new TextToSpeechV1({
-  authenticator: new IamAuthenticator({
-    apikey: process.env.TTS_API_KEY,
-  }),
-  url: process.env.TTS_ENDPOINT,
-});
-
 const assistant = new AssistantV2({
   version: "2020-04-01",
   authenticator: new IamAuthenticator({
@@ -97,12 +90,6 @@ const handler = async (req, res) => {
             contentType: "audio/mp3",
           };
 
-          const tts_options = {
-            text: "Hello there",
-            accept: "audio/wav",
-            voice: "en-US_MichaelVoice",
-          };
-
           const data = {
             action: "",
             contact_id: "",
@@ -130,13 +117,18 @@ const handler = async (req, res) => {
 
             data.text = transcript;
 
-            const intent = output.intents ? output.intents[0] : null;
+            console.log(JSON.stringify(output));
+
+            const intent =
+              output.intents && output.intents.length
+                ? output.intents[0].intent
+                : null;
 
             switch (intent) {
               case "Call_Contact":
                 data.action = "startCall";
 
-                  const contactToCall = output.entities[0].value.toLowerCase();
+                const contactToCall = output.entities[0].value.toLowerCase();
 
                 const contactNames = consumer.contacts.map((c) => c.name);
                 const { bestMatchIndex } = stringSimilarity.findBestMatch(
