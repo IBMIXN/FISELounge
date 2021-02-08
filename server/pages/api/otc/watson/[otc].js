@@ -117,8 +117,6 @@ const handler = async (req, res) => {
 
             data.text = transcript;
 
-            console.log(JSON.stringify(output));
-
             const intent =
               output.intents && output.intents.length
                 ? output.intents[0].intent
