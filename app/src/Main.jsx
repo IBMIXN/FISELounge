@@ -122,9 +122,45 @@ function Main() {
       });
   };
 
-  const handleWatsonResponse = async ({ action, contact_id, text}) => {
+  const playAudioResponse  = async ({ body }) => {
+    const reader = body.getReader();
+    reader.read().then(result => {
+      const blob = new Blob([result.value], { type: 'audio/wav' });
+      const url = window.URL.createObjectURL(blob)
+      window.audio = new Audio();
+      window.audio.src = url;
+      window.audio.play();
+    }).catch(async (err) => {
+      if (err instanceof Error) {
+        throw err;
+      }
+      throw await err.json().then((rJson) => {
+        console.error(
+          `Audio Response - ${err.status} ${err.statusText}: ${rJson.message}`
+        );
+        return;
+      });
+    });
+  };
+
+  const handleTextToSpeechResponse = async (reply) => {
+    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/otc/watson/text-to-speech/${localStorage.getItem("otc")}`, { 
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: `text=${reply}`,           
+    }).then(r => {
+      if (r.ok) {
+      return r;
+      }
+      throw r;
+    });
+    return response;
+  }
+
+  const handleWatsonResponse = async ({ action, contact_id, text, reply}) => {
     if (!text) {
-      // No text was detected
       toast({
         title: "We couldn't hear you.",
         description:
@@ -152,8 +188,11 @@ function Main() {
         isClosable: true,
       });
     } else {
-      // We have a valid request
       switch (action) {
+        case "respondAudioOnly":
+          const response = await handleTextToSpeechResponse(reply);
+          await playAudioResponse(response);
+          break;
         case "startExercise":
           console.log("Exercise initiated");
           break;
@@ -162,29 +201,6 @@ function Main() {
           break;
         case "startCall":
           handleMakeCall(contact_id);
-          break;
-        case "askBob":
-          const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/otc/askbob/${localStorage.getItem("otc")}`, { 
-              method: "POST",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: `text=${text}`,           
-          }).then(r => {
-            if (r.ok) {
-              return r;
-            }
-            throw r;
-          });
-          const reader = response.body.getReader();
-          reader.read().then(result => {
-            const blob = new Blob([result.value], { type: 'audio/wav' });
-            const url = window.URL.createObjectURL(blob)
-            window.audio = new Audio();
-            window.audio.src = url;
-            window.audio.play();
-            return;
-          })
           break;
         default:
           toast({
@@ -218,7 +234,7 @@ function Main() {
             await fetch(
               `${
                 process.env.REACT_APP_SERVER_URL
-              }/api/otc/watson/${localStorage.getItem("otc")}`,
+              }/api/otc/askbob/${localStorage.getItem("otc")}`,
               {
                 method: "POST",
                 body: mp3_base64,

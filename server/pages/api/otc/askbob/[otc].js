@@ -2,9 +2,9 @@
 
 import Cors from "cors";
 import SpeechToTextV1 from "ibm-watson/speech-to-text/v1";
-import TextToSpeechV1 from "ibm-watson/text-to-speech/v1";
 import { IamAuthenticator } from "ibm-watson/auth";
 import { connectToDatabase } from "../../../../utils/mongodb";
+import stringSimilarity from "string-similarity";
 
 const cors = Cors({
   methods: ["GET", "HEAD", "POST"],
@@ -22,18 +22,12 @@ function runMiddleware(req, res, fn) {
   });
 }
 
-const tts = new TextToSpeechV1({
+const stt = new SpeechToTextV1({
   authenticator: new IamAuthenticator({
-    apikey: process.env.TTS_API_KEY,
+    apikey: process.env.STT_API_KEY,
   }),
-  url: process.env.TTS_ENDPOINT,
+  url: process.env.STT_ENDPOINT,
 });
-
-const tts_options = {
-  text: "",
-  accept: "audio/wav",
-  voice: "en-US_MichaelVoice",
-};
 
 const handler = async (req, res) => {
   // Run the middleware
@@ -74,38 +68,92 @@ const handler = async (req, res) => {
       case "POST":
         // ---------------- POST
         try {
-          const { text } = body;
-          const response = await fetch(`${process.env.ASKBOB_ENDPOINT}/query`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: `message=${text}&sender=${user.name}`,
-          }).then((r) => {
-            if (r.ok) {
-              return r.json();
+          const recognizeParams = {
+            audio: new Buffer(body, "base64"),
+            contentType: "audio/mp3",
+          };
+
+          const data = {
+            action: "",
+            contact_id: "",
+            text: "",
+            reply: "",
+          };
+
+          const {
+            result: { results },
+          } = await stt.recognize(recognizeParams);
+
+          if (results.length) {
+            const { transcript } = results[0].alternatives[0];
+            data.text = transcript;
+
+            const askBobResponse = await fetch(
+              `${process.env.ASKBOB_ENDPOINT}/query`,
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `message=${transcript}&sender=${user.name}`,
+              }
+            ).then((r) => {
+              if (r.ok) {
+                return r.json();
+              }
+              throw r;
+            });
+
+            const messages = askBobResponse ? askBobResponse.messages : [];
+
+            const askBobText = messages.find((msg) => msg.text);
+            data.reply = askBobText ? askBobText.text : "";
+
+            const askBobCustom = messages.find((msg) => msg.custom);
+            const intent = askBobCustom ? askBobCustom.custom.type : null;
+
+            switch (intent) {
+              case "call_user":
+                data.action = "startCall";
+
+                const contactToCall = askBobCustom.custom
+                  ? askBobCustom.custom.callee.toLowerCase()
+                  : null;
+
+                const contactNames = consumer.contacts.map((c) => c.name);
+                const { bestMatchIndex } = stringSimilarity.findBestMatch(
+                  contactToCall,
+                  contactNames
+                );
+                const contact_id = consumer.contacts[bestMatchIndex]._id;
+                data.contact_id = contact_id;
+                break;
+              case "change_background":
+                data.action = "changeBackground";
+                break;
+              default:
+                data.action = "respondAudioOnly";
+                break;
             }
-            throw r;
-          });
+          }
 
-          const messages = response ? response.messages : [];
-
-          tts_options.text = messages.length
-            ? messages[0]
-            : "Bob could not understand";
-
-          const speech_res = await tts.synthesize(tts_options);
-          const buffer = await tts.repairWavHeaderStream(speech_res.result);
-
-          res.setHeader("Content-Type", "audio/wav");
-          res.status(200).send(buffer);
+          if (data.action) {
+            return res.status(200).json({
+              message: "AskBob recognized your request",
+              data,
+            });
+          } else {
+            return res.status(200).json({
+              message: "AskBob couldn't recognize intents",
+              data,
+            });
+          }
         } catch (err) {
-          console.error(`api.otc.askbob.POST: ${err}`);
+          console.error(`api.otc.watson.POST: ${err}`);
           return res
             .status(500)
             .json({ message: "Uncaught Server Error", data: err });
         }
-        break;
       case "GET":
       // ---------------- GET
       case "PUT":
@@ -114,7 +162,6 @@ const handler = async (req, res) => {
       // ---------------- DELETE
       default:
         return res.status(405).json({ message: "This route does not exist" });
-        break;
     }
   } else {
     return res

@@ -3,11 +3,9 @@
 import Cors from "cors";
 import AssistantV2 from "ibm-watson/assistant/v2";
 import SpeechToTextV1 from "ibm-watson/speech-to-text/v1";
-import TextToSpeechV1 from "ibm-watson/text-to-speech/v1";
 import { IamAuthenticator } from "ibm-watson/auth";
 import { connectToDatabase } from "../../../../utils/mongodb";
 import stringSimilarity from "string-similarity";
-import relations from "../../../../utils/relations";
 
 const watsonId = process.env.WATSON_ASSISTANT_ID;
 
@@ -94,6 +92,7 @@ const handler = async (req, res) => {
             action: "",
             contact_id: "",
             text: "",
+            reply: "",
           };
 
           // call stt api with the audio in request and add this to assistant input
@@ -127,6 +126,7 @@ const handler = async (req, res) => {
                 data.action = "startCall";
 
                 const contactToCall = output.entities[0].value.toLowerCase();
+                data.reply = `Calling ${contactToCall}`;
 
                 const contactNames = consumer.contacts.map((c) => c.name);
                 const { bestMatchIndex } = stringSimilarity.findBestMatch(
@@ -138,12 +138,35 @@ const handler = async (req, res) => {
                 break;
               case "Change_Background":
                 data.action = "changeBackground";
+                data.reply = "Changing background";
                 break;
               case "Start_Exercise":
                 data.action = "startExercise";
+                data.reply = "Starting exercise";
                 break;
               default:
                 data.action = "askBob";
+                const askBobResponse = await fetch(
+                  `${process.env.ASKBOB_ENDPOINT}/query`,
+                  {
+                    method: "POST",
+                    headers: {
+                      "Content-Type": "application/x-www-form-urlencoded",
+                    },
+                    body: `message=${transcript}&sender=${user.name}`,
+                  }
+                ).then((r) => {
+                  if (r.ok) {
+                    return r.json();
+                  }
+                  throw r;
+                });
+
+                const messages = askBobResponse ? askBobResponse.messages : [];
+
+                data.reply = messages.length
+                  ? messages[0]
+                  : "I could not understand";
                 break;
             }
           }
