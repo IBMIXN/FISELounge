@@ -64,7 +64,7 @@ const handler = async (req, res) => {
           return res
             .status(200)
             .json({ message: "Data found", data: consumer });
-        } catch (err) { 
+        } catch (err) {
           console.error(`api.otc.consumer.GET: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });
         }
@@ -82,13 +82,30 @@ const handler = async (req, res) => {
             return res.status(400).json({ message: "Missing Params" });
 
           // add call to logs
-          await usersDB.updateOne({_id:user._id, "consumers._id": consumer._id},
-          {$push:{"consumers.$.logs":{call: {calledAt: Date.now(), contactCalled:contact.name, contactID:contact._id}}}});
-          //console.log(await usersDB.find({"consumers._id" : consumer._id}).toArray());
-
-          let transporter = nodemailer.createTransport(
-            process.env.EMAIL_SERVER
+          await usersDB.updateOne(
+            { _id: user._id, "consumers._id": consumer._id },
+            {
+              $push: {
+                "consumers.$.logs": {
+                  call: {
+                    calledAt: Date.now(),
+                    contactCalled: contact.name,
+                    contactID: contact._id,
+                  },
+                },
+              },
+            }
           );
+
+          let transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: 465,
+            secure: true, // true for 465, false for other ports
+            auth: {
+              user: process.env.EMAIL_PROVIDER_USERNAME,
+              pass: process.env.EMAIL_PROVIDER_PASS,
+            },
+          });
 
           const message = {
             from: process.env.EMAIL_FROM,
@@ -108,7 +125,9 @@ const handler = async (req, res) => {
             }">here</a> to join.<br /><br />Thanks,<br />FISE Lounge Team</p>`,
           };
 
-          transporter.sendMail(message);
+          transporter.sendMail(message).catch((err) => {
+            throw err;
+          });
 
           return res.status(200).json({ message: "Invite Sent successfully" });
         } catch (err) {
