@@ -72,15 +72,18 @@ const handler = async (req, res) => {
       case "POST":
         // ---------------- POST
         try {
-          const { contact_id } = body;
-          if (!contact_id)
+          const { contact_id, sms } = body;
+          if (!contact_id) {
             return res.status(400).json({ message: "Missing Params" });
+          }
 
           const contact = consumer.contacts.find((c) => c._id === contact_id);
 
-          if (!contact)
+          if (!contact) {
             return res.status(400).json({ message: "Missing Params" });
+          }
 
+          console.log(contact_id);
           // add call to logs
           await usersDB.updateOne(
             { _id: user._id, "consumers._id": consumer._id },
@@ -96,6 +99,30 @@ const handler = async (req, res) => {
               },
             }
           );
+
+          if (sms) {
+            await fetch(`${process.env.SMS_ENDPOINT}`, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Basic ${process.env.SMS_API_KEY}`,
+              },
+              body: JSON.stringify({
+                to: "40727117700",
+                from: `${process.env.SMS_FROM}`,
+                content: `Hi ${capitalize(contact.name)},\n\n${capitalize(
+                  consumer.name
+                )} would like to speak to you on Lounge.\n\nClick the link below to join.\n${
+                  process.env.JITSI_MEET_URL
+                }/${contact._id}`,
+              }),
+            })
+              .then((res) => console.log("SMS RES", JSON.stringify(res)))
+              .catch((err) => console.log("SMS ERR", JSON.stringify(err)));
+            return res
+              .status(200)
+              .json({ message: "SMS Invite Sent successfully" });
+          }
 
           let transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
@@ -129,7 +156,9 @@ const handler = async (req, res) => {
             throw err;
           });
 
-          return res.status(200).json({ message: "Invite Sent successfully" });
+          return res
+            .status(200)
+            .json({ message: "Email Invite Sent successfully" });
         } catch (err) {
           console.error(`api.otc.consumer.POST: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });
