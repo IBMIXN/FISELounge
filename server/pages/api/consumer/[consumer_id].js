@@ -5,6 +5,15 @@ import { connectToDatabase } from "../../../utils/mongodb";
 import randomWords from "random-words";
 import { sanitizeName } from "../../../utils";
 
+// max size of each background image
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: process.env.MAX_IMG_SIZE
+    },
+  },
+}
+
 const handler = async (req, res) => {
   const session = await getSession(req);
   if (!session)
@@ -94,6 +103,23 @@ const handler = async (req, res) => {
         return res.status(500).json({ message: "Uncaught Server Error" });
       }
       break;
+    case "PATCH" : 
+        // --------------- PATCH
+        // Upload image
+      try {
+        const {img_b64, img_name} = body;
+        consumer.ar_scenes[img_name] = img_b64; 
+
+        await users.updateOne({ email }, { $set: user });
+
+        return res.status(200).json({
+          message: "Background image uploaded successfully"
+        });
+      } catch (err) {
+          console.error(`api.consumer.PATCH: ${err}`);
+          return res.status(500).json({ message: "Uncaught Server Error" });
+        }
+          
     default:
       return res.status(405).json({ message: "This route does not exist" });
       break;

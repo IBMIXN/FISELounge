@@ -30,7 +30,7 @@ const handler = async (req, res) => {
             name: sanitizeName(name),
             isCloudEnabled: isCloudEnabled,
             otc: randomWords(3).join("-"),
-            ar_scenes: [],
+            ar_scenes: {},
             contacts: [],
             logs: [],
           };

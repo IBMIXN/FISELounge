@@ -9,7 +9,7 @@ import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
 import MicRecorder from "mic-recorder-to-mp3";
 import JitsiComponent from "./components/JitsiComponent";
-import img1 from "./assets/img1.jpg";
+import img1 from "./assets/img1.jpeg";
 import img2 from "./assets/img2.jpg";
 import img3 from "./assets/img3.jpg";
 import img4 from "./assets/img4.jpg";
@@ -86,6 +86,9 @@ function Main() {
   const rawUser = localStorage.getItem("user");
   if (!rawUser) return <Redirect to="/onboarding" />;
   const user = JSON.parse(rawUser);
+
+  // add user-uploaded background scenes
+  scenes.unshift(...Object.values(user.ar_scenes));
 
   const handleChangeScene = () => {
     setCurrentSceneIndex((currentSceneIndex + 1) % scenes.length);

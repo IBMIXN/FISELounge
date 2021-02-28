@@ -5,6 +5,7 @@ import { Formik, Field } from "formik";
 import { useUser } from "../../../lib/hooks";
 import { fetcher, capitalize, validateName } from "../../../utils";
 import relations from "../../../utils/relations";
+import * as yup from 'yup';
 
 import {
   Badge,
@@ -81,6 +82,112 @@ const DeleteUserModal = ({ onClick, consumer_name }) => {
     </>
   );
 };
+
+const AddBackgroundForm = ({ consumer_id, background_scenes, router
+}) => {
+
+  const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+  const fileToBase64 = (inp_file) => {
+    const tempFileReader = new FileReader()
+
+    return new Promise((resolve, reject) => {
+      tempFileReader.onerror = () => {
+        tempFileReader.abort();
+        reject(new DOMException("Problem parsing background file."));
+      };
+
+      tempFileReader.onload = () => {
+        resolve(tempFileReader.result);
+      };
+      tempFileReader.readAsDataURL(inp_file);
+    });
+  };
+
+  const handleBackgroundSubmit = async (values, actions) => {
+    console.log("submitting...");
+    const imageData = await fileToBase64(values.file);
+    const formBody = encodeURIComponent("img_b64") + "=" + encodeURIComponent(imageData)
+      + "&" + encodeURIComponent("img_name") + "=" + encodeURIComponent(values.img_Name);
+
+    const options = {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBody,
+    };
+    await fetch(`/api/consumer/${consumer_id}`, options)
+      .then((r) => {
+        if (r.ok) {
+          router.replace(`/dashboard`);
+          actions.setSubmitting(false);
+          return r.json();
+        }
+        throw r;
+      })
+      .catch(async (err) => {
+        actions.setSubmitting(false);
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw await err.json().then((rJson) => {
+          console.error(
+            `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+          );
+          return;
+        });
+      });
+
+  }
+
+  return (
+    <Formik
+      initialValues={{ file: null, img_Name: "" }}
+      onSubmit={handleBackgroundSubmit}
+      validationSchema={yup.object().shape({
+        file: yup.mixed().required()
+          .test('fileType', "Unsupported File Format", value => SUPPORTED_FORMATS.includes(value.type)),
+        img_Name: yup.string().required(),
+      })}>
+
+      {({ values, handleSubmit, setFieldValue, isSubmitting }) => {
+        return (
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+
+              <Field name="img_Name" validate={validateName}>
+                {({ field, form }) => (
+                  <FormControl isInvalid={form.errors.name && form.touched.name}>
+                    <FormLabel htmlFor="img_Name">Image Title</FormLabel>
+                    <Input {...field} id="img_Name" placeholder="Image 1" />
+                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  </FormControl>
+                )}
+              </Field>
+
+              <br></br>
+              <label htmlFor="file">Upload Image</label>
+              <br></br>
+              <input id="file" name="file" type="file" onChange={(event) => {
+                setFieldValue("file", event.currentTarget.files[0]);
+              }} className="form-control" />
+            </div>
+
+            <Button
+              type="submit"
+              disabled={values.img_Name === "" || values.file === null}
+              className="btn btn-primary"
+              mt={4}
+              isLoading={isSubmitting}
+              variantColor="blue">
+              Save background
+              </Button>
+
+          </form>
+        );
+      }}
+    </Formik>)
+}
 
 const MakeChangesForm = ({
   currentName,
@@ -177,11 +284,53 @@ const MakeChangesForm = ({
   );
 };
 
+const BackgroundTable = ({
+  ar_scenes,
+}) => {
+  const bgArray = Object.keys(ar_scenes);
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableHeader>Background Name</TableHeader>
+          <TableHeader />
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {bgArray.map((imageName, i) => (
+          <TableRow
+            bg={i % 2 === 0 ? "white" : "gray.50"}
+            key={i}
+          >
+            <TableCell>
+              <Text
+                fontSize="sm"
+                color="gray.600"
+                as="a"
+              >
+                {imageName}
+              </Text>
+            </TableCell>
+            <TableCell textAlign="right">
+              <ChakraLink
+                fontSize="sm"
+                fontWeight="medium"
+                color="blue.600"
+              >
+                Delete
+                </ChakraLink>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
 const ConsumerPage = () => {
   const router = useRouter();
   const user = useUser({ redirectTo: "/login" });
   const { consumer_id } = router.query;
-
   const { data: consumer } = useSWR(
     consumer_id && `/api/consumer/${consumer_id}`,
     fetcher
@@ -193,7 +342,7 @@ const ConsumerPage = () => {
     })
       .then((r) => {
         if (r.ok) {
-          router.replace("/dashboard");
+          router.replace(`/dashboard`);
           return;
         }
         throw r;
@@ -225,8 +374,8 @@ const ConsumerPage = () => {
         <Text>
           To set up FISE Lounge on {capitalize(consumer.name)}'s device, go to
           {` `}
-          <ChakraLink href="https://app.fise.ml" textDecoration="underline">
-            app.fise.ml
+          <ChakraLink href="localhost:3001" textDecoration="underline">
+            [FISE APP URL]
           </ChakraLink>
           {` `} and enter in the code:
           <br />
@@ -303,6 +452,16 @@ const ConsumerPage = () => {
             </TableBody>
           </Table>
         </Box>
+        <Heading size="lg">{capitalize(consumer.name)}'s Backgrounds</Heading>
+        <Box>
+          <BackgroundTable
+            ar_scenes={consumer.ar_scenes} />
+        </Box>
+        <AddBackgroundForm
+          router={router}
+          consumer_id={consumer_id}
+          background_scenes={consumer.ar_scenes} />
+        <br></br>
         <Heading size="lg">Edit {capitalize(consumer.name)}'s Info</Heading>
         <MakeChangesForm
           router={router}
@@ -323,8 +482,8 @@ const ConsumerPage = () => {
       <Footer />
     </Container>
   ) : (
-    <Loading />
-  );
+      <Loading />
+    );
 };
 
 export default ConsumerPage;

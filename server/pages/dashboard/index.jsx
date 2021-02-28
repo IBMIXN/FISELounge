@@ -142,8 +142,8 @@ const DashboardPage = () => {
         <Text>
           To set up your loved one with FISE Lounge, first Add a new user to set
           up their details and contacts, then go to{` `}
-          <ChakraLink href="https://app.fise.ml" textDecoration="underline">
-            app.fise.ml
+          <ChakraLink href="localhost:3001" textDecoration="underline">
+            [FISE APP URL]
           </ChakraLink>
           {` `} on their device and enter in their One-Time-Code given below.
         </Text>
