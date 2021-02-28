@@ -71,6 +71,7 @@ const handler = async (req, res) => {
             email: contactEmail,
             profileImage,
             relation: relationStr,
+            phone: phone
           } = body;
 
           const relation = relations.indexOf(relationStr);
@@ -82,6 +83,7 @@ const handler = async (req, res) => {
             ...(name && { name: sanitizeName(name) }),
             ...(contactEmail && { email: contactEmail.toLowerCase() }),
             ...(profileImage && { profileImage }),
+            ...(phone && { phone }),
             ...(relation && { relation }),
           };
 

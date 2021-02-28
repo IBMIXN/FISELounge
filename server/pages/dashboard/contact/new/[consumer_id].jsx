@@ -10,6 +10,7 @@ import {
   validateName,
   validateEmail,
   validateRelation,
+  validatePhone,
 } from "../../../../utils";
 
 import {
@@ -83,7 +84,7 @@ const NameForm = ({ router }) => {
 
   return (
     <Formik
-      initialValues={{ name: "", email: "", relation: "" }}
+      initialValues={{ name: "", email: "", phone: "", relation: ""}}
       onSubmit={handleFormSubmit}
     >
       {({
@@ -111,6 +112,16 @@ const NameForm = ({ router }) => {
                 <FormLabel htmlFor="email">Email address</FormLabel>
                 <Input {...field} id="email" placeholder="adam@example.org" />
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+              </FormControl>
+            )}
+          </Field>
+          <br />
+          <Field name="phone" validate={validatePhone}>
+            {({ field, form }) => (
+              <FormControl isInvalid={form.errors.phone && form.touched.phone}>
+                <FormLabel htmlFor="phone">Phone number</FormLabel>
+                <Input {...field} id="phone" placeholder="+44767254891" />
+                <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
             )}
           </Field>

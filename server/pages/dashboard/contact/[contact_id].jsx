@@ -9,6 +9,7 @@ import {
   validateName,
   validateEmail,
   validateRelation,
+  validatePhone,
 } from "../../../utils";
 import relations from "../../../utils/relations";
 
@@ -36,6 +37,7 @@ const MakeChangesForm = ({
   currentName,
   currentEmail,
   currentRelation,
+  currentPhone,
 }) => {
   const handleFormSubmit = async (values, actions) => {
     const formBody = Object.entries(values)
@@ -81,6 +83,7 @@ const MakeChangesForm = ({
       initialValues={{
         name: currentName,
         email: currentEmail,
+        phone: currentPhone,
         relation: currentRelation,
       }}
       onSubmit={handleFormSubmit}
@@ -114,7 +117,16 @@ const MakeChangesForm = ({
             )}
           </Field>
           <br />
-
+          <Field name="phone" validate={validatePhone}>
+            {({ field, form }) => (
+              <FormControl isInvalid={form.errors.phone && form.touched.phone}>
+                <FormLabel htmlFor="phone">Phone number</FormLabel>
+                <Input {...field} id="email" placeholder="+44767254891" />
+                <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
+              </FormControl>
+            )}
+          </Field>
+          <br />
           <Field name="relation" validate={validateRelation}>
             {({ field, form }) => (
               <FormControl
@@ -216,6 +228,7 @@ const ContactPage = () => {
           router={router}
           currentName={capitalize(contact.name)}
           currentEmail={contact.email}
+          currentPhone={contact.phone}
           currentRelation={relations[contact.relation]}
           contact_id={contact_id}
         />
