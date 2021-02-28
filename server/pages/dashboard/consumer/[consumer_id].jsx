@@ -106,8 +106,8 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
   const handleBackgroundSubmit = async (values, actions) => {
     console.log("submitting...");
     const imageData = await fileToBase64(values.file);
-    const formBody = encodeURIComponent("img_b64") + "=" + encodeURIComponent(imageData)
-      + "&" + encodeURIComponent("img_name") + "=" + encodeURIComponent(values.img_Name);
+    const formBody = encodeURIComponent("imgB64") + "=" + encodeURIComponent(imageData)
+      + "&" + encodeURIComponent("imgName") + "=" + encodeURIComponent(values.imgName);
 
     const options = {
       method: "PATCH",
@@ -142,12 +142,12 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
 
   return (
     <Formik
-      initialValues={{ file: null, img_Name: "" }}
+      initialValues={{ file: null, imgName: "" }}
       onSubmit={handleBackgroundSubmit}
       validationSchema={yup.object().shape({
         file: yup.mixed().required()
           .test('fileType', "Unsupported File Format", value => SUPPORTED_FORMATS.includes(value.type)),
-        img_Name: yup.string().required(),
+        imgName: yup.string().required(),
       })}>
 
       {({ values, handleSubmit, setFieldValue, isSubmitting }) => {
@@ -155,12 +155,11 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
           <form onSubmit={handleSubmit}>
             <div className="form-group">
 
-              <Field name="img_Name" validate={validateName}>
+              <Field name="imgName" >
                 {({ field, form }) => (
-                  <FormControl isInvalid={form.errors.name && form.touched.name}>
-                    <FormLabel htmlFor="img_Name">Image Title</FormLabel>
-                    <Input {...field} id="img_Name" placeholder="Image 1" />
-                    <FormErrorMessage>{form.errors.name}</FormErrorMessage>
+                  <FormControl >
+                    <FormLabel htmlFor="imgName">Image Title</FormLabel>
+                    <Input {...field} id="imgName" placeholder="Image 1" />
                   </FormControl>
                 )}
               </Field>
@@ -175,7 +174,7 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
 
             <Button
               type="submit"
-              disabled={values.img_Name === "" || values.file === null}
+              disabled={values.imgName === "" || values.file === null}
               className="btn btn-primary"
               mt={4}
               isLoading={isSubmitting}

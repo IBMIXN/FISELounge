@@ -10,6 +10,7 @@ const email_regex = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=
 
 const name_regex = /^[a-zA-Z\s]+$/i;
 
+// E.164 standard for phone number
 const phone_regex = /^\+[1-9]\d{1,14}$/;
 
 export function validateName(value) {
@@ -56,7 +57,8 @@ export function validateRelation(value) {
 
 export function validatePhone(value) {
   let error = "";
-  if (!phone_regex.test(value)) {
+  if (!value) {
+  } else if (!phone_regex.test(value)) {
     error = "Invalid phone number, don't forget to include country code";
   }
   return error;
