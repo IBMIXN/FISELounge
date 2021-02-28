@@ -45,6 +45,7 @@ const handler = async (req, res) => {
             email: contact_email,
             profileImage: profileImage,
             relation: relation,
+            profileImage: profileImage,
             phone : phone
           };
 

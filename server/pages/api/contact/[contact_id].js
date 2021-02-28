@@ -69,7 +69,7 @@ const handler = async (req, res) => {
           const {
             name,
             email: contactEmail,
-            profileImage,
+            profileImage: profileImage,
             relation: relationStr,
             phone: phone
           } = body;
@@ -82,7 +82,7 @@ const handler = async (req, res) => {
             ...consumer.contacts[contactIndex],
             ...(name && { name: sanitizeName(name) }),
             ...(contactEmail && { email: contactEmail.toLowerCase() }),
-            ...(profileImage && { profileImage }),
+            ...({ profileImage }),
             ...(phone && { phone }),
             ...(relation && { relation }),
           };

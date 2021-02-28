@@ -30,6 +30,8 @@ import { Main } from "../../../components/Main";
 import { Footer } from "../../../components/Footer";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import Loading from "../../../components/Loading";
+import Checkbox from "../../../components/Checkbox";
+import * as yup from 'yup';
 
 const MakeChangesForm = ({
   router,
@@ -38,8 +40,38 @@ const MakeChangesForm = ({
   currentEmail,
   currentRelation,
   currentPhone,
+  currentProfileImage,
 }) => {
+  var hasSelectedDeleteImage = false; // CHANGED NAME FROM deleteImg 
+  const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+  const fileToBase64 = (inputFile) => {
+    const fileReader = new FileReader() 
+
+    return new Promise((resolve, reject) => {   
+      fileReader.onerror = () => {
+        fileReader.abort();
+        reject(new DOMException("Problem parsing background file."));
+      };
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+      fileReader.readAsDataURL(inputFile);
+    });
+  };
+
   const handleFormSubmit = async (values, actions) => {
+    if (values.profileImage) {
+      values.profileImage = await fileToBase64(values.profileImage);
+    } else if (values.hasSelectedDeleteImage) {
+      //delete image if selected 
+      values.profileImage = ""; 
+    } else {
+      values.profileImage = currentProfileImage;
+    }
+    // don't include value in formbody
+    delete values.hasSelectedDeleteImage;
+
     const formBody = Object.entries(values)
       .map(
         ([key, value]) =>
@@ -85,8 +117,16 @@ const MakeChangesForm = ({
         email: currentEmail,
         phone: currentPhone,
         relation: currentRelation,
+        profileImage: null,
+        hasSelectedDeleteImage: hasSelectedDeleteImage === "false",
       }}
       onSubmit={handleFormSubmit}
+      validationSchema={yup.object().shape({
+        profileImage: yup.mixed()
+          .nullable()
+          .notRequired()
+          .test('fileType', "Unsupported File Format", value => !value || (value && SUPPORTED_FORMATS.includes(value.type))),
+      })}
     >
       {({
         isSubmitting,
@@ -94,6 +134,7 @@ const MakeChangesForm = ({
         handleChange,
         handleBlur,
         handleSubmit,
+        setFieldValue,
         values,
       }) => (
         <form onSubmit={handleSubmit}>
@@ -154,6 +195,23 @@ const MakeChangesForm = ({
               </FormControl>
             )}
           </Field>
+          
+          <br />
+          <FormLabel>Current Profile Picture</FormLabel>
+          <img src={currentProfileImage} width="100px" height="100x" />
+          <Field
+            name="hasSelectedDeleteImage"
+            type="checkbox"
+            checked={values.hasSelectedDeleteImage === true}
+            label="Remove"
+            component={Checkbox}
+          />
+          <FormLabel htmlFor="profileImage">Change Profile Picture</FormLabel>
+          <br />
+          <input id="profileImage" name="profileImage" type="file" accept="image/*" onChange={(event) => {
+            setFieldValue("profileImage", event.currentTarget.files[0]);
+          }} className="form-control" />
+          <br />
 
           <Button
             mt={4}
@@ -231,6 +289,7 @@ const ContactPage = () => {
           currentPhone={contact.phone}
           currentRelation={relations[contact.relation]}
           contact_id={contact_id}
+          currentProfileImage={contact.profileImage}
         />
         <Heading mt="3rem" size="lg" color="red.200">
           Danger Zone
@@ -248,8 +307,8 @@ const ContactPage = () => {
       <Footer />
     </Container>
   ) : (
-    <Loading />
-  );
+      <Loading />
+    );
 };
 
 export default ContactPage;
