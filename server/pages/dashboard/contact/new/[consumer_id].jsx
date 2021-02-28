@@ -30,11 +30,31 @@ import { Main } from "../../../../components/Main";
 import { Footer } from "../../../../components/Footer";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
 import Loading from "../../../../components/Loading";
+import * as yup from 'yup';
 
 const NameForm = ({ router }) => {
   const [formError, setFormError] = useState("");
+  const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+  const fileToBase64 = (inputFile) => {
+    const tempFileReader = new FileReader() 
+
+    return new Promise((resolve, reject) => {   
+      tempFileReader.onerror = () => {
+        tempFileReader.abort();
+        reject(new DOMException("Problem parsing background file."));
+      };
+
+      tempFileReader.onload = () => {
+        resolve(tempFileReader.result);
+      };
+      tempFileReader.readAsDataURL(inputFile);
+    });
+  };
 
   const handleFormSubmit = async (values, actions) => {
+    if (values.profileImage != ""){
+      values.profileImage = await fileToBase64(values.profileImage);
+    }
     const valuesToSend = { ...values, consumer_id: router.query.consumer_id };
     const formBody = Object.entries(valuesToSend)
       .map(
@@ -84,8 +104,13 @@ const NameForm = ({ router }) => {
 
   return (
     <Formik
-      initialValues={{ name: "", email: "", phone: "", relation: ""}}
+      initialValues={{ name: "", email: "", phone: "", relation: "", profileImage: ""}}
       onSubmit={handleFormSubmit}
+      validationSchema={yup.object().shape({
+        profileImage: yup.mixed()
+          .notRequired()
+          .test('fileType', "Unsupported File Format", value => !value || (value && SUPPORTED_FORMATS.includes(value.type))),
+      })}
     >
       {({
         isSubmitting,
@@ -93,8 +118,10 @@ const NameForm = ({ router }) => {
         handleChange,
         handleBlur,
         handleSubmit,
+        setFieldValue,
         values,
-      }) => (
+      }
+      ) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
             {({ field, form }) => (
@@ -150,6 +177,13 @@ const NameForm = ({ router }) => {
               <option value="friend">Their friend</option>
             </Field>
           </FormControl>
+          <br />
+          <FormLabel htmlFor="profileImage">Set Profile Picture</FormLabel>
+          <br />
+          <input id="profileImage" name="profileImage" type="file" accept="image/*" onChange={(event) => {
+            setFieldValue("profileImage", event.currentTarget.files[0]);
+          }} className="form-control" />
+          <br />
 
           {formError && <Text color="crimson">{formError}</Text>}
           <Button

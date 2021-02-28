@@ -27,7 +27,7 @@ const handler = async (req, res) => {
             consumer_id,
             name,
             email: contact_email_raw,
-            profileImage,
+            profileImage: profileImage,
             relation: relationStr,
             phone: phone,
           } = body;
@@ -43,6 +43,7 @@ const handler = async (req, res) => {
             _id: uuid.v4(),
             name: sanitizeName(name),
             email: contact_email,
+            profileImage: profileImage,
             relation: relation,
             phone : phone
           };
