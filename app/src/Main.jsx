@@ -100,7 +100,7 @@ function Main() {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `contact_id=${contact_id}`,
+      body: `contact_id=${contact_id}&sms=true`,
     })
       .then((r) => {
         if (r.ok) {
