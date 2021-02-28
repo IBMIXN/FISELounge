@@ -108,7 +108,7 @@ const handler = async (req, res) => {
                 Authorization: `Basic ${process.env.SMS_API_KEY}`,
               },
               body: JSON.stringify({
-                to: "40727117700",
+                to: contact.phone,
                 from: `${process.env.SMS_FROM}`,
                 content: `Hi ${capitalize(contact.name)},\n\n${capitalize(
                   consumer.name
@@ -119,9 +119,6 @@ const handler = async (req, res) => {
             })
               .then((res) => console.log("SMS RES", JSON.stringify(res)))
               .catch((err) => console.log("SMS ERR", JSON.stringify(err)));
-            return res
-              .status(200)
-              .json({ message: "SMS Invite Sent successfully" });
           }
 
           let transporter = nodemailer.createTransport({
@@ -155,10 +152,7 @@ const handler = async (req, res) => {
           transporter.sendMail(message).catch((err) => {
             throw err;
           });
-
-          return res
-            .status(200)
-            .json({ message: "Email Invite Sent successfully" });
+          return res.status(200).json({ message: "Invite Sent successfully" });
         } catch (err) {
           console.error(`api.otc.consumer.POST: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });

@@ -100,7 +100,7 @@ function Main() {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `contact_id=${contact_id}`,
+      body: `contact_id=${contact_id}&sms=true`,
     })
       .then((r) => {
         if (r.ok) {
@@ -335,14 +335,14 @@ function Main() {
               pos="absolute"
               top="0"
               left="0"
-              bg="gray.600"
+              bg="rgba(12, 12, 12, 0.45)"
               pr="1rem"
               pb="1rem"
               pt="0.5rem"
               pl="0.5rem"
               roundedBottomRight="70%"
             >
-              <Icon color="white" name="repeat" size="4rem" m="1rem" />
+              <Icon color="white" name="repeat" size="4rem" m="1rem" opacity="100%"/>
             </Box>
           </button>
         )}
@@ -352,7 +352,7 @@ function Main() {
               pos="absolute"
               top="0"
               right="0"
-              bg="gray.600"
+              bg="rgba(12, 12, 12, 0.45)"
               pr="1rem"
               pb="1rem"
               pt="0.5rem"
