@@ -104,7 +104,6 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
   };
 
   const handleBackgroundSubmit = async (values, actions) => {
-    console.log("submitting...");
     const imageData = await fileToBase64(values.file);
     const formBody = encodeURIComponent("imgB64") + "=" + encodeURIComponent(imageData)
       + "&" + encodeURIComponent("imgName") + "=" + encodeURIComponent(values.imgName);
@@ -146,7 +145,7 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
       onSubmit={handleBackgroundSubmit}
       validationSchema={yup.object().shape({
         file: yup.mixed().required()
-          .test('fileType', "Unsupported File Format", value => SUPPORTED_FORMATS.includes(value.type)),
+          .test('fileType', "Unsupported File Format", value => (value && SUPPORTED_FORMATS.includes(value.type))),
         imgName: yup.string().required(),
       })}>
 
@@ -167,7 +166,7 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
               <br></br>
               <label htmlFor="file">Upload Image</label>
               <br></br>
-              <input id="file" name="file" type="file" onChange={(event) => {
+              <input id="file" name="file" type="file" accept="image/*" onChange={(event) => {
                 setFieldValue("file", event.currentTarget.files[0]);
               }} className="form-control" />
             </div>
@@ -285,8 +284,42 @@ const MakeChangesForm = ({
 
 const BackgroundTable = ({
   ar_scenes,
+  consumer_id,
+  router,
 }) => {
   const bgArray = Object.keys(ar_scenes);
+
+  const handleDeleteBackground = async (imageName) => {
+    const formBody = encodeURIComponent("backgroundToDelete") + "=" + encodeURIComponent(imageName);
+    const options = {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBody,
+    };
+    await fetch(`/api/consumer/${consumer_id}`, options)
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw r;
+      })
+      .then(({ message, data }) => {
+        router.replace(`/dashboard`);
+      })
+      .catch(async (err) => {
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw await err.json().then((rJson) => {
+          console.error(
+            `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+          );
+          return;
+        });
+      });
+  };
   return (
     <Table>
       <TableHead>
@@ -315,6 +348,7 @@ const BackgroundTable = ({
                 fontSize="sm"
                 fontWeight="medium"
                 color="blue.600"
+                onClick={() => handleDeleteBackground(imageName)}
               >
                 Delete
                 </ChakraLink>
@@ -454,7 +488,10 @@ const ConsumerPage = () => {
         <Heading size="lg">{capitalize(consumer.name)}'s Backgrounds</Heading>
         <Box>
           <BackgroundTable
-            ar_scenes={consumer.ar_scenes} />
+            router={router}
+            ar_scenes={consumer.ar_scenes}
+            consumer_id={consumer_id}
+          />
         </Box>
         <AddBackgroundForm
           router={router}

@@ -58,10 +58,14 @@ const handler = async (req, res) => {
     case "PUT":
       // ---------------- PUT
       try {
-        const { name, isCloudEnabled } = body;
+        const { name, isCloudEnabled, backgroundToDelete } = body; 
 
         consumer.name = sanitizeName(name) || consumer.name;
         consumer.isCloudEnabled = isCloudEnabled || consumer.isCloudEnabled;
+
+        if (backgroundToDelete) {
+          delete consumer.ar_scenes[backgroundToDelete];
+        }
 
         await users.updateOne({ email }, { $set: user });
         return res.status(200).json({
@@ -107,8 +111,8 @@ const handler = async (req, res) => {
         // --------------- PATCH
         // Upload image
       try {
-        const {img_b64, img_name} = body;
-        consumer.ar_scenes[img_name] = img_b64; 
+        const {imgB64, imgName} = body;
+        consumer.ar_scenes[imgName] = imgB64; 
 
         await users.updateOne({ email }, { $set: user });
 
