@@ -9,6 +9,7 @@ import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
 import MicRecorder from "mic-recorder-to-mp3";
 import JitsiComponent from "./components/JitsiComponent";
+import PluginComponent from "./components/PluginComponent";
 import img1 from "./assets/img1.jpeg";
 import img2 from "./assets/img2.jpg";
 import img3 from "./assets/img3.jpg";
@@ -30,10 +31,13 @@ function Main() {
   const scenes = [img1, img2, img3, img4];
   const [room, setRoom] = useState("");
   const [call, setCall] = useState(false);
+  const [openPlugin, setOpenPlugin] = useState(false);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isMicrophoneRecording, setIsMicrophoneRecording] = useState(false);
   const [isBlocked, setIsBlocked] = useState(false);
   const toast = useToast();
+  // if plugin URL not added then icon will not show up in APP
+  const pluginExists = process.env.REACT_APP_PLUGIN_URL;
 
   useEffect(() => {
     navigator.mediaDevices.getUserMedia(
@@ -288,6 +292,17 @@ function Main() {
   return (
     <>
       <Helmet></Helmet>
+      {openPlugin && (
+        <div css={css`
+        z-index: 50;
+        position: relative;
+        top: 10vh;
+        left: 10vw;
+        height: 80vh;
+        width: 80vw;
+      `}>
+        <PluginComponent/></div>
+        )}
 
       {user && call && (
         <div
@@ -319,7 +334,7 @@ function Main() {
           width: 100vw;
           height: 100vh;
         `}
-        onClick={() => call && setCall(false)}
+        onClick={() => (openPlugin || call) && (setOpenPlugin(false) || setCall(false))}
       >
         <Scene vr-mode-ui={{ enabled: false }} style={{ zIndex: -10 }}>
           <Entity particle-system={{ preset: "snow" }} />
@@ -343,6 +358,40 @@ function Main() {
               roundedBottomRight="70%"
             >
               <Icon color="white" name="repeat" size="4rem" m="1rem" opacity="100%"/>
+            </Box>
+          </button>
+        )}
+        {scenes.length > 1 && (
+          <button onClick={handleChangeScene}>
+            <Box
+              pos="absolute"
+              bottom="0"
+              left="0"
+              bg="rgba(12, 12, 12, 0.45)"
+              pr="1rem"
+              pb="1rem"
+              pt="0.5rem"
+              pl="0.5rem"
+              roundedTopRight="70%"
+            >
+              <Icon color="red.500" name="warning-2" size="4rem" m="1rem" opacity="100%"/>
+            </Box>
+          </button>
+        )}
+        {pluginExists && (
+          <button onClick={setOpenPlugin}>
+            <Box
+              pos="absolute"
+              bottom="0"
+              right="0"
+              bg="rgba(12, 12, 12, 0.45)"
+              pr="1rem"
+              pb="1rem"
+              pt="0.5rem"
+              pl="0.5rem"
+              roundedTopLeft="70%"
+            >
+              <Icon color="white" name="plus-square" size="4rem" m="1rem" opacity="100%"/>
             </Box>
           </button>
         )}
