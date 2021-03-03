@@ -326,7 +326,7 @@ function Main() {
       )}
       <div
         css={css`
-          ${call && "filter: blur(5px);"}
+          ${(call || openPlugin) && "filter: blur(5px);"}
           z-index: 10;
           position: absolute;
           top: 0;
@@ -438,14 +438,13 @@ function Main() {
                   >
                     {contact.profileImage ? (
                       <Image
-                        rounded="full"
+                        rounded="10%"
                         size="10rem"
                         src={contact.profileImage}
-                        alt="Segun Adebayo"
                         pointerEvents="none"
                       />
                     ) : (
-                      <Box w="10rem" h="10rem" rounded="100%" bg={colors[index % colors.length]}>
+                      <Box w="10rem" h="10rem" rounded="10%" bg={colors[index % colors.length]}>
                         <Text fontSize="6rem" lineHeight="10rem">
                           {contact.name[0].toUpperCase()}
                         </Text>
@@ -462,6 +461,6 @@ function Main() {
   );
 }
 
-const colors = ["red.300", "blue.300", "green.300"]
+const colors = ["yellow.50","pink.300", "yellow.400", "red.500", "pink.800"]
 
 export default Main;
