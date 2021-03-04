@@ -58,11 +58,13 @@ const handler = async (req, res) => {
     case "PUT":
       // ---------------- PUT
       try {
-        const { name, isCloudEnabled, backgroundToDelete } = body; 
+        const { name, isCloudEnabled, isSnowEnabled, backgroundToDelete } = body; 
 
         consumer.name = sanitizeName(name) || consumer.name;
         consumer.isCloudEnabled = isCloudEnabled || consumer.isCloudEnabled;
+        consumer.isSnowEnabled = isSnowEnabled || consumer.isSnowEnabled;
 
+        // only delete background when included in request
         if (backgroundToDelete) {
           delete consumer.ar_scenes[backgroundToDelete];
         }

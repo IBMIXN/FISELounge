@@ -337,7 +337,7 @@ function Main() {
         onClick={() => (openPlugin || call) && (setOpenPlugin(false) || setCall(false))}
       >
         <Scene vr-mode-ui={{ enabled: false }} style={{ zIndex: -10 }}>
-          <Entity particle-system={{ preset: "snow" }} />
+          {user.isSnowEnabled === "true" && <Entity particle-system={{ preset: "snow"}} />}
           <Entity
             primitive="a-sky"
             rotation="0 -140 0"

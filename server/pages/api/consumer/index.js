@@ -23,12 +23,13 @@ const handler = async (req, res) => {
       case "POST":
         // ---------------- POST
         try {
-          const { name, isCloudEnabled } = body;
+          const { name, isCloudEnabled, isSnowEnabled} = body;
           if (!name || !isCloudEnabled) throw new Error("Missing params");
           var consumer = {
             _id: uuid.v4(),
             name: sanitizeName(name),
             isCloudEnabled: isCloudEnabled,
+            isSnowEnabled: isSnowEnabled,
             otc: randomWords(3).join("-"),
             ar_scenes: {},
             contacts: [],

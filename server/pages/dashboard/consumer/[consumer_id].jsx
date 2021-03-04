@@ -190,6 +190,7 @@ const AddBackgroundForm = ({ consumer_id, background_scenes, router
 const MakeChangesForm = ({
   currentName,
   isCloudEnabled,
+  isSnowEnabled,
   consumer_id,
   router,
 }) => {
@@ -232,11 +233,22 @@ const MakeChangesForm = ({
       });
   };
 
+  const showSnowWariningText = (isSnowEnabled) => {
+    if (isSnowEnabled) {
+      return (
+        <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
+          (Falling snow is not recommended for users with epilepsy or similar conditions.)
+        </Text>
+      );
+    }
+  }
+
   return (
     <Formik
       initialValues={{
         name: capitalize(currentName),
         isCloudEnabled: isCloudEnabled === "true",
+        isSnowEnabled: isSnowEnabled === "true",
       }}
       onSubmit={handleFormSubmit}
     >
@@ -267,6 +279,15 @@ const MakeChangesForm = ({
             component={Checkbox}
           />
 
+          <Field
+            name="isSnowEnabled"
+            type="checkbox"
+            checked={values.isSnowEnabled === true}
+            label={"Enable falling snow particles in the background?"}
+            component={Checkbox}
+          /> 
+          {showSnowWariningText(values.isSnowEnabled)}
+          
           <Button
             mt={4}
             variantColor="blue"
@@ -504,6 +525,7 @@ const ConsumerPage = () => {
           consumer_id={consumer_id}
           currentName={capitalize(consumer.name)}
           isCloudEnabled={consumer.isCloudEnabled}
+          isSnowEnabled={consumer.isSnowEnabled}
         />
         <Heading mt="3rem" size="lg" color="red.200">
           Danger Zone

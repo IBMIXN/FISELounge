@@ -62,9 +62,19 @@ const NameForm = ({ router }) => {
       });
   };
 
+  const showSnowWariningText = (isSnowEnabled) => {
+    if (isSnowEnabled) {
+      return (
+        <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
+          Snow is not recommended for users with epilepsy or similar conditions.
+        </Text>
+      );
+    }
+  }
+
   return (
     <Formik
-      initialValues={{ name: "", isCloudEnabled: true }}
+      initialValues={{ name: "", isCloudEnabled: true, isSnowEnabled: false }}
       onSubmit={handleFormSubmit}
     >
       {({
@@ -97,6 +107,21 @@ const NameForm = ({ router }) => {
                 onBlur={handleBlur}
               />
               Enable IBM Watson Speech-to-text features?
+            </FormLabel>
+          </FormControl>
+          <FormControl my="1rem">
+            <FormLabel>
+              <Checkbox
+                mr="1rem"
+                size="lg"
+                name="isSnowEnabled"
+                checked={values.isSnowEnabled}
+                isChecked={values.isSnowEnabled}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              Enable falling snow particles in the background?
+              {showSnowWariningText(values.isSnowEnabled)}
             </FormLabel>
           </FormControl>
 
@@ -138,8 +163,8 @@ const NewConsumerPage = () => {
       <Footer />
     </Container>
   ) : (
-    <Loading />
-  );
+      <Loading />
+    );
 };
 
 export default NewConsumerPage;
