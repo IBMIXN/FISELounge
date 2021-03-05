@@ -176,20 +176,21 @@ const MakeChangesForm = ({
                 <FormLabel htmlFor="relation">
                   What relation is this person to ?
                 </FormLabel>
-                <Select {...field} id="relation" placeholder="Select Relation">
-                  <option value="son">Their son</option>
-                  <option value="daughter">Their daughter</option>
-                  <option value="grandson">Their grandson</option>
-                  <option value="granddaughter">Their granddaughter</option>
-                  <option value="father">Their father</option>
-                  <option value="mother">Their mother</option>
-                  <option value="grandfather">Their grandfather</option>
-                  <option value="grandmother">Their grandmother</option>
-                  <option value="uncle">Their uncle</option>
-                  <option value="aunt">Their aunt</option>
-                  <option value="brother">Their brother</option>
-                  <option value="sister">Their sister</option>
-                  <option value="friend">Their friend</option>
+                <Select {...field} id="relation">
+                <option default style={{ color: 'black' }}>Select Relation</option>
+                <option value="son" style={{ color: 'black' }} >Their son</option>
+                <option value="daughter" style={{ color: 'black' }} >Their daughter</option>
+                <option value="grandson" style={{ color: 'black' }}>Their grandson</option>
+                <option value="granddaughter" style={{ color: 'black' }}>Their granddaughter</option>
+                <option value="father" style={{ color: 'black' }}>Their father</option>
+                <option value="mother" style={{ color: 'black' }}>Their mother</option>
+                <option value="grandfather" style={{ color: 'black' }}>Their grandfather</option>
+                <option value="grandmother" style={{ color: 'black' }}>Their grandmother</option>
+                <option value="uncle" style={{ color: 'black' }}>Their uncle</option>
+                <option value="aunt" style={{ color: 'black' }}>Their aunt</option>
+                <option value="brother" style={{ color: 'black' }}>Their brother</option>
+                <option value="sister" style={{ color: 'black' }}>Their sister</option>
+                <option value="friend" style={{ color: 'black' }}>Their friend</option>
                 </Select>
                 <FormErrorMessage>{form.errors.relation}</FormErrorMessage>
               </FormControl>

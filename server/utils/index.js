@@ -49,7 +49,7 @@ export function validatePassword(value) {
 
 export function validateRelation(value) {
   let error = "";
-  if (!value) {
+  if ((!value) || (value == "Select Relation")) {
     error = "Choose a relation";
   }
   return error;
