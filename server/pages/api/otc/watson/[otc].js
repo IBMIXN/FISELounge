@@ -145,40 +145,19 @@ const handler = async (req, res) => {
                 data.reply = "Starting exercise";
                 break;
               default:
-                data.action = "askBob";
-                const askBobResponse = await fetch(
-                  `${process.env.ASKBOB_ENDPOINT}/query`,
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/x-www-form-urlencoded",
-                    },
-                    body: `message=${transcript}&sender=${user.name}`,
-                  }
-                ).then((r) => {
-                  if (r.ok) {
-                    return r.json();
-                  }
-                  throw r;
-                });
-
-                const messages = askBobResponse ? askBobResponse.messages : [];
-
-                data.reply = messages.length
-                  ? messages[0]
-                  : "I could not understand";
-                break;
+                data.action = "";
+                data.reply = "Watson couldn't understand";
             }
           }
 
           if (data.action) {
             return res.status(200).json({
-              message: "AskBob recognized your request",
+              message: "Watson recognized your request",
               data,
             });
           } else {
             return res.status(200).json({
-              message: "AskBob couldn't recognize intents",
+              message: "Watson couldn't recognize intents",
               data,
             });
           }

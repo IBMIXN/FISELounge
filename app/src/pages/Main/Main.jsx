@@ -57,14 +57,15 @@ function Main() {
       )
       .then(async (stream) => {
         if (user.isCloudEnabled === "true") {
-          const MicRecorder = await import("mic-recorder-to-mp3");
+          const MicRecorder = (await import("mic-recorder-to-mp3")).default;
           Mp3Recorder = new MicRecorder({ bitRate: 128 });
         } else {
           const Recorder = (await import("./recorder")).Recorder;
           var source = audioContext.createMediaStreamSource(stream);
           window.savedReferenceWorkaroundFor934512 = source;
+
           var gainNode = audioContext.createGain();
-          gainNode.gain.value = 0.2; //0.15;
+          gainNode.gain.value = 0.2;
           source.connect(gainNode);
 
           WavRecorder = new Recorder(gainNode, {
