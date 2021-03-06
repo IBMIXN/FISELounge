@@ -84,7 +84,7 @@ const handler = async (req, res) => {
             text: "",
           };
           const recognizeParams = {
-            audio: new Buffer(body, "base64"),
+            audio: Buffer.from(body, "base64"),
             contentType: "audio/mp3",
           };
 

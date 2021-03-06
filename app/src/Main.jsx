@@ -7,7 +7,15 @@ import "aframe";
 import "aframe-particle-system-component";
 import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
-import MicRecorder from "mic-recorder-to-mp3";
+import Recorder from "./recorder";
+import Mp3Recorder from "mic-recorder-to-mp3";
+import {
+  capitalize,
+  sleep,
+  resampleBufferToWav16kHz,
+  playAudio,
+} from "./utils";
+import stringSimilarity from "string-similarity";
 import JitsiComponent from "./components/JitsiComponent";
 import PluginComponent from "./components/PluginComponent";
 import img1 from "./assets/img1.jpeg";
@@ -25,7 +33,9 @@ import {
   Spinner,
 } from "@chakra-ui/core";
 
-const Mp3Recorder = new MicRecorder({ bitRate: 128 });
+//const Mp3Recorder = new MicRecorder({ bitRate: 128 });
+var recorder;
+var audioContext;
 
 function Main() {
   const scenes = [img1, img2, img3, img4];
@@ -34,23 +44,40 @@ function Main() {
   const [openPlugin, setOpenPlugin] = useState(false);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
   const [isMicrophoneRecording, setIsMicrophoneRecording] = useState(false);
-  const [isBlocked, setIsBlocked] = useState(false);
+  const [isBlocked, setIsBlocked] = useState(true);
   const toast = useToast();
   // if plugin URL not added then icon will not show up in APP
   const pluginExists = process.env.REACT_APP_PLUGIN_URL;
 
+  const initUserMedia = async () => {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    return navigator.mediaDevices
+      .getUserMedia(
+        { audio: true },
+        () => {
+          console.log("Permission Granted");
+        },
+        () => {
+          console.log("Permission Denied");
+        }
+      )
+      .then((stream) => {
+        var source = audioContext.createMediaStreamSource(stream);
+        window.savedReferenceWorkaroundFor934512 = source;
+        var gainNode = audioContext.createGain();
+        gainNode.gain.value = 0.2; //0.15;
+        source.connect(gainNode);
+
+        recorder = new Recorder(gainNode, {
+          type: "audio/wav",
+        });
+      })
+      .then(() => setIsBlocked(false))
+      .catch((err) => console.log("Unable to get user media stream ", err));
+  };
+
   useEffect(() => {
-    navigator.mediaDevices.getUserMedia(
-      { audio: true },
-      () => {
-        console.log("Permission Granted");
-        setIsBlocked(false);
-      },
-      () => {
-        console.log("Permission Denied");
-        setIsBlocked(true);
-      }
-    );
+    initUserMedia();
   }, []);
 
   useEffect(() => {
@@ -129,44 +156,124 @@ function Main() {
       });
   };
 
-  const playAudioResponse  = async ({ body }) => {
+  const playTtsAudioResponse = async ({ body }) => {
     const reader = body.getReader();
-    reader.read().then(result => {
-      const blob = new Blob([result.value], { type: 'audio/wav' });
-      const url = window.URL.createObjectURL(blob)
-      window.audio = new Audio();
-      window.audio.src = url;
-      window.audio.play();
-    }).catch(async (err) => {
-      if (err instanceof Error) {
-        throw err;
-      }
-      throw await err.json().then((rJson) => {
-        console.error(
-          `Audio Response - ${err.status} ${err.statusText}: ${rJson.message}`
-        );
-        return;
+    reader
+      .read()
+      .then((result) => {
+        playAudio(result.value);
+      })
+      .catch(async (err) => {
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw await err.json().then((rJson) => {
+          console.error(
+            `Audio Response - ${err.status} ${err.statusText}: ${rJson.message}`
+          );
+          return;
+        });
       });
-    });
   };
 
-  const handleTextToSpeechResponse = async (reply) => {
-    const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/otc/watson/text-to-speech/${localStorage.getItem("otc")}`, { 
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `text=${reply}`,           
-    }).then(r => {
+  const handleTextToSpeechResponse = async (text) => {
+    const response = await fetch(
+      `${
+        process.env.REACT_APP_SERVER_URL
+      }/api/otc/watson/text-to-speech/${localStorage.getItem("otc")}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `text=${text}`,
+      }
+    ).then((r) => {
       if (r.ok) {
-      return r;
+        return r;
       }
       throw r;
     });
     return response;
-  }
+  };
 
-  const handleWatsonResponse = async ({ action, contact_id, text, reply}) => {
+  const handleAskbobResponse = async ({ query, messages, error }) => {
+    if (error) {
+      toast({
+        title: "Askbob couldn't understand you.",
+        description:
+          "Please try moving somewhere quieter or speaking more loudly.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+      console.error(`Askbob Error - ${error}`);
+      return;
+    }
+
+    if (!messages || messages.length === 0) {
+      toast({
+        title: "Askbob couldn't understand you.",
+        description:
+          "Please try moving somewhere quieter or try rephrasing your request.",
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    console.log("Askbob - ", JSON.stringify({ query, messages, error }));
+
+    messages = messages || [];
+    const askBobTextObject = messages.find((msg) => msg.text);
+
+    const askBobCustomObject = messages.find((msg) => msg.custom);
+    const intent = askBobCustomObject ? askBobCustomObject.custom.type : null;
+
+    switch (intent) {
+      case "call_user":
+        const contactToCall = askBobCustomObject.custom
+          ? askBobCustomObject.custom.callee.toLowerCase()
+          : null;
+
+        const contacts = JSON.parse(localStorage.getItem("user")).contacts;
+
+        const contactNames = contacts.map((c) => c.name);
+        const { bestMatchIndex } = stringSimilarity.findBestMatch(
+          contactToCall,
+          contactNames
+        );
+        if (bestMatchIndex === -1 || bestMatchIndex === null) {
+          toast({
+            title: `"${query}"`,
+            description: `Sorry, ${capitalize(
+              contactToCall
+            )} is not in your contacts.`,
+            status: "warning",
+            duration: 9000,
+            isClosable: true,
+          });
+          break;
+        }
+        const contact_id = contacts[bestMatchIndex]._id;
+        handleMakeCall(contact_id);
+        break;
+
+      case "change_background":
+        handleChangeScene();
+        break;
+
+      default:
+        if (askBobTextObject && askBobTextObject.text) {
+          const ttsResponse = await handleTextToSpeechResponse(
+            askBobTextObject.text
+          );
+          await playTtsAudioResponse(ttsResponse);
+        }
+        break;
+    }
+  };
+
+  const handleWatsonResponse = async ({ action, contact_id, text, reply }) => {
     if (!text) {
       toast({
         title: "We couldn't hear you.",
@@ -198,7 +305,7 @@ function Main() {
       switch (action) {
         case "respondAudioOnly":
           const response = await handleTextToSpeechResponse(reply);
-          await playAudioResponse(response);
+          await playTtsAudioResponse(response);
           break;
         case "startExercise":
           console.log("Exercise initiated");
@@ -222,7 +329,97 @@ function Main() {
     }
   };
 
-  const handleMicrophoneClick = async (e) => {
+  const handleAskbobMicrophoneClick = async (e) => {
+    if (!isMicrophoneRecording) {
+      if (isBlocked) {
+        console.log("Permission Denied");
+      } else {
+        await initUserMedia();
+        recorder.record();
+        setIsMicrophoneRecording(true);
+      }
+    } else {
+      setIsBlocked(true);
+      await sleep(400);
+      setIsMicrophoneRecording(false);
+      await sleep(400);
+      recorder.stop();
+      try {
+        recorder.getBuffer(async (buffers) => {
+          if (!buffers || buffers.length === 0 || buffers[0].length === 0) {
+            console.log("Recorder.js buffer empty");
+            recorder.clear();
+            setIsBlocked(false);
+            toast({
+              title: "We couldn't hear you.",
+              description:
+                "Microphone recorder not working properly, try again.",
+              status: "error",
+              duration: 9000,
+              isClosable: true,
+            });
+            return;
+          }
+
+          const leftChannelBuffer = buffers[0];
+          const wavFile = resampleBufferToWav16kHz(
+            audioContext,
+            leftChannelBuffer
+          );
+
+          var formData = new FormData();
+          formData.append("speech", wavFile);
+          formData.append(
+            "sender",
+            JSON.parse(localStorage.getItem("user")).name
+          );
+
+          await fetch(`${process.env.REACT_APP_ASKBOB_URL}/voicequery`, {
+            method: "POST",
+            body: formData,
+          })
+            .then((r) => {
+              if (r.ok) {
+                return r.json();
+              }
+              toast({
+                title: "Something went wrong",
+                description: "Askbob couldn't respond to your request.",
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+              });
+              throw r;
+            })
+            .then((rJson) => {
+              handleAskbobResponse(rJson);
+              recorder.clear();
+              setIsBlocked(false);
+            })
+            .catch(async (err) => {
+              recorder.clear();
+              setIsBlocked(false);
+              if (err instanceof Error) {
+                throw err;
+              }
+              throw await err.json().then((rJson) => {
+                console.error(
+                  `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+                );
+                return;
+              });
+            });
+        });
+      } catch (err) {
+        recorder.clear();
+        setIsMicrophoneRecording(false);
+        setIsBlocked(false);
+        console.log(err);
+      }
+    }
+  };
+
+  const handleWatsonMicrophoneClick = async (e) => {
     if (isMicrophoneRecording) {
       // End recording
       setIsBlocked(true);
@@ -293,16 +490,19 @@ function Main() {
     <>
       <Helmet></Helmet>
       {openPlugin && (
-        <div css={css`
-        z-index: 50;
-        position: relative;
-        top: 10vh;
-        left: 10vw;
-        height: 80vh;
-        width: 80vw;
-      `}>
-        <PluginComponent/></div>
-        )}
+        <div
+          css={css`
+            z-index: 50;
+            position: relative;
+            top: 10vh;
+            left: 10vw;
+            height: 80vh;
+            width: 80vw;
+          `}
+        >
+          <PluginComponent />
+        </div>
+      )}
 
       {user && call && (
         <div
@@ -334,10 +534,14 @@ function Main() {
           width: 100vw;
           height: 100vh;
         `}
-        onClick={() => (openPlugin || call) && (setOpenPlugin(false) || setCall(false))}
+        onClick={() =>
+          (openPlugin || call) && (setOpenPlugin(false) || setCall(false))
+        }
       >
         <Scene vr-mode-ui={{ enabled: false }} style={{ zIndex: -10 }}>
-          {user.isSnowEnabled === "true" && <Entity particle-system={{ preset: "snow"}} />}
+          {user.isSnowEnabled === "true" && (
+            <Entity particle-system={{ preset: "snow" }} />
+          )}
           <Entity
             primitive="a-sky"
             rotation="0 -140 0"
@@ -357,7 +561,13 @@ function Main() {
               pl="0.5rem"
               roundedBottomRight="70%"
             >
-              <Icon color="white" name="repeat" size="4rem" m="1rem" opacity="100%"/>
+              <Icon
+                color="white"
+                name="repeat"
+                size="4rem"
+                m="1rem"
+                opacity="100%"
+              />
             </Box>
           </button>
         )}
@@ -374,7 +584,13 @@ function Main() {
               pl="0.5rem"
               roundedTopRight="70%"
             >
-              <Icon color="red.500" name="warning-2" size="4rem" m="1rem" opacity="100%"/>
+              <Icon
+                color="red.500"
+                name="warning-2"
+                size="4rem"
+                m="1rem"
+                opacity="100%"
+              />
             </Box>
           </button>
         )}
@@ -391,12 +607,18 @@ function Main() {
               pl="0.5rem"
               roundedTopLeft="70%"
             >
-              <Icon color="white" name="plus-square" size="4rem" m="1rem" opacity="100%"/>
+              <Icon
+                color="white"
+                name="plus-square"
+                size="4rem"
+                m="1rem"
+                opacity="100%"
+              />
             </Box>
           </button>
         )}
         {user.isCloudEnabled === "true" && (
-          <button onClick={handleMicrophoneClick}>
+          <button onClick={handleAskbobMicrophoneClick}>
             <Box
               pos="absolute"
               top="0"
@@ -433,16 +655,24 @@ function Main() {
               {user.contacts.map((contact, index) => (
                 <Box
                   // Flex items will stay centered, even if they overflow the flex container
-                  // marginLeft & marginRight ensures that first and last box-items have 
+                  // marginLeft & marginRight ensures that first and last box-items have
                   // margins that keep them accessible
-                  marginLeft={index === 0 ? "auto" : "0"} 
-                  marginRight={index === user.contacts.length-1 ? "auto" : "0"} >
+                  marginLeft={index === 0 ? "auto" : "0"}
+                  marginRight={
+                    index === user.contacts.length - 1 ? "auto" : "0"
+                  }
+                >
                   <button
                     style={{ outline: "none" }}
                     onClick={() => handleMakeCall(contact._id)}
                   >
                     {contact.profileImage ? (
-                      <Box w="10rem" h="10rem" rounded="10%" bg={colors[index % colors.length]}>
+                      <Box
+                        w="10rem"
+                        h="10rem"
+                        rounded="10%"
+                        bg={colors[index % colors.length]}
+                      >
                         <Image
                           rounded="10%"
                           size="10rem"
@@ -451,10 +681,13 @@ function Main() {
                         />
                       </Box>
                     ) : (
-                      <Box w="10rem" h="10rem" rounded="10%" bg={colors[index % colors.length]}>
-                        <Text
-                          fontSize="6rem" 
-                          lineHeight="10rem">
+                      <Box
+                        w="10rem"
+                        h="10rem"
+                        rounded="100%"
+                        bg={colors[index % colors.length]}
+                      >
+                        <Text fontSize="6rem" lineHeight="10rem">
                           {contact.name[0].toUpperCase()}
                         </Text>
                       </Box>
@@ -470,6 +703,6 @@ function Main() {
   );
 }
 
-const colors = ["yellow.50","pink.300", "yellow.400", "red.500", "pink.800"]
+const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 
 export default Main;
