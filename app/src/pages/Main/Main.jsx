@@ -7,21 +7,15 @@ import "aframe";
 import "aframe-particle-system-component";
 import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
-import Recorder from "./recorder";
-import Mp3Recorder from "mic-recorder-to-mp3";
-import {
-  capitalize,
-  sleep,
-  resampleBufferToWav16kHz,
-  playAudio,
-} from "./utils";
+import { playAudio } from "../../utils";
 import stringSimilarity from "string-similarity";
-import JitsiComponent from "./components/JitsiComponent";
-import PluginComponent from "./components/PluginComponent";
-import img1 from "./assets/img1.jpeg";
-import img2 from "./assets/img2.jpg";
-import img3 from "./assets/img3.jpg";
-import img4 from "./assets/img4.jpg";
+import { capitalize, sleep, resampleBufferToWav16kHz } from "../../utils";
+import JitsiComponent from "../../components/JitsiComponent";
+import PluginComponent from "../../components/PluginComponent";
+import img1 from "../../assets/img1.jpeg";
+import img2 from "../../assets/img2.jpg";
+import img3 from "../../assets/img3.jpg";
+import img4 from "../../assets/img4.jpg";
 import { Redirect } from "react-router-dom";
 import {
   Box,
@@ -33,8 +27,8 @@ import {
   Spinner,
 } from "@chakra-ui/core";
 
-//const Mp3Recorder = new MicRecorder({ bitRate: 128 });
-var recorder;
+var Mp3Recorder;
+var WavRecorder;
 var audioContext;
 
 function Main() {
@@ -61,24 +55,29 @@ function Main() {
           console.log("Permission Denied");
         }
       )
-      .then((stream) => {
-        var source = audioContext.createMediaStreamSource(stream);
-        window.savedReferenceWorkaroundFor934512 = source;
-        var gainNode = audioContext.createGain();
-        gainNode.gain.value = 0.2; //0.15;
-        source.connect(gainNode);
+      .then(async (stream) => {
+        if (user.isCloudEnabled === "true") {
+          const MicRecorder = await import("mic-recorder-to-mp3");
+          Mp3Recorder = new MicRecorder({ bitRate: 128 });
+        } else {
+          const Recorder = (await import("./recorder")).Recorder;
+          var source = audioContext.createMediaStreamSource(stream);
+          window.savedReferenceWorkaroundFor934512 = source;
+          var gainNode = audioContext.createGain();
+          gainNode.gain.value = 0.2; //0.15;
+          source.connect(gainNode);
 
-        recorder = new Recorder(gainNode, {
-          type: "audio/wav",
-        });
+          WavRecorder = new Recorder(gainNode, {
+            type: "audio/wav",
+          });
+        }
       })
       .then(() => setIsBlocked(false))
-      .catch((err) => console.log("Unable to get user media stream ", err));
+      .catch((err) => {
+        setIsBlocked(false);
+        console.log("Unable to get user media stream ", err);
+      });
   };
-
-  useEffect(() => {
-    initUserMedia();
-  }, []);
 
   useEffect(() => {
     const otc = localStorage.getItem("otc");
@@ -112,6 +111,8 @@ function Main() {
         });
     }
     fetchUserData();
+    initUserMedia();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const rawUser = localStorage.getItem("user");
@@ -273,6 +274,96 @@ function Main() {
     }
   };
 
+  const handleAskbobMicrophoneClick = async (e) => {
+    if (!isMicrophoneRecording) {
+      if (isBlocked) {
+        console.log("Permission Denied");
+      } else {
+        await initUserMedia();
+        WavRecorder.record();
+        setIsMicrophoneRecording(true);
+      }
+    } else {
+      setIsBlocked(true);
+      await sleep(400);
+      setIsMicrophoneRecording(false);
+      await sleep(400);
+      WavRecorder.stop();
+      try {
+        WavRecorder.getBuffer(async (buffers) => {
+          if (!buffers || buffers.length === 0 || buffers[0].length === 0) {
+            console.log("Recorder.js buffer empty");
+            WavRecorder.clear();
+            setIsBlocked(false);
+            toast({
+              title: "We couldn't hear you.",
+              description:
+                "Microphone recorder not working properly, try again.",
+              status: "error",
+              duration: 9000,
+              isClosable: true,
+            });
+            return;
+          }
+
+          const leftChannelBuffer = buffers[0];
+          const wavFile = resampleBufferToWav16kHz(
+            audioContext,
+            leftChannelBuffer
+          );
+
+          var formData = new FormData();
+          formData.append("speech", wavFile);
+          formData.append(
+            "sender",
+            JSON.parse(localStorage.getItem("user")).name
+          );
+
+          await fetch(`${process.env.REACT_APP_ASKBOB_URL}/voicequery`, {
+            method: "POST",
+            body: formData,
+          })
+            .then((r) => {
+              if (r.ok) {
+                return r.json();
+              }
+              toast({
+                title: "Something went wrong",
+                description: "Askbob couldn't respond to your request.",
+                status: "error",
+                duration: 9000,
+                isClosable: true,
+              });
+              throw r;
+            })
+            .then((rJson) => {
+              handleAskbobResponse(rJson);
+              WavRecorder.clear();
+              setIsBlocked(false);
+            })
+            .catch(async (err) => {
+              WavRecorder.clear();
+              setIsBlocked(false);
+              if (err instanceof Error) {
+                throw err;
+              }
+              throw await err.json().then((rJson) => {
+                console.error(
+                  `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+                );
+                return;
+              });
+            });
+        });
+      } catch (err) {
+        WavRecorder.clear();
+        setIsMicrophoneRecording(false);
+        setIsBlocked(false);
+        console.log(err);
+      }
+    }
+  };
+
   const handleWatsonResponse = async ({ action, contact_id, text, reply }) => {
     if (!text) {
       toast({
@@ -329,96 +420,6 @@ function Main() {
     }
   };
 
-  const handleAskbobMicrophoneClick = async (e) => {
-    if (!isMicrophoneRecording) {
-      if (isBlocked) {
-        console.log("Permission Denied");
-      } else {
-        await initUserMedia();
-        recorder.record();
-        setIsMicrophoneRecording(true);
-      }
-    } else {
-      setIsBlocked(true);
-      await sleep(400);
-      setIsMicrophoneRecording(false);
-      await sleep(400);
-      recorder.stop();
-      try {
-        recorder.getBuffer(async (buffers) => {
-          if (!buffers || buffers.length === 0 || buffers[0].length === 0) {
-            console.log("Recorder.js buffer empty");
-            recorder.clear();
-            setIsBlocked(false);
-            toast({
-              title: "We couldn't hear you.",
-              description:
-                "Microphone recorder not working properly, try again.",
-              status: "error",
-              duration: 9000,
-              isClosable: true,
-            });
-            return;
-          }
-
-          const leftChannelBuffer = buffers[0];
-          const wavFile = resampleBufferToWav16kHz(
-            audioContext,
-            leftChannelBuffer
-          );
-
-          var formData = new FormData();
-          formData.append("speech", wavFile);
-          formData.append(
-            "sender",
-            JSON.parse(localStorage.getItem("user")).name
-          );
-
-          await fetch(`${process.env.REACT_APP_ASKBOB_URL}/voicequery`, {
-            method: "POST",
-            body: formData,
-          })
-            .then((r) => {
-              if (r.ok) {
-                return r.json();
-              }
-              toast({
-                title: "Something went wrong",
-                description: "Askbob couldn't respond to your request.",
-                status: "error",
-                duration: 9000,
-                isClosable: true,
-              });
-              throw r;
-            })
-            .then((rJson) => {
-              handleAskbobResponse(rJson);
-              recorder.clear();
-              setIsBlocked(false);
-            })
-            .catch(async (err) => {
-              recorder.clear();
-              setIsBlocked(false);
-              if (err instanceof Error) {
-                throw err;
-              }
-              throw await err.json().then((rJson) => {
-                console.error(
-                  `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
-                );
-                return;
-              });
-            });
-        });
-      } catch (err) {
-        recorder.clear();
-        setIsMicrophoneRecording(false);
-        setIsBlocked(false);
-        console.log(err);
-      }
-    }
-  };
-
   const handleWatsonMicrophoneClick = async (e) => {
     if (isMicrophoneRecording) {
       // End recording
@@ -438,7 +439,7 @@ function Main() {
             await fetch(
               `${
                 process.env.REACT_APP_SERVER_URL
-              }/api/otc/askbob/${localStorage.getItem("otc")}`,
+              }/api/otc/watson/${localStorage.getItem("otc")}`,
               {
                 method: "POST",
                 body: mp3_base64,
@@ -617,32 +618,38 @@ function Main() {
             </Box>
           </button>
         )}
-        {user.isCloudEnabled === "true" && (
-          <button onClick={handleAskbobMicrophoneClick}>
-            <Box
-              pos="absolute"
-              top="0"
-              right="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedBottomLeft="70%"
-            >
-              {isBlocked ? (
-                <Spinner size="4rem" m="1rem" color="white" speed="0.5s" />
-              ) : (
-                <Icon
-                  name="microphone"
-                  size="4rem"
-                  m="1rem"
-                  color={isMicrophoneRecording ? "red.500" : "white"}
-                />
-              )}
-            </Box>
-          </button>
-        )}
+
+        <button
+          onClick={
+            user.isCloudEnabled === "true"
+              ? handleWatsonMicrophoneClick
+              : handleAskbobMicrophoneClick
+          }
+        >
+          <Box
+            pos="absolute"
+            top="0"
+            right="0"
+            bg="rgba(12, 12, 12, 0.45)"
+            pr="1rem"
+            pb="1rem"
+            pt="0.5rem"
+            pl="0.5rem"
+            roundedBottomLeft="70%"
+          >
+            {isBlocked ? (
+              <Spinner size="4rem" m="1rem" color="white" speed="0.5s" />
+            ) : (
+              <Icon
+                name="microphone"
+                size="4rem"
+                m="1rem"
+                color={isMicrophoneRecording ? "red.500" : "white"}
+              />
+            )}
+          </Box>
+        </button>
+
         {user.contacts && (
           <Box
             pos="absolute"

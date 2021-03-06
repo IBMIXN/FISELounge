@@ -17,7 +17,7 @@ import {
 import { useState } from "react";
 import { useEffect } from "react";
 
-import Footer from "./components/Footer";
+import Footer from "../components/Footer";
 
 function Onboarding() {
   const [userIsValid, setUserIsValid] = useState(false);
