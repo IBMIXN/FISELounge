@@ -425,27 +425,36 @@ function Main() {
           <Box
             pos="absolute"
             bottom="20%"
-            left={`calc(50vw - ${
-              user.contacts.length === 1 ? "5" : user.contacts.length * 6
-            }rem)`}
+            left="20vw"
+            right="20vw"
+            overflow="auto"
           >
-            <Stack isInline spacing="6rem">
+            <Stack isInline spacing="6rem" display="flex" flexDirection="row">
               {user.contacts.map((contact, index) => (
-                <Box>
+                <Box
+                  // Flex items will stay centered, even if they overflow the flex container
+                  // marginLeft & marginRight ensures that first and last box-items have 
+                  // margins that keep them accessible
+                  marginLeft={index === 0 ? "auto" : "0"} 
+                  marginRight={index === user.contacts.length-1 ? "auto" : "0"} >
                   <button
                     style={{ outline: "none" }}
                     onClick={() => handleMakeCall(contact._id)}
                   >
                     {contact.profileImage ? (
-                      <Image
-                        rounded="10%"
-                        size="10rem"
-                        src={contact.profileImage}
-                        pointerEvents="none"
-                      />
+                      <Box w="10rem" h="10rem" rounded="10%" bg={colors[index % colors.length]}>
+                        <Image
+                          rounded="10%"
+                          size="10rem"
+                          src={contact.profileImage}
+                          pointerEvents="none"
+                        />
+                      </Box>
                     ) : (
                       <Box w="10rem" h="10rem" rounded="10%" bg={colors[index % colors.length]}>
-                        <Text fontSize="6rem" lineHeight="10rem">
+                        <Text
+                          fontSize="6rem" 
+                          lineHeight="10rem">
                           {contact.name[0].toUpperCase()}
                         </Text>
                       </Box>
