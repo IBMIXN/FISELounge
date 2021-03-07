@@ -12,9 +12,34 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 display-none {
   display: none;
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  width: 2px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.76);
+  border-radius: 5px;
+}
+
+.contactBox:first-child{
+  margin-left:auto;
+}
+
+.contactBox:last-child{
+  margin-right:auto;
 }

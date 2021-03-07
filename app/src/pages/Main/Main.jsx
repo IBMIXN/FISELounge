@@ -657,19 +657,10 @@ function Main() {
             bottom="20%"
             left="20vw"
             right="20vw"
-            overflow="auto"
           >
-            <Stack isInline spacing="6rem" display="flex" flexDirection="row">
+            <Stack isInline spacing="6rem" display="flex" flexDirection="row" className="scrollable">
               {user.contacts.map((contact, index) => (
-                <Box
-                  // Flex items will stay centered, even if they overflow the flex container
-                  // marginLeft & marginRight ensures that first and last box-items have
-                  // margins that keep them accessible
-                  marginLeft={index === 0 ? "auto" : "0"}
-                  marginRight={
-                    index === user.contacts.length - 1 ? "auto" : "0"
-                  }
-                >
+                <Box className="contactBox">
                   <button
                     style={{ outline: "none" }}
                     onClick={() => handleMakeCall(contact._id)}
@@ -692,7 +683,7 @@ function Main() {
                       <Box
                         w="10rem"
                         h="10rem"
-                        rounded="100%"
+                        rounded="10%"
                         bg={colors[index % colors.length]}
                       >
                         <Text fontSize="6rem" lineHeight="10rem">
