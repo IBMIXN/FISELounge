@@ -652,13 +652,14 @@ function Main() {
         </button>
 
         {user.contacts && (
-          <Box
-            pos="absolute"
-            bottom="20%"
-            left="20vw"
-            right="20vw"
-          >
-            <Stack isInline spacing="6rem" display="flex" flexDirection="row" className="scrollable">
+          <Box pos="absolute" bottom="20%" left="20vw" right="20vw">
+            <Stack
+              isInline
+              spacing="6rem"
+              display="flex"
+              flexDirection="row"
+              className="scrollable"
+            >
               {user.contacts.map((contact, index) => (
                 <Box className="contactBox">
                   <button
