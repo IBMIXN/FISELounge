@@ -64,4 +64,12 @@ export function validatePhone(value) {
   return error;
 }
 
+export function validateImageName(value) {
+  let error = "";
+  if (!value) {
+    error = "Required";
+  } 
+  return error;
+}
+
 export const sanitizeName = (name) => name?.split(/\s/)[0].toLowerCase();

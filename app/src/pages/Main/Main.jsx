@@ -14,8 +14,6 @@ import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
-import img3 from "../../assets/img3.jpg";
-import img4 from "../../assets/img4.jpg";
 import { Redirect } from "react-router-dom";
 import {
   Box,
@@ -31,8 +29,18 @@ var Mp3Recorder;
 var WavRecorder;
 var audioContext;
 
+const defaultBackground1 = {
+  data: img1,
+  isVR: "true"
+}
+
+const defaultBackground2 = {
+  data: img2,
+  isVR: "true"
+}
+
 function Main() {
-  const scenes = [img1, img2, img3, img4];
+  const scenes = [defaultBackground1, defaultBackground2];
   const [room, setRoom] = useState("");
   const [call, setCall] = useState(false);
   const [openPlugin, setOpenPlugin] = useState(false);
@@ -121,7 +129,9 @@ function Main() {
   const user = JSON.parse(rawUser);
 
   // add user-uploaded background scenes
-  scenes.unshift(...Object.values(user.ar_scenes));
+  user.backgrounds.forEach((image) => {
+    scenes.unshift(image);
+  });
 
   const handleChangeScene = () => {
     setCurrentSceneIndex((currentSceneIndex + 1) % scenes.length);
@@ -223,7 +233,7 @@ function Main() {
         isClosable: true,
       });
     }
-    console.log("Askbob - ", JSON.stringify({ query, messages, error }));
+    console.log("Askbob - ", JSON.stringify({ query, messages, error })); // FIX
 
     messages = messages || [];
     const askBobTextObject = messages.find((msg) => msg.text);
@@ -535,21 +545,25 @@ function Main() {
           left: 0;
           width: 100vw;
           height: 100vh;
+          ${ (scenes[currentSceneIndex].isVR === "false") &&
+          `background-image: url(${scenes[currentSceneIndex].data})`}
         `}
         onClick={() =>
           (openPlugin || call) && (setOpenPlugin(false) || setCall(false))
         }
       >
-        <Scene vr-mode-ui={{ enabled: false }} style={{ zIndex: -10 }}>
-          {user.isSnowEnabled === "true" && (
-            <Entity particle-system={{ preset: "snow" }} />
-          )}
-          <Entity
-            primitive="a-sky"
-            rotation="0 -140 0"
-            src={scenes[currentSceneIndex]}
-          />
-        </Scene>
+        {(scenes[currentSceneIndex].isVR === "true") && (
+          <Scene vr-mode-ui={{ enabled: false }} style={{ zIndex: -10 }}>
+            {user.isSnowEnabled === "true" && (
+              <Entity particle-system={{ preset: "snow" }} />
+            )}
+            <Entity
+              primitive="a-sky"
+              rotation="0 -140 0"
+              src={scenes[currentSceneIndex].data}
+            />
+          </Scene>
+        )}
         {scenes.length > 1 && (
           <button onClick={handleChangeScene}>
             <Box

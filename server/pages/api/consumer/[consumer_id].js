@@ -5,14 +5,14 @@ import { connectToDatabase } from "../../../utils/mongodb";
 import randomWords from "random-words";
 import { sanitizeName } from "../../../utils";
 
-// max size of each background image
+// max size of each background image //TBD?
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: process.env.MAX_IMG_SIZE
+      sizeLimit: process.env.MAX_IMG_SIZE,
     },
   },
-}
+};
 
 const handler = async (req, res) => {
   const session = await getSession(req);
@@ -27,8 +27,6 @@ const handler = async (req, res) => {
     body,
     method,
   } = req;
-
-  const allowedKeys = ["name", ""];
 
   const { client } = await connectToDatabase();
   const db = await client.db(process.env.MONGODB_DB);
@@ -58,16 +56,11 @@ const handler = async (req, res) => {
     case "PUT":
       // ---------------- PUT
       try {
-        const { name, isCloudEnabled, isSnowEnabled, backgroundToDelete } = body; 
+        const { name, isCloudEnabled, isSnowEnabled } = body;
 
         consumer.name = sanitizeName(name) || consumer.name;
         consumer.isCloudEnabled = isCloudEnabled || consumer.isCloudEnabled;
         consumer.isSnowEnabled = isSnowEnabled || consumer.isSnowEnabled;
-
-        // only delete background when included in request
-        if (backgroundToDelete) {
-          delete consumer.ar_scenes[backgroundToDelete];
-        }
 
         await users.updateOne({ email }, { $set: user });
         return res.status(200).json({
@@ -109,23 +102,7 @@ const handler = async (req, res) => {
         return res.status(500).json({ message: "Uncaught Server Error" });
       }
       break;
-    case "PATCH" : 
-        // --------------- PATCH
-        // Upload image
-      try {
-        const {imgB64, imgName} = body;
-        consumer.ar_scenes[imgName] = imgB64; 
 
-        await users.updateOne({ email }, { $set: user });
-
-        return res.status(200).json({
-          message: "Background image uploaded successfully"
-        });
-      } catch (err) {
-          console.error(`api.consumer.PATCH: ${err}`);
-          return res.status(500).json({ message: "Uncaught Server Error" });
-        }
-          
     default:
       return res.status(405).json({ message: "This route does not exist" });
       break;

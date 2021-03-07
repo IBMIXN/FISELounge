@@ -5,7 +5,7 @@ import { Formik, Field } from "formik";
 import { useUser } from "../../../lib/hooks";
 import { fetcher, capitalize, validateName } from "../../../utils";
 import relations from "../../../utils/relations";
-import * as yup from 'yup';
+import * as yup from "yup";
 
 import {
   Badge,
@@ -83,110 +83,6 @@ const DeleteUserModal = ({ onClick, consumer_name }) => {
   );
 };
 
-const AddBackgroundForm = ({ consumer_id, background_scenes, router
-}) => {
-
-  const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
-  const fileToBase64 = (inp_file) => {
-    const tempFileReader = new FileReader()
-
-    return new Promise((resolve, reject) => {
-      tempFileReader.onerror = () => {
-        tempFileReader.abort();
-        reject(new DOMException("Problem parsing background file."));
-      };
-
-      tempFileReader.onload = () => {
-        resolve(tempFileReader.result);
-      };
-      tempFileReader.readAsDataURL(inp_file);
-    });
-  };
-
-  const handleBackgroundSubmit = async (values, actions) => {
-    const imageData = await fileToBase64(values.file);
-    const formBody = encodeURIComponent("imgB64") + "=" + encodeURIComponent(imageData)
-      + "&" + encodeURIComponent("imgName") + "=" + encodeURIComponent(values.imgName);
-
-    const options = {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: formBody,
-    };
-    await fetch(`/api/consumer/${consumer_id}`, options)
-      .then((r) => {
-        if (r.ok) {
-          router.replace(`/dashboard`);
-          actions.setSubmitting(false);
-          return r.json();
-        }
-        throw r;
-      })
-      .catch(async (err) => {
-        actions.setSubmitting(false);
-        if (err instanceof Error) {
-          throw err;
-        }
-        throw await err.json().then((rJson) => {
-          console.error(
-            `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
-          );
-          return;
-        });
-      });
-
-  }
-
-  return (
-    <Formik
-      initialValues={{ file: null, imgName: "" }}
-      onSubmit={handleBackgroundSubmit}
-      validationSchema={yup.object().shape({
-        file: yup.mixed().required()
-          .test('fileType', "Unsupported File Format", value => (value && SUPPORTED_FORMATS.includes(value.type))),
-        imgName: yup.string().required(),
-      })}>
-
-      {({ values, handleSubmit, setFieldValue, isSubmitting }) => {
-        return (
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-
-              <Field name="imgName" >
-                {({ field, form }) => (
-                  <FormControl >
-                    <FormLabel htmlFor="imgName">Image Title</FormLabel>
-                    <Input {...field} id="imgName" placeholder="Image 1" />
-                  </FormControl>
-                )}
-              </Field>
-
-              <br></br>
-              <label htmlFor="file">Upload Image</label>
-              <br></br>
-              <input id="file" name="file" type="file" accept="image/*" onChange={(event) => {
-                setFieldValue("file", event.currentTarget.files[0]);
-              }} className="form-control" />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={values.imgName === "" || values.file === null}
-              className="btn btn-primary"
-              mt={4}
-              isLoading={isSubmitting}
-              variantColor="blue">
-              Save background
-              </Button>
-
-          </form>
-        );
-      }}
-    </Formik>)
-}
-
 const MakeChangesForm = ({
   currentName,
   isCloudEnabled,
@@ -237,11 +133,12 @@ const MakeChangesForm = ({
     if (isSnowEnabled) {
       return (
         <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
-          (Falling snow is not recommended for users with epilepsy or similar conditions.)
+          (Falling snow is not recommended for users with epilepsy or similar
+          conditions.)
         </Text>
       );
     }
-  }
+  };
 
   return (
     <Formik
@@ -252,14 +149,7 @@ const MakeChangesForm = ({
       }}
       onSubmit={handleFormSubmit}
     >
-      {({
-        isSubmitting,
-        getFieldProps,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-      }) => (
+      {({ isSubmitting, handleSubmit, values }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
             {({ field, form }) => (
@@ -285,9 +175,9 @@ const MakeChangesForm = ({
             checked={values.isSnowEnabled === true}
             label={"Enable falling snow particles in the background?"}
             component={Checkbox}
-          /> 
+          />
           {showSnowWariningText(values.isSnowEnabled)}
-          
+
           <Button
             mt={4}
             variantColor="blue"
@@ -303,23 +193,29 @@ const MakeChangesForm = ({
   );
 };
 
-const BackgroundTable = ({
-  ar_scenes,
-  consumer_id,
-  router,
-}) => {
-  const bgArray = Object.keys(ar_scenes);
+const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
+  const handleDeleteBackground = async (value) => {
+    var imageToDelete = {
+      image_id: value,
+      consumer_id: consumer_id,
+    };
 
-  const handleDeleteBackground = async (imageName) => {
-    const formBody = encodeURIComponent("backgroundToDelete") + "=" + encodeURIComponent(imageName);
+    const formBody = Object.entries(imageToDelete)
+      .map(
+        ([key, value]) =>
+          encodeURIComponent(key) + "=" + encodeURIComponent(value)
+      )
+      .join("&");
+
     const options = {
-      method: "PUT",
+      method: "DELETE",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
       body: formBody,
     };
-    await fetch(`/api/consumer/${consumer_id}`, options)
+
+    await fetch(`/api/background/`, options)
       .then((r) => {
         if (r.ok) {
           return r.json();
@@ -327,7 +223,7 @@ const BackgroundTable = ({
         throw r;
       })
       .then(({ message, data }) => {
-        router.replace(`/dashboard`);
+        router.replace(`/dashboard/consumer/${consumer_id}`);
       })
       .catch(async (err) => {
         if (err instanceof Error) {
@@ -341,41 +237,56 @@ const BackgroundTable = ({
         });
       });
   };
+
   return (
     <Table>
       <TableHead>
         <TableRow>
           <TableHeader>Background Name</TableHeader>
+          <TableHeader>VR viewing</TableHeader>
           <TableHeader />
         </TableRow>
       </TableHead>
       <TableBody>
-        {bgArray.map((imageName, i) => (
-          <TableRow
-            bg={i % 2 === 0 ? "white" : "gray.50"}
-            key={i}
-          >
+        {backgrounds.map((image, i) => (
+          <TableRow bg={i % 2 === 0 ? "white" : "gray.50"} key={i}>
             <TableCell>
-              <Text
-                fontSize="sm"
-                color="gray.600"
-                as="a"
-              >
-                {imageName}
+              <Text fontSize="sm" color="gray.600" as="a">
+                {capitalize(image.name)}
               </Text>
             </TableCell>
+            <TableCell>
+              <Text fontSize="sm" color="gray.600">
+                {capitalize(image.isVR)}
+              </Text>
+            </TableCell>
+
             <TableCell textAlign="right">
               <ChakraLink
                 fontSize="sm"
                 fontWeight="medium"
                 color="blue.600"
-                onClick={() => handleDeleteBackground(imageName)}
+                onClick={() => handleDeleteBackground(image._id)}
               >
                 Delete
-                </ChakraLink>
+              </ChakraLink>
             </TableCell>
           </TableRow>
         ))}
+        <TableRow bg="white">
+          <TableCell>
+            <Button
+              as="a"
+              href={`/dashboard/background/new/${consumer_id}`}
+              leftIcon="add"
+              color="gray.600"
+            >
+              Add a new background
+            </Button>
+          </TableCell>
+          <TableCell />
+          <TableCell />
+        </TableRow>
       </TableBody>
     </Table>
   );
@@ -427,9 +338,13 @@ const ConsumerPage = () => {
         <Heading>Editing {capitalize(consumer.name)}'s Profile</Heading>
         <Text>
           To set up FISE Lounge on {capitalize(consumer.name)}'s device, go to
+          the
           {` `}
-          <ChakraLink href="localhost:3001" textDecoration="underline">
-            [FISE APP URL]
+          <ChakraLink
+            href={`${process.env.NEXT_PUBLIC_APP_URL}`}
+            textDecoration="underline"
+          >
+            lounge
           </ChakraLink>
           {` `} and enter in the code:
           <br />
@@ -510,14 +425,10 @@ const ConsumerPage = () => {
         <Box>
           <BackgroundTable
             router={router}
-            ar_scenes={consumer.ar_scenes}
+            backgrounds={consumer.backgrounds}
             consumer_id={consumer_id}
           />
         </Box>
-        <AddBackgroundForm
-          router={router}
-          consumer_id={consumer_id}
-          background_scenes={consumer.ar_scenes} />
         <br></br>
         <Heading size="lg">Edit {capitalize(consumer.name)}'s Info</Heading>
         <MakeChangesForm
@@ -540,8 +451,8 @@ const ConsumerPage = () => {
       <Footer />
     </Container>
   ) : (
-      <Loading />
-    );
+    <Loading />
+  );
 };
 
 export default ConsumerPage;
