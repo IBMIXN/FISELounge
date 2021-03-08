@@ -28,7 +28,7 @@ const Footer = (props) => (
         In association with IBM, NHS & University College London.
       </Text>
       <Text textAlign="center">
-        Supervised by John MacNamara, Dean Mohammedally.
+        Supervised by John McNamara, Dean Mohamedally.
       </Text>
     </Stack>
   </Flex>

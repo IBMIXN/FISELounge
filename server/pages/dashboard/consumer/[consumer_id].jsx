@@ -341,10 +341,10 @@ const ConsumerPage = () => {
           the
           {` `}
           <ChakraLink
-            href={`${process.env.NEXT_PUBLIC_APP_URL}`}
+            href={`${process.env.NEXT_PUBLIC_FISE_APP_URL}`}
             textDecoration="underline"
           >
-            lounge
+            app
           </ChakraLink>
           {` `} and enter in the code:
           <br />

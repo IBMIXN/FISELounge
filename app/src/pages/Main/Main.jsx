@@ -141,8 +141,8 @@ function Main() {
   const user = JSON.parse(rawUser);
 
   // add user-uploaded background scenes
-  user.backgrounds.forEach((image) => {
-    scenes.unshift(image);
+  user.backgrounds.forEach((background) => {
+    scenes.unshift(background);
   });
 
   const handleChangeScene = () => {
@@ -558,7 +558,8 @@ function Main() {
           width: 100vw;
           height: 100vh;
           ${ (scenes[currentSceneIndex].isVR === "false") &&
-          `background-image: url(${scenes[currentSceneIndex].data})`}
+          `background-image: url(${scenes[currentSceneIndex].data});
+           background-size: cover;`}
         `}
         onClick={() =>
           (openPlugin || call) && (setOpenPlugin(false) || setCall(false))
