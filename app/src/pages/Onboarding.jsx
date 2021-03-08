@@ -132,13 +132,13 @@ function Onboarding() {
           above and press "Enter App".
         </Text>
         <Text color="gray.500">
-          Otherwise, please sign up for FISE Lounge at{" "}
+          Otherwise, please sign up for FISE Lounge {" "}
           <ChakraLink
             color="blue.600"
             textDecoration="underline"
-            href="https://fise.ml"
+            href={process.env.REACT_APP_SERVER_URL}
           >
-            fise.ml
+            here
           </ChakraLink>{" "}
           and return here when you have created a user and received a
           one-time-code.

@@ -341,7 +341,7 @@ const ConsumerPage = () => {
           the
           {` `}
           <ChakraLink
-            href={`${process.env.NEXT_PUBLIC_FISE_APP_URL}`}
+            href={`${process.env.NEXT_PUBLIC_FISE_WEB_APP_URL}`}
             textDecoration="underline"
           >
             app
