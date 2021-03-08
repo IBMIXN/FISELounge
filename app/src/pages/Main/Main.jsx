@@ -24,6 +24,7 @@ import {
   useToast,
   Spinner,
 } from "@chakra-ui/core";
+import SplashScreen from "../../components/SplashScreen";
 
 var Mp3Recorder;
 var WavRecorder;
@@ -39,7 +40,15 @@ const defaultBackground2 = {
   isVR: "true"
 }
 
+var displaySplashScreen = true;
+
 function Main() {
+  const [loaded, setLoading] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setLoading(true), 6000)
+  }, [])
+
   const scenes = [defaultBackground1, defaultBackground2];
   const [room, setRoom] = useState("");
   const [call, setCall] = useState(false);
@@ -125,6 +134,9 @@ function Main() {
   }, []);
 
   const rawUser = localStorage.getItem("user");
+  if (!rawUser){
+    displaySplashScreen = false;
+  }
   if (!rawUser) return <Redirect to="/onboarding" />;
   const user = JSON.parse(rawUser);
 
@@ -498,7 +510,7 @@ function Main() {
     }
   };
 
-  return (
+  return (loaded || !displaySplashScreen) ? (
     <>
       <Helmet></Helmet>
       {openPlugin && (
@@ -714,8 +726,10 @@ function Main() {
         )}
       </div>
     </>
+  ) : (
+    <SplashScreen />
   );
-}
+};
 
 const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 

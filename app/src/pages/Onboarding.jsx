@@ -1,4 +1,3 @@
-import React from "react";
 import { Redirect } from "react-router-dom";
 import { Formik, Field } from "formik";
 import {
@@ -14,12 +13,19 @@ import {
   Button,
   Box,
 } from "@chakra-ui/core";
-import { useState } from "react";
-import { useEffect } from "react";
 
 import Footer from "../components/Footer";
+import SplashScreen from "../components/SplashScreen";
+import React, { useState, useEffect } from 'react'
 
 function Onboarding() {
+
+  const [loaded, setLoading] = useState(false)
+
+  useEffect(() => {
+    setTimeout(() => setLoading(true), 6000)
+  }, [])
+
   const [userIsValid, setUserIsValid] = useState(false);
   const [error, setError] = useState("");
 
@@ -67,7 +73,7 @@ function Onboarding() {
       });
   };
 
-  return (
+  return loaded ? (
     <Flex direction="column" alignItems="center" justifyContent="flex-start">
       <Stack justifyContent="center" alignItems="center" height="25vh">
         <Heading fontSize="5vw">Welcome to FISE Lounge</Heading>
@@ -140,7 +146,9 @@ function Onboarding() {
       </Stack>
       <Footer />
     </Flex>
+  ) : (
+    <SplashScreen />
   );
-}
+};
 
 export default Onboarding;
