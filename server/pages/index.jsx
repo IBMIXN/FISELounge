@@ -8,19 +8,12 @@ import { Hero } from "../components/Hero";
 import { Main } from "../components/Main";
 import { Footer } from "../components/Footer";
 import { CTA } from "../components/CTA";
-import React, { useState, useEffect } from 'react'
-import SplashScreen from "../components/SplashScreen";
+import React from 'react'
 
 const IndexPage = () => {
   const user = useUser();
 
-  const [loaded, setLoading] = useState(false)
-
-  useEffect(() => {
-    setTimeout(() => setLoading(true), 6000)
-  }, [])
-
-  return loaded ? (
+  return (
     <Container>
       <Nav />
       <Hero />
@@ -48,8 +41,6 @@ const IndexPage = () => {
       <Footer />
       {!user && <CTA />}
     </Container>
-  ) : (
-    <SplashScreen />
   );
 };
 
