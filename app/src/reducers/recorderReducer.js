@@ -3,12 +3,27 @@ const recorderReducer = (state, action) => {
     case "SET_IS_BLOCKED":
       return {
         ...state,
-        isBlocked: action.payload,
+        recorderIsBlocked: action.payload,
       };
-    case "SET_IS_RECORDING":
+    case "SET_IS_RECORDING_COMMAND":
       return {
         ...state,
-        isMicrophoneRecording: action.payload,
+        commandIsRecording: action.payload,
+      };
+    case "SET_IS_LOADING_COMMAND":
+      return {
+        ...state,
+        commandIsLoading: action.payload,
+      };
+    case "SET_IS_RECORDING_CLIP":
+      return {
+        ...state,
+        clipIsRecording: action.payload,
+      };
+    case "SET_IS_LOADING_CLIP":
+      return {
+        ...state,
+        clipIsLoading: action.payload,
       };
     default:
       return state;

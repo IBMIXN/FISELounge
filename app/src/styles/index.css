@@ -1,7 +1,11 @@
 @font-face {
   font-family: Manrope;
   font-weight: 800;
-  src: url(./fonts/Manrope-ExtraBold.ttf);
+  src: url(../fonts/Manrope-ExtraBold.ttf);
+}
+
+:root {
+  --warning-red: #b62121;
 }
 
 body {
@@ -36,10 +40,14 @@ display-none {
   border-radius: 5px;
 }
 
-.contactBox:first-child{
-  margin-left:auto;
+.contactBox:first-child {
+  margin-left: auto;
 }
 
-.contactBox:last-child{
-  margin-right:auto;
+.contactBox:last-child {
+  margin-right: auto;
+}
+
+.warning {
+  color: var(--warning-red);
 }

@@ -146,7 +146,7 @@ const handler = async (req, res) => {
                 break;
               default:
                 data.action = "";
-                data.reply = "Watson couldn't understand";
+                data.reply = "Watson couldn't understand your intent";
             }
           }
 

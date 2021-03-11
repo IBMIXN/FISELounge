@@ -83,7 +83,6 @@ const handler = async (req, res) => {
             return res.status(400).json({ message: "Missing Params" });
           }
 
-          console.log(contact_id);
           // add call to logs
           await usersDB.updateOne(
             { _id: user._id, "consumers._id": consumer._id },
@@ -101,7 +100,7 @@ const handler = async (req, res) => {
           );
 
           if (sms) {
-            await fetch(`${process.env.SMS_ENDPOINT}`, {
+            await fetch(`${process.env.SMS_ENDPOINT}/send`, {
               method: "POST",
               headers: {
                 "Content-Type": "application/json",
@@ -117,8 +116,8 @@ const handler = async (req, res) => {
                 }/${contact._id}`,
               }),
             })
-              .then((res) => console.log("SMS RES", JSON.stringify(res)))
-              .catch((err) => console.log("SMS ERR", JSON.stringify(err)));
+              .then((res) => console.log("SMS RES", res))
+              .catch((err) => console.log("SMS ERR", err));
           }
 
           let transporter = nodemailer.createTransport({

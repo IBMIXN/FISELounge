@@ -12,19 +12,12 @@ import SplashScreen from "../../components/SplashScreen";
 import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import VoiceCommand from "../../components/VoiceCommand";
+import VoiceClip from "../../components/VoiceClip";
 import recorderReducer from "../../reducers/recorderReducer";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
-import {
-  Box,
-  Icon,
-  Image,
-  Stack,
-  Text,
-  useToast,
-  Spinner,
-} from "@chakra-ui/core";
+import { Box, Icon, Image, Stack, Text, useToast } from "@chakra-ui/core";
 
 const TOAST_DURATION = 8000;
 
@@ -39,8 +32,9 @@ const defaultBackground2 = {
 };
 
 const initialRecorderState = {
-  isBlocked: true,
-  isMicrophoneRecording: false,
+  recorderIsBlocked: true,
+  commandIsRecording: false,
+  clipIsRecording: false,
 };
 const RecorderContext = createContext(initialRecorderState);
 
@@ -151,7 +145,7 @@ function Main() {
   };
 
   const playTextToSpeech = async (text) => {
-    const response = await fetch(
+    await fetch(
       `${
         process.env.REACT_APP_SERVER_URL
       }/api/otc/watson/text-to-speech/${localStorage.getItem("otc")}`,
@@ -184,13 +178,23 @@ function Main() {
       });
   };
 
-  const showToast = ({ title, description, status }) => {
+  const showToast = ({
+    title,
+    description,
+    status,
+    position,
+    isClosable,
+    duration,
+    id,
+  }) => {
     toast({
       title,
       description,
       status,
-      isClosable: true,
-      duration: TOAST_DURATION,
+      position: position || "bottom",
+      isClosable: isClosable || true,
+      duration: duration || TOAST_DURATION,
+      id,
     });
   };
 
@@ -284,29 +288,6 @@ function Main() {
             </Box>
           </button>
         )}
-        {scenes.length > 1 && (
-          <button onClick={handleChangeScene}>
-            <Box
-              pos="absolute"
-              bottom="0"
-              left="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedTopRight="70%"
-            >
-              <Icon
-                color="red.500"
-                name="warning-2"
-                size="4rem"
-                m="1rem"
-                opacity="100%"
-              />
-            </Box>
-          </button>
-        )}
         {pluginExists && (
           <button onClick={setOpenPlugin}>
             <Box
@@ -322,7 +303,7 @@ function Main() {
             >
               <Icon
                 color="white"
-                name="plus-square"
+                name="external-link"
                 size="4rem"
                 m="1rem"
                 opacity="100%"
@@ -339,32 +320,11 @@ function Main() {
               customResponse: playTextToSpeech,
             }}
             onError={showToast}
-          >
-            <Box
-              pos="absolute"
-              top="0"
-              right="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedBottomLeft="70%"
-            >
-              {recorderState.isBlocked ? (
-                <Spinner size="4rem" m="1rem" color="white" speed="0.5s" />
-              ) : (
-                <Icon
-                  name="microphone"
-                  size="4rem"
-                  m="1rem"
-                  color={
-                    recorderState.isMicrophoneRecording ? "red.500" : "white"
-                  }
-                />
-              )}
-            </Box>
-          </VoiceCommand>
+          ></VoiceCommand>
+          <VoiceClip
+            isCloudEnabled={user.isCloudEnabled === "true"}
+            onNotify={showToast}
+          ></VoiceClip>
         </RecorderContext.Provider>
         {user.contacts && (
           <Box pos="absolute" bottom="20%" left="20vw" right="20vw">

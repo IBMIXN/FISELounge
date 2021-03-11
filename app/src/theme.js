@@ -14,6 +14,7 @@ const theme = {
   colors: {
     ...chakraTheme.colors,
     black: "#16161D",
+    warningRed: "#ed2f2f",
   },
   fonts,
   breakpoints,
@@ -106,12 +107,23 @@ const theme = {
     },
     microphone: {
       path: (
-        <svg version="1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="currentColor">
+        <svg
+          version="1"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 64 64"
+          fill="currentColor"
+        >
           <path d="M32 40c6 0 11-5 11-11V11c0-6-5-11-11-11S21 5 21 11v18c0 6 5 11 11 11zm-9-29c0-5 4-9 9-9s9 4 9 9v18c0 5-4 9-9 9s-9-4-9-9V11z" />
           <path d="M50 25l-1 1v4c0 9-8 17-17 17s-17-8-17-17v-4a1 1 0 0 0-2 0v4c0 10 8 18 18 19v13H21a1 1 0 0 0 0 2h22a1 1 0 0 0 0-2H33V49c10-1 18-9 18-19v-4l-1-1z" />
         </svg>
       ),
       viewBox: "0 0 64 64",
+    },
+    mainStyle: {
+      size: "4rem",
+      width: "4rem",
+      height: "4rem",
+      margin: "1rem",
     },
   },
 };
