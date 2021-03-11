@@ -1,21 +1,24 @@
 import React, { useEffect, useState, useContext } from "react";
 import { RecorderContext } from "../pages/Main";
 import { RecorderActions } from "../reducers";
-import stringSimilarity from "string-similarity";
 import { capitalize, sleep, resampleBufferToWav16kHz } from "../utils";
-import { Spinner, Icon, useTheme } from "@chakra-ui/core";
 import CommandButton from "./CommandButton";
+import PulsatingBlob from "./PulsatingBlob";
+import { Icon, Spinner, useTheme } from "@chakra-ui/core";
+import { encodeURI } from "../utils";
 
 var Mp3Recorder;
 var WavRecorder;
 var audioContext;
 
-function VoiceCommand({ isCloudEnabled, commands, onError }) {
+function VoiceClip({ isCloudEnabled, onNotify }) {
   const [isLoading, setIsLoading] = useState(true);
   const [recorderState, recorderDispatch] = useContext(RecorderContext);
-  const { changeScene, makeCall, customResponse } = commands;
-
   const theme = useTheme();
+
+  const DEFAULT_MESSAGE = `EMERGENCY notification from ${capitalize(
+    localStorage.getItem("user").name
+  )}`;
 
   // const setIsBlocked = (bool) => {
   //   bool
@@ -24,9 +27,18 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
   // };
 
   const setIsRecording = (bool) => {
-    bool
-      ? recorderDispatch(RecorderActions.SET_IS_RECORDING_COMMAND)
-      : recorderDispatch(RecorderActions.SET_NOT_RECORDING_COMMAND);
+    if (bool) {
+      onNotify({
+        title: "Recording EMERGENCY Message",
+        status: "error",
+        position: "top",
+        duration: 3000,
+        id: "emergency-toast",
+      });
+      recorderDispatch(RecorderActions.SET_IS_RECORDING_CLIP);
+      return;
+    }
+    recorderDispatch(RecorderActions.SET_NOT_RECORDING_CLIP);
   };
 
   const initUserMedia = async () => {
@@ -73,55 +85,66 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
     // eslint-disable-next-line
   }, []);
 
-  const handleWatsonResponse = async ({ action, contact_id, text, reply }) => {
-    if (!text) {
-      onError({
-        title: "We couldn't hear you.",
-        description:
-          "Please try moving somewhere quieter or speaking more loudly.",
-        status: "error",
-      });
-    } else if (!action) {
-      // No intent recognized
-      onError({
-        title: "We couldn't understand you.",
-        description: "Sorry, we couldn't understand what you said",
-        status: "error",
-      });
-    } else if (action === "startCall" && !contact_id) {
-      // No contact found
-      onError({
-        title: "We don't know who that is.",
-        description: "Sorry, we don't recognize that person.",
-        status: "warning",
-      });
-    } else {
-      switch (action) {
-        case "respondAudioOnly":
-          customResponse(reply);
-          break;
-        case "startExercise":
-          console.log("Exercise initiated");
-          break;
-        case "changeBackground":
-          changeScene();
-          break;
-        case "startCall":
-          makeCall(contact_id);
-          break;
-        default:
-          onError({
-            title: "We couldn't hear you.",
+  const sendEmergencyMessage = async (text) => {
+    text = text || DEFAULT_MESSAGE;
+    console.log(encodeURI({ text }));
+    await fetch(
+      `${process.env.REACT_APP_SERVER_URL}/api/otc/sms/${localStorage.getItem(
+        "otc"
+      )}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: encodeURI({ text }),
+      }
+    )
+      .then((res) => {
+        if (res.ok) {
+          onNotify({
+            title: "Emergency message sent succesfully",
             description:
-              "Please try moving somewhere quieter or speaking more loudly.",
+              "Please, if needed contact local authorities and maintain your calm",
             status: "error",
           });
-      }
-    }
+          return;
+        }
+        throw res;
+      })
+      .catch(async (err) => {
+        onNotify({
+          title: "Message could not be send",
+          description:
+            "Please try again by pressing the bottom left emergency button",
+          status: "error",
+        });
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw await err.json().then((rJson) => {
+          console.error(
+            `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+          );
+          return;
+        });
+      });
   };
 
-  const handleWatsonMicrophoneClick = async (e) => {
-    if (recorderState.commandIsRecording) {
+  const handleWatsonResponse = async ({ text }) => {
+    if (!text) {
+      onNotify({
+        title: "We couldn't hear you... sending default emergency message.",
+        // description:
+        //   "Please try moving somewhere quieter or speaking more loudly.",
+        status: "warning",
+      });
+    }
+    sendEmergencyMessage(text);
+  };
+
+  const handleWatsonClick = async () => {
+    if (recorderState.clipIsRecording) {
       // End recording
       setIsRecording(false);
       setIsLoading(true);
@@ -159,9 +182,9 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
               })
               .catch(async (err) => {
                 setIsLoading(false);
-                onError({
+                onNotify({
                   title: "Something went wrong",
-                  description: "Askbob couldn't respond to your request.",
+                  description: "Watson couldn't respond to your request.",
                   status: "error",
                 });
                 if (err instanceof Error) {
@@ -180,85 +203,29 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
         })
         .catch((e) => console.log(e));
     } else {
-      // Begin recording
-      // if (recorderState.isBlocked) {
-      //   console.log("Permission Denied");
-      // } else {
       Mp3Recorder.start()
         .then(() => {
           setIsRecording(true);
         })
         .catch((e) => console.error(e));
-      //}
     }
   };
 
-  const handleAskbobResponse = async ({ query, messages, error }) => {
+  const handleAskbobResponse = async ({ query, error }) => {
     if (error) {
-      onError({
+      onNotify({
         title: "Askbob couldn't understand you.",
         description:
           "Please try moving somewhere quieter or speaking more loudly.",
         status: "error",
       });
       console.error(`Askbob Error - ${error}`);
-      return;
     }
-
-    if (!messages || messages.length === 0) {
-      onError({
-        title: "Askbob couldn't understand you.",
-        description:
-          "Please try moving somewhere quieter or try rephrasing your request.",
-        status: "error",
-      });
-    }
-
-    messages = messages || [];
-    const askBobTextObject = messages.find((msg) => msg.text);
-
-    const askBobCustomObject = messages.find((msg) => msg.custom);
-    const intent = askBobCustomObject ? askBobCustomObject.custom.type : null;
-
-    switch (intent) {
-      case "call_user":
-        const contactToCall = askBobCustomObject.custom
-          ? askBobCustomObject.custom.callee.toLowerCase()
-          : null;
-
-        const contacts = JSON.parse(localStorage.getItem("user")).contacts;
-
-        const contactNames = contacts.map((c) => c.name);
-        const { bestMatchIndex } = stringSimilarity.findBestMatch(
-          contactToCall,
-          contactNames
-        );
-        if (bestMatchIndex === -1 || bestMatchIndex === null) {
-          onError({
-            title: `"${query}"`,
-            description: `Sorry, ${capitalize(
-              contactToCall
-            )} is not in your contacts.`,
-            status: "warning",
-          });
-          break;
-        }
-        const contact_id = contacts[bestMatchIndex]._id;
-        makeCall(contact_id);
-        break;
-      case "change_background":
-        changeScene();
-        break;
-      default:
-        if (askBobTextObject && askBobTextObject.text) {
-          customResponse(askBobTextObject.text);
-        }
-        break;
-    }
+    sendEmergencyMessage(query);
   };
 
-  const handleAskbobMicrophoneClick = async () => {
-    if (!recorderState.commandIsRecording) {
+  const handleAskbobClick = async () => {
+    if (!recorderState.clipIsRecording) {
       if (!isLoading) {
         await initUserMedia();
         WavRecorder.record();
@@ -276,7 +243,7 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
             console.log("Recorder.js buffer empty");
             WavRecorder.clear();
             setIsLoading(false);
-            onError({
+            onNotify({
               title: "We couldn't hear you.",
               description:
                 "Microphone recorder not working properly, try again.",
@@ -306,8 +273,8 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
               if (r.ok) {
                 return r.json();
               }
-              onError({
-                title: "Something went wrong",
+              onNotify({
+                title: "Something went wrong... sending default message",
                 description: "Askbob couldn't respond to your request.",
                 status: "error",
               });
@@ -341,32 +308,51 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
     }
   };
 
-  return (
-    <CommandButton
-      rounded="bottomLeft"
-      top="0"
-      right="0"
-      onClick={
-        isCloudEnabled
-          ? handleWatsonMicrophoneClick
-          : handleAskbobMicrophoneClick
-      }
-    >
-      {isLoading ? (
-        <Spinner size="4rem" m="1rem" color="white" speed="0.5s" />
-      ) : (
-        <Icon
-          color={
-            recorderState.commandIsRecording ? theme.colors.warningRed : "white"
-          }
-          name="microphone"
+  const handleClick = async () => {
+    if (isCloudEnabled) {
+      await handleWatsonClick();
+      return;
+    }
+    handleAskbobClick();
+  };
+
+  const getEmergencySign = () => {
+    if (isLoading) {
+      return (
+        <Spinner
           size="4rem"
           m="1rem"
-          opacity="100%"
+          color={theme.colors.warningRed}
+          speed="0.5s"
+          thickness="4px"
         />
-      )}
+      );
+    } else if (recorderState.clipIsRecording) {
+      return (
+        <PulsatingBlob
+          color={theme.colors.warningRed}
+          pulseOn={recorderState.clipIsRecording}
+          key="emergency-pulsating-blob"
+        ></PulsatingBlob>
+      );
+    } else {
+      return (
+        <Icon
+          name="warning-2"
+          color={theme.colors.warningRed}
+          size="4rem"
+          margin="1rem"
+          key="emergency-warning-icon"
+        ></Icon>
+      );
+    }
+  };
+
+  return (
+    <CommandButton rounded="topRight" bottom="0" left="0" onClick={handleClick}>
+      {getEmergencySign()}
     </CommandButton>
   );
 }
 
-export default VoiceCommand;
+export default VoiceClip;
