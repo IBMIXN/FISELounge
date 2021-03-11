@@ -50,7 +50,7 @@ const handler = async (req, res) => {
             .status(200)
             .json({ message: "New background uploaded successfully" });
         } catch (err) {
-          console.error(`api.contact.POST: ${err}`);
+          console.error(`api.background.POST: ${err}`);
           return res
             .status(500)
             .json({ message: `Uncaught Server Error: ${err.message}` });
@@ -76,7 +76,7 @@ const handler = async (req, res) => {
             message: "Background deleted successfully",
           });
         } catch (err) {
-          console.error(`api.consumer.DELETE: ${err}`);
+          console.error(`api.background.DELETE: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });
         }
 
