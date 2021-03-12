@@ -16,15 +16,7 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
   const [recorderState, recorderDispatch] = useContext(RecorderContext);
   const theme = useTheme();
 
-  const DEFAULT_MESSAGE = `EMERGENCY notification from ${capitalize(
-    localStorage.getItem("user").name
-  )}`;
-
-  // const setIsBlocked = (bool) => {
-  //   bool
-  //     ? recorderDispatch(RecorderActions.BLOCK_RECORDER)
-  //     : recorderDispatch(RecorderActions.UNBLOCK_RECORDER);
-  // };
+  const DEFAULT_MESSAGE = "Please, I am in need of your help. Contact me.";
 
   const setIsRecording = (bool) => {
     if (bool) {
@@ -89,9 +81,9 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
     text = text || DEFAULT_MESSAGE;
     console.log(encodeURI({ text }));
     await fetch(
-      `${process.env.REACT_APP_SERVER_URL}/api/otc/sms/${localStorage.getItem(
-        "otc"
-      )}`,
+      `${
+        process.env.REACT_APP_SERVER_URL
+      }/api/otc/emergency/${localStorage.getItem("otc")}`,
       {
         method: "POST",
         headers: {
@@ -135,8 +127,8 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
     if (!text) {
       onNotify({
         title: "We couldn't hear you... sending default emergency message.",
-        // description:
-        //   "Please try moving somewhere quieter or speaking more loudly.",
+        description:
+          "Please try moving somewhere quieter or speaking more loudly.",
         status: "warning",
       });
     }
@@ -184,7 +176,7 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
                 setIsLoading(false);
                 onNotify({
                   title: "Something went wrong",
-                  description: "Watson couldn't respond to your request.",
+                  description: "We couldn't respond to your request.",
                   status: "error",
                 });
                 if (err instanceof Error) {
@@ -244,7 +236,7 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
             WavRecorder.clear();
             setIsLoading(false);
             onNotify({
-              title: "We couldn't hear you.",
+              title: "Askbob couldn't hear you.",
               description:
                 "Microphone recorder not working properly, try again.",
               status: "error",
@@ -275,7 +267,7 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
               }
               onNotify({
                 title: "Something went wrong... sending default message",
-                description: "Askbob couldn't respond to your request.",
+                description: "Askbob not working properly, try again.",
                 status: "error",
               });
               throw r;
@@ -288,6 +280,11 @@ function VoiceClip({ isCloudEnabled, onNotify }) {
             .catch(async (err) => {
               WavRecorder.clear();
               setIsLoading(false);
+              onNotify({
+                title: "Something went wrong",
+                description: "We couldn't respond to your request.",
+                status: "error",
+              });
               if (err instanceof Error) {
                 throw err;
               }

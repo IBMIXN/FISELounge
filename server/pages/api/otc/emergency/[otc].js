@@ -62,9 +62,6 @@ const handler = async (req, res) => {
     return res.status(400).json({ message: "No contacts found" });
   }
 
-  console.log(contactPhoneNums);
-  console.log(contactEmails);
-
   if (consumer) {
     switch (method) {
       case "GET":
@@ -72,11 +69,14 @@ const handler = async (req, res) => {
       case "POST":
         try {
           const { text } = body;
-          console.log(text);
 
           if (!text) {
             return res.status(400).json({ message: 'Missing "message" param' });
           }
+
+          const emergencyMessage = `EMERGENCY Notification - from ${capitalize(
+            consumer.name
+          )}: "${text}"`;
 
           var smsSuccessful = false;
           var emailSuccessful = false;
@@ -91,10 +91,8 @@ const handler = async (req, res) => {
               messages: [
                 {
                   to: contactPhoneNums,
-                  from: `${capitalize(user.name)}`,
-                  content: `EMERGENCY Notification - from ${capitalize(
-                    user.name
-                  )}: "${text}"`,
+                  from: `${capitalize(consumer.name)}`,
+                  content: emergencyMessage,
                 },
               ],
             }),
@@ -122,9 +120,7 @@ const handler = async (req, res) => {
           const message = {
             from: process.env.EMAIL_FROM,
             to: contactEmails,
-            subject: `EMERGENCY Notification - from ${capitalize(
-              user.name
-            )}: "${text}"`,
+            subject: emergencyMessage,
             text: capitalize(text),
           };
 

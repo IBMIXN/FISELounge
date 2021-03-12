@@ -136,7 +136,7 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
                 isChecked={values.isVR}
                 onChange={handleChange}
               />
-              Enable VR viewing?
+              Enable VR-360-Viewing?
             </FormLabel>
           </FormControl>
 
@@ -204,7 +204,7 @@ const NewBackgroundPage = () => {
         </Heading>
         <Text>
           {capitalize(consumer.name)} will be able to see this image as a
-          background in the lobby. If VR viewing is selected, the background
+          background in the lobby. If VR-360-Viewing is selected, the background
           will be interactive.
           <br />
           <br />

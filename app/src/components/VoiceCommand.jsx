@@ -17,12 +17,6 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
 
   const theme = useTheme();
 
-  // const setIsBlocked = (bool) => {
-  //   bool
-  //     ? recorderDispatch(RecorderActions.BLOCK_RECORDER)
-  //     : recorderDispatch(RecorderActions.UNBLOCK_RECORDER);
-  // };
-
   const setIsRecording = (bool) => {
     bool
       ? recorderDispatch(RecorderActions.SET_IS_RECORDING_COMMAND)
@@ -85,7 +79,8 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
       // No intent recognized
       onError({
         title: "We couldn't understand you.",
-        description: "Sorry, we couldn't understand what you said",
+        description:
+          "Please try moving somewhere quieter or speaking more loudly.",
         status: "error",
       });
     } else if (action === "startCall" && !contact_id) {
@@ -161,7 +156,7 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
                 setIsLoading(false);
                 onError({
                   title: "Something went wrong",
-                  description: "Askbob couldn't respond to your request.",
+                  description: "We couldn't respond to your request.",
                   status: "error",
                 });
                 if (err instanceof Error) {
@@ -180,16 +175,11 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
         })
         .catch((e) => console.log(e));
     } else {
-      // Begin recording
-      // if (recorderState.isBlocked) {
-      //   console.log("Permission Denied");
-      // } else {
       Mp3Recorder.start()
         .then(() => {
           setIsRecording(true);
         })
         .catch((e) => console.error(e));
-      //}
     }
   };
 
@@ -321,6 +311,11 @@ function VoiceCommand({ isCloudEnabled, commands, onError }) {
             .catch(async (err) => {
               WavRecorder.clear();
               setIsLoading(false);
+              onError({
+                title: "Something went wrong",
+                description: "We couldn't respond to your request.",
+                status: "error",
+              });
               if (err instanceof Error) {
                 throw err;
               }

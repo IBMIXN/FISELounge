@@ -71,24 +71,6 @@ const theme = {
       ),
       viewBox: "0 0 371 109",
     },
-    nhs: {
-      path: (
-        <svg
-          width="371"
-          height="150"
-          viewBox="0 0 371 150"
-          version="1"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M371 0v150H0V0h371zm-51 12c-27 0-54 10-54 41 0 34 47 27 47 46 0 13-16 14-26 14-11 0-23-2-30-6l-7 24c12 4 24 6 37 6 28 0 59-8 59-42 0-36-47-30-47-47 0-10 11-12 24-12 9 0 18 2 26 6l8-24c-8-4-22-6-37-6zM77 14H36L10 135h31l17-83 25 83h40l26-121h-30l-17 84h-1L77 14zm116 0h-32l-25 121h32l11-51h38l-11 51h33l25-121h-32l-10 47h-38l9-47z"
-            fill="currentColor"
-            fillRule="nonzero"
-          />
-        </svg>
-      ),
-      viewBox: "0 0 371 150",
-    },
     exit: {
       path: (
         <svg

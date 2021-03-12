@@ -160,7 +160,7 @@ const MakeChangesForm = ({
               </FormControl>
             )}
           </Field>
-
+          <br />
           <Field
             name="isCloudEnabled"
             type="checkbox"
@@ -168,7 +168,13 @@ const MakeChangesForm = ({
             label="Enable Cloud Features?"
             component={Checkbox}
           />
-
+          <Text>
+            <i>
+              (Note that enabling cloud features is not Privacy safe due to
+              voice data being used by IBM services)
+            </i>
+          </Text>
+          <br />
           <Field
             name="isSnowEnabled"
             type="checkbox"
