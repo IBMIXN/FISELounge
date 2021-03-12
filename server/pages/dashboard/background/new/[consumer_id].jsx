@@ -204,8 +204,10 @@ const NewBackgroundPage = () => {
         </Heading>
         <Text>
           {capitalize(consumer.name)} will be able to see this image as a
-          background in the lobby. If VR-360-Viewing is selected, the background
-          will be interactive.
+          background in the lobby. The image can be either static{" "}
+          <i>(normal image)</i> or VR 360°{" "}
+          <i>(spherical image or panorama)</i>. If VR 360 viewing is selected, the
+          background will be interactive.
           <br />
           <br />
           Note: In the lobby there is always a set of default backgrounds which

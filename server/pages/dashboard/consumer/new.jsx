@@ -62,15 +62,15 @@ const NameForm = ({ router }) => {
       });
   };
 
-  const showSnowWariningText = (isSnowEnabled) => {
-    if (isSnowEnabled) {
+  const showWarningText = (bool, text) => {
+    if (bool) {
       return (
         <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
-          Snow is not recommended for users with epilepsy or similar conditions.
-        </Text>
+        {text}
+      </Text>
       );
-    }
-  }
+    };
+  };
 
   return (
     <Formik
@@ -107,6 +107,7 @@ const NameForm = ({ router }) => {
                 onBlur={handleBlur}
               />
               Enable IBM Watson Speech-to-text features?
+              {showWarningText(values.isCloudEnabled, "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)")}
             </FormLabel>
           </FormControl>
           <FormControl my="1rem">
@@ -121,7 +122,7 @@ const NameForm = ({ router }) => {
                 onBlur={handleBlur}
               />
               Enable falling snow particles in the background?
-              {showSnowWariningText(values.isSnowEnabled)}
+              {showWarningText(values.isSnowEnabled, "(Falling snow is not recommended for users with epilepsy or similar conditions)")}
             </FormLabel>
           </FormControl>
 

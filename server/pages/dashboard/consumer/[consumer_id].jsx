@@ -129,16 +129,15 @@ const MakeChangesForm = ({
       });
   };
 
-  const showSnowWariningText = (isSnowEnabled) => {
-    if (isSnowEnabled) {
+  const showWarningText = (bool, text) => {
+    if (bool) {
       return (
         <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
-          (Falling snow is not recommended for users with epilepsy or similar
-          conditions.)
-        </Text>
+        {text}
+      </Text>
       );
-    }
-  };
+    };
+  }; 
 
   return (
     <Formik
@@ -168,13 +167,7 @@ const MakeChangesForm = ({
             label="Enable Cloud Features?"
             component={Checkbox}
           />
-          <Text>
-            <i>
-              (Note that enabling cloud features is not Privacy safe due to
-              voice data being used by IBM services)
-            </i>
-          </Text>
-          <br />
+          {showWarningText(values.isCloudEnabled, "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)")}
           <Field
             name="isSnowEnabled"
             type="checkbox"
@@ -182,7 +175,7 @@ const MakeChangesForm = ({
             label={"Enable falling snow particles in the background?"}
             component={Checkbox}
           />
-          {showSnowWariningText(values.isSnowEnabled)}
+          {showWarningText(values.isSnowEnabled, "(Falling snow is not recommended for users with epilepsy or similar conditions)")}
 
           <Button
             mt={4}
@@ -249,7 +242,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
       <TableHead>
         <TableRow>
           <TableHeader>Background Name</TableHeader>
-          <TableHeader>VR viewing</TableHeader>
+          <TableHeader>VR - 360° - viewing</TableHeader>
           <TableHeader />
         </TableRow>
       </TableHead>
