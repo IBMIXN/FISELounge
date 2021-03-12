@@ -1,6 +1,6 @@
 import React from "react";
 
-const domain = process.env.REACT_APP_PLUGIN_URL; 
+const domain = "./plugins.html"
 
 const PluginComponent = () => {
 
@@ -8,7 +8,7 @@ const PluginComponent = () => {
         width: "100%",
         height: "100%",
         border: "none",
-        //background: #FFFFFF,
+        background: "#FFFFFF",
     };
 
     return (

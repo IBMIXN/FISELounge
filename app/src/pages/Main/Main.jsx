@@ -58,9 +58,6 @@ function Main() {
   );
   const toast = useToast();
 
-  // if plugin URL not added then icon will not show up in APP
-  const pluginExists = process.env.REACT_APP_PLUGIN_URL;
-
   useEffect(() => {
     const otc = localStorage.getItem("otc");
     async function fetchUserData() {
@@ -288,7 +285,7 @@ function Main() {
             </Box>
           </button>
         )}
-        {pluginExists && (
+        {(
           <button onClick={setOpenPlugin}>
             <Box
               pos="absolute"
