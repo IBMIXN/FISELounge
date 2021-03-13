@@ -78,7 +78,7 @@ function Onboarding() {
         <Heading fontSize="5vw">Welcome to FISE Lounge</Heading>
         {userIsValid && <Redirect to="/" />}
       </Stack>
-      <Box>
+      <Box maxWidth="90vw">
         <Formik initialValues={{ otc: "" }} onSubmit={handleFormSubmit}>
           {({
             isSubmitting,
