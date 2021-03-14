@@ -8,7 +8,7 @@ import uuid from "node-uuid";
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: process.env.MAX_IMG_SIZE,
+      sizeLimit: '5mb' // default
     },
   },
 };
