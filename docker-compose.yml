@@ -1,0 +1,39 @@
+version: "3.9"
+services:
+  fise-app:
+    restart: always
+    env_file:
+      - ./app/.env.local
+    build: ./app
+    stdin_open: true
+    ports:
+      - "3001:5000"
+    depends_on:
+      - fise-server
+    networks:
+      - app-net
+  fise-server:
+    restart: always
+    env_file:
+      - ./server/.env.local
+    build: ./server
+    ports:
+      - "3000:3000"
+    depends_on:
+      - mongo
+    networks:
+      - app-net
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-net
+networks:
+  app-net:
+    driver: bridge
+volumes:
+  mongo-data:
+    driver: local
