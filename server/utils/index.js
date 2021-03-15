@@ -49,7 +49,7 @@ export function validatePassword(value) {
 
 export function validateRelation(value) {
   let error = "";
-  if ((!value) || (value == "Select Relation")) {
+  if (!value || value == "Select Relation") {
     error = "Choose a relation";
   }
   return error;
@@ -68,7 +68,15 @@ export function validateImageName(value) {
   let error = "";
   if (!value) {
     error = "Required";
-  } 
+  }
+  return error;
+}
+
+export function validateImageURL(value) {
+  let error = "";
+  if (!value) {
+    error = "Required";
+  }
   return error;
 }
 

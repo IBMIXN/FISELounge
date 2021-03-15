@@ -26,6 +26,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  IconButton,
 } from "@chakra-ui/core";
 
 import {
@@ -133,11 +134,11 @@ const MakeChangesForm = ({
     if (bool) {
       return (
         <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
-        {text}
-      </Text>
+          {text}
+        </Text>
       );
-    };
-  }; 
+    }
+  };
 
   return (
     <Formik
@@ -167,7 +168,10 @@ const MakeChangesForm = ({
             label="Enable Cloud Features?"
             component={Checkbox}
           />
-          {showWarningText(values.isCloudEnabled, "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)")}
+          {showWarningText(
+            values.isCloudEnabled,
+            "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+          )}
           <Field
             name="isSnowEnabled"
             type="checkbox"
@@ -175,7 +179,10 @@ const MakeChangesForm = ({
             label={"Enable falling snow particles in the background?"}
             component={Checkbox}
           />
-          {showWarningText(values.isSnowEnabled, "(Falling snow is not recommended for users with epilepsy or similar conditions)")}
+          {showWarningText(
+            values.isSnowEnabled,
+            "(Falling snow is not recommended for users with epilepsy or similar conditions)"
+          )}
 
           <Button
             mt={4}
@@ -235,7 +242,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
           return;
         });
       });
-  };
+  };  
 
   return (
     <Table>
@@ -259,16 +266,14 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
                 {capitalize(image.isVR)}
               </Text>
             </TableCell>
-
             <TableCell textAlign="right">
-              <ChakraLink
-                fontSize="sm"
-                fontWeight="medium"
-                color="blue.600"
+              <IconButton
+                aria-label="Delete background"
+                icon="delete"
+                variant="outline"
+                variantColor="red"
                 onClick={() => handleDeleteBackground(image._id)}
-              >
-                Delete
-              </ChakraLink>
+              ></IconButton>
             </TableCell>
           </TableRow>
         ))}

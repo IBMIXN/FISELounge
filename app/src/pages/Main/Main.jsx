@@ -259,6 +259,7 @@ function Main() {
               primitive="a-sky"
               rotation="0 -140 0"
               src={scenes[currentSceneIndex].data}
+              crossorigin="anonymous"
             />
           </Scene>
         )}

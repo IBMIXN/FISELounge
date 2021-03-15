@@ -20,6 +20,9 @@ import {
   FormLabel,
   FormControl,
   Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
   Button,
   Select,
 } from "@chakra-ui/core";
@@ -30,15 +33,20 @@ import { Main } from "../../../../components/Main";
 import { Footer } from "../../../../components/Footer";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
 import Loading from "../../../../components/Loading";
-import * as yup from 'yup';
+import * as yup from "yup";
 
 const NameForm = ({ router }) => {
   const [formError, setFormError] = useState("");
-  const SUPPORTED_FORMATS = ['image/jpg', 'image/jpeg', 'image/gif', 'image/png'];
+  const SUPPORTED_FORMATS = [
+    "image/jpg",
+    "image/jpeg",
+    "image/gif",
+    "image/png",
+  ];
   const fileToBase64 = (inputFile) => {
-    const tempFileReader = new FileReader() 
+    const tempFileReader = new FileReader();
 
-    return new Promise((resolve, reject) => {   
+    return new Promise((resolve, reject) => {
       tempFileReader.onerror = () => {
         tempFileReader.abort();
         reject(new DOMException("Problem parsing background file."));
@@ -52,7 +60,7 @@ const NameForm = ({ router }) => {
   };
 
   const handleFormSubmit = async (values, actions) => {
-    if (values.profileImage != ""){
+    if (values.profileImage != "") {
       values.profileImage = await fileToBase64(values.profileImage);
     }
     const valuesToSend = { ...values, consumer_id: router.query.consumer_id };
@@ -104,12 +112,24 @@ const NameForm = ({ router }) => {
 
   return (
     <Formik
-      initialValues={{ name: "", email: "", phone: "", relation: "", profileImage: ""}}
+      initialValues={{
+        name: "",
+        email: "",
+        phone: "",
+        relation: "",
+        profileImage: "",
+      }}
       onSubmit={handleFormSubmit}
       validationSchema={yup.object().shape({
-        profileImage: yup.mixed()
+        profileImage: yup
+          .mixed()
           .notRequired()
-          .test('fileType', "Unsupported File Format", value => !value || (value && SUPPORTED_FORMATS.includes(value.type))),
+          .test(
+            "fileType",
+            "Unsupported File Format",
+            (value) =>
+              !value || (value && SUPPORTED_FORMATS.includes(value.type))
+          ),
       })}
     >
       {({
@@ -120,8 +140,7 @@ const NameForm = ({ router }) => {
         handleSubmit,
         setFieldValue,
         values,
-      }
-      ) => (
+      }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
             {({ field, form }) => (
@@ -137,7 +156,12 @@ const NameForm = ({ router }) => {
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.email && form.touched.email}>
                 <FormLabel htmlFor="email">Email address</FormLabel>
-                <Input {...field} id="email" placeholder="adam@example.org" />
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="email" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="adam@example.org" />
+                </InputGroup>
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
               </FormControl>
             )}
@@ -147,7 +171,12 @@ const NameForm = ({ router }) => {
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.phone && form.touched.phone}>
                 <FormLabel htmlFor="phone">Phone number</FormLabel>
-                <Input {...field} id="phone" placeholder="+44767254891" />
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="phone" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="+44767254891" />
+                </InputGroup>
                 <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
             )}
@@ -180,9 +209,16 @@ const NameForm = ({ router }) => {
           <br />
           <FormLabel htmlFor="profileImage">Set Profile Picture</FormLabel>
           <br />
-          <input id="profileImage" name="profileImage" type="file" accept="image/*" onChange={(event) => {
-            setFieldValue("profileImage", event.currentTarget.files[0]);
-          }} className="form-control" />
+          <input
+            id="profileImage"
+            name="profileImage"
+            type="file"
+            accept="image/*"
+            onChange={(event) => {
+              setFieldValue("profileImage", event.currentTarget.files[0]);
+            }}
+            className="form-control"
+          />
           <br />
 
           {formError && <Text color="crimson">{formError}</Text>}
