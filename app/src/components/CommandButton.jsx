@@ -41,7 +41,7 @@ const CommandButton = ({
   };
 
   return (
-    <button onClick={onClick}>
+    <button onClick={onClick} aria-label="on-click">
       <Box
         pos="absolute"
         top={top}

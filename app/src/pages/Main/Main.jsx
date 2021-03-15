@@ -268,7 +268,7 @@ function Main() {
           </Scene>
         )}
         {scenes.length > 1 && (
-          <button onClick={handleChangeScene}>
+          <button aria-label="change-background" onClick={handleChangeScene}>
             <Box
               pos="absolute"
               top="0"
@@ -291,7 +291,7 @@ function Main() {
           </button>
         )}
         {
-          <button onClick={setOpenPlugin}>
+          <button onClick={setOpenPlugin} aria-label="open-plugin">
             <Box
               pos="absolute"
               bottom="0"
@@ -342,6 +342,7 @@ function Main() {
                   <button
                     style={{ outline: "none" }}
                     onClick={() => handleMakeCall(contact._id)}
+                    aria-label="contact"
                   >
                     {contact.profileImage ? (
                       <Box
