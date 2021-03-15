@@ -88,6 +88,7 @@ const MakeChangesForm = ({
   currentName,
   isCloudEnabled,
   isSnowEnabled,
+  isWatsonTtsEnabled,
   consumer_id,
   router,
 }) => {
@@ -146,6 +147,7 @@ const MakeChangesForm = ({
         name: capitalize(currentName),
         isCloudEnabled: isCloudEnabled === "true",
         isSnowEnabled: isSnowEnabled === "true",
+        isWatsonTtsEnabled: isWatsonTtsEnabled === "true",
       }}
       onSubmit={handleFormSubmit}
     >
@@ -171,6 +173,21 @@ const MakeChangesForm = ({
           {showWarningText(
             values.isCloudEnabled,
             "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+          )}
+          <Field
+            name="isWatsonTtsEnabled"
+            type="checkbox"
+            checked={values.isWatsonTtsEnabled === true}
+            label="Enable Cloud Text to Speech Narration ?"
+            component={Checkbox}
+          />
+          {showWarningText(
+            values.isWatsonTtsEnabled,
+            "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+          )}
+          {showWarningText(
+            !values.isWatsonTtsEnabled || values.isWatsonTtsEnabled === "false",
+            "(Speech to text setting needs to be enabled in the broswer)"
           )}
           <Field
             name="isSnowEnabled"
@@ -242,7 +259,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
           return;
         });
       });
-  };  
+  };
 
   return (
     <Table>
@@ -441,6 +458,7 @@ const ConsumerPage = () => {
           currentName={capitalize(consumer.name)}
           isCloudEnabled={consumer.isCloudEnabled}
           isSnowEnabled={consumer.isSnowEnabled}
+          isWatsonTtsEnabled={consumer.isWatsonTtsEnabled}
         />
         <Heading mt="3rem" size="lg" color="red.200">
           Danger Zone

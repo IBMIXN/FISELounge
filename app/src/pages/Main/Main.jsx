@@ -7,7 +7,7 @@ import "aframe";
 import "aframe-particle-system-component";
 import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
-import { playAudio } from "../../utils";
+import { playAudio, sleep } from "../../utils";
 import SplashScreen from "../../components/SplashScreen";
 import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
@@ -57,6 +57,8 @@ function Main() {
     initialRecorderState
   );
   const toast = useToast();
+
+  const synth = window.speechSynthesis;
 
   useEffect(() => {
     const otc = localStorage.getItem("otc");
@@ -141,7 +143,7 @@ function Main() {
       });
   };
 
-  const playTextToSpeech = async (text) => {
+  const playTextToSpeechWatson = async (text) => {
     await fetch(
       `${
         process.env.REACT_APP_SERVER_URL
@@ -173,6 +175,20 @@ function Main() {
           `Audio Response - ${err.status} ${err.statusText}: ${err.message}`
         );
       });
+  };
+
+  const speechToTextLocally = async (text) => {
+    if (synth.speaking) {
+      synth.cancel();
+      await sleep(1000);
+    }
+    if (text) {
+      const speakText = new SpeechSynthesisUtterance(text);
+      speakText.onerror = (e) => {
+        console.error("Speech to text failed: ", e);
+      };
+      synth.speak(speakText);
+    }
   };
 
   const showToast = ({
@@ -313,7 +329,10 @@ function Main() {
           commands={{
             changeScene: handleChangeScene,
             makeCall: handleMakeCall,
-            customResponse: playTextToSpeech,
+            customResponse:
+              user.isWatsonTtsEnabled === "true"
+                ? playTextToSpeechWatson
+                : speechToTextLocally,
           }}
           toast={showToast}
         ></VoiceCommand>

@@ -66,7 +66,9 @@ function RecorderComponent({
 
   const handleMicrophoneClick = async () => {
     if (!isRecording && !isLoading) {
-      await initUserMedia(); // fixes Recorder.js known bug
+      if (user.isCloudEnabled === "false") {
+        await initUserMedia(); // fixes Recorder.js known bug when audioContext gets garbage collected
+      }
       await Recorder.start()
         .then(() => {
           setIsRecording(true);
