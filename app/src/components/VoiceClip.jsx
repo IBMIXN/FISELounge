@@ -2,10 +2,10 @@ import React from "react";
 import CommandButton from "./CommandButton";
 import PulsatingBlob from "./PulsatingBlob";
 import { Icon, Spinner, useTheme } from "@chakra-ui/core";
-import { encodeURI } from "../utils";
+import { encodeURI, translateEmergencyMessage } from "../utils";
 import RecorderComponent from "./RecorderComponent";
 
-const DEFAULT_MESSAGE = "Please, I am in need of your help. Contact me.";
+const DEFAULT_MESSAGE = translateEmergencyMessage();
 
 function VoiceClip({ toast }) {
   const theme = useTheme();
@@ -18,7 +18,7 @@ function VoiceClip({ toast }) {
       description: "",
       status: "error",
       position: "top",
-      duration: 4000,
+      duration: 5000,
       isClosable: false,
     });
   };
