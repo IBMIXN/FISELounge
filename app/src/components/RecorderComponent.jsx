@@ -13,6 +13,8 @@ function RecorderComponent({
   rendererOnDefault,
   rendererOnRecording,
   rendererOnLoading,
+  onStartRecording,
+  onFeedback,
   onError,
 }) {
   const [isLoading, setIsLoading] = useState(true);
@@ -70,12 +72,14 @@ function RecorderComponent({
           setIsRecording(true);
         })
         .catch((err) => console.error(err));
-      setIsRecording(true);
+      if (onStartRecording) {
+        onStartRecording();
+      }
     } else {
       setIsLoading(true);
-      await sleep(400);
+      await sleep(100);
       setIsRecording(false);
-      await sleep(200);
+      await sleep(800);
       Recorder.stop()
         .then((res) => {
           if (user.isCloudEnabled === "true") {
@@ -90,6 +94,9 @@ function RecorderComponent({
           throw r;
         })
         .then(async (rJson) => {
+          if (onFeedback) {
+            onFeedback(rJson, user.isCloudEnabled);
+          }
           user.isCloudEnabled === "true"
             ? await watsonResponseHandler(rJson)
             : await askbobResponseHandler(rJson);

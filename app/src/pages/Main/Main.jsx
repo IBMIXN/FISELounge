@@ -285,7 +285,7 @@ function Main() {
             </Box>
           </button>
         )}
-        {(
+        {
           <button onClick={setOpenPlugin}>
             <Box
               pos="absolute"
@@ -307,22 +307,19 @@ function Main() {
               />
             </Box>
           </button>
-        )}
-        <RecorderContext.Provider value={[recorderState, recorderDispatch]}>
-          <VoiceCommand
-            isCloudEnabled={user.isCloudEnabled === "true"}
-            commands={{
-              changeScene: handleChangeScene,
-              makeCall: handleMakeCall,
-              customResponse: playTextToSpeech,
-            }}
-            onError={showToast}
-          ></VoiceCommand>
-          <VoiceClip
-            isCloudEnabled={user.isCloudEnabled === "true"}
-            onNotify={showToast}
-          ></VoiceClip>
-        </RecorderContext.Provider>
+        }
+        <VoiceCommand
+          commands={{
+            changeScene: handleChangeScene,
+            makeCall: handleMakeCall,
+            customResponse: playTextToSpeech,
+          }}
+          toast={showToast}
+        ></VoiceCommand>
+        <VoiceClip
+          isCloudEnabled={user.isCloudEnabled === "true"}
+          toast={showToast}
+        ></VoiceClip>
         {user.contacts && (
           <Box pos="absolute" bottom="20%" left="20vw" right="20vw">
             <Stack
