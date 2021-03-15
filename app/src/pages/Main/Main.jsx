@@ -13,7 +13,6 @@ import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import VoiceCommand from "../../components/VoiceCommand";
 import VoiceClip from "../../components/VoiceClip";
-import recorderReducer from "../../reducers/recorderReducer";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
@@ -31,13 +30,6 @@ const defaultBackground2 = {
   isVR: "true",
 };
 
-const initialRecorderState = {
-  recorderIsBlocked: true,
-  commandIsRecording: false,
-  clipIsRecording: false,
-};
-const RecorderContext = createContext(initialRecorderState);
-
 var displaySplashScreen = true;
 
 function Main() {
@@ -52,10 +44,6 @@ function Main() {
   const [call, setCall] = useState(false);
   const [openPlugin, setOpenPlugin] = useState(false);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
-  const [recorderState, recorderDispatch] = useReducer(
-    recorderReducer,
-    initialRecorderState
-  );
   const toast = useToast();
 
   const synth = window.speechSynthesis;
@@ -396,5 +384,4 @@ function Main() {
 
 const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 
-export { RecorderContext };
 export default Main;
