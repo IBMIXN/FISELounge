@@ -1,0 +1,14 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render unit test 1`] = `
+<button>
+  <Box
+    bg="rgba(12, 12, 12, 0.45)"
+    pb="1rem"
+    pl="0.5rem"
+    pos="absolute"
+    pr="1rem"
+    pt="0.5rem"
+  />
+</button>
+`;

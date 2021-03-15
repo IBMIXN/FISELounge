@@ -16,15 +16,14 @@ import {
 
 import Footer from "../components/Footer";
 import SplashScreen from "../components/SplashScreen";
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect } from "react";
 
 function Onboarding() {
-
-  const [loaded, setLoading] = useState(false)
+  const [loaded, setLoading] = useState(false);
 
   useEffect(() => {
-    setTimeout(() => setLoading(true), 6000)
-  }, [])
+    setTimeout(() => setLoading(true), 6000);
+  }, []);
 
   const [userIsValid, setUserIsValid] = useState(false);
   const [error, setError] = useState("");
@@ -79,7 +78,7 @@ function Onboarding() {
         <Heading fontSize="5vw">Welcome to FISE Lounge</Heading>
         {userIsValid && <Redirect to="/" />}
       </Stack>
-      <Box>
+      <Box maxWidth="90vw">
         <Formik initialValues={{ otc: "" }} onSubmit={handleFormSubmit}>
           {({
             isSubmitting,
@@ -132,7 +131,7 @@ function Onboarding() {
           above and press "Enter App".
         </Text>
         <Text color="gray.500">
-          Otherwise, please sign up for FISE Lounge {" "}
+          Otherwise, please sign up for FISE Lounge{" "}
           <ChakraLink
             color="blue.600"
             textDecoration="underline"
@@ -143,12 +142,15 @@ function Onboarding() {
           and return here when you have created a user and received a
           one-time-code.
         </Text>
+        <Text mt="2rem">
+          <i>*Not supported on Internet Explorer & Opera Mini</i>
+        </Text>
       </Stack>
       <Footer />
     </Flex>
   ) : (
     <SplashScreen />
   );
-};
+}
 
 export default Onboarding;

@@ -4,7 +4,12 @@ import useSWR from "swr";
 import { Formik, Field } from "formik";
 
 import { useUser } from "../../../../lib/hooks";
-import { fetcher, capitalize, validateImageName } from "../../../../utils";
+import {
+  fetcher,
+  capitalize,
+  validateImageName,
+  validateImageURL,
+} from "../../../../utils";
 
 import {
   Text,
@@ -15,6 +20,8 @@ import {
   Input,
   Button,
   Checkbox,
+  FormHelperText,
+  Switch,
 } from "@chakra-ui/core";
 
 import { Nav } from "../../../../components/Nav";
@@ -28,7 +35,7 @@ import * as yup from "yup";
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 
 const NewBackgroundForm = ({ consumer_id, router }) => {
-  const [formError, setFormError] = useState("");
+  // const [formError, setFormError] = useState("");
   const fileToBase64 = (inputFile) => {
     const tempFileReader = new FileReader();
 
@@ -46,8 +53,18 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
   };
 
   const handleFormSubmit = async (values, actions) => {
-    values.imageFile = await fileToBase64(values.imageFile);
+    if (values.imageFile) {
+      values.imageFile = await fileToBase64(values.imageFile);
+      delete values.imageURL;
+    } else {
+      values.imageFile = values.imageURL;
+      delete values.imageURL;
+    }
+
     values.consumer_id = router.query.consumer_id;
+    if (values.imageURL) {
+      console.log(values.imageURL);
+    }
 
     const formBody = Object.entries(values)
       .map(
@@ -85,22 +102,27 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
         });
       });
   };
-
   return (
     <Formik
-      initialValues={{ imageFile: null, imageName: "", isVR: "true" }}
+      initialValues={{
+        imageFile: null,
+        imageName: "",
+        imageURL: "",
+        isVR: "true",
+        isURL: "true",
+      }}
       onSubmit={handleFormSubmit}
-      validationSchema={yup.object().shape({
-        imageFile: yup
-          .mixed()
-          .notRequired()
-          .test(
-            "fileType",
-            "Unsupported File Format",
-            (value) =>
-              !value || (value && SUPPORTED_FORMATS.includes(value.type))
-          ),
-      })}
+      // validationSchema={yup.object().shape({
+      //   imageFile: yup
+      //     .mixed()
+      //     .notRequired() //fix
+      //     .test(
+      //       "fileType",
+      //       "Unsupported File Format",
+      //       (value) =>
+      //         !value || (value && SUPPORTED_FORMATS.includes(value.type))
+      //     ),
+      // })}
     >
       {({
         isSubmitting,
@@ -136,31 +158,79 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
                 isChecked={values.isVR}
                 onChange={handleChange}
               />
-              Enable VR viewing?
+              Enable VR-360-Viewing?
             </FormLabel>
           </FormControl>
 
-          <FormLabel htmlFor="imageFile">Upload Image</FormLabel>
+          <FormControl>
+            <FormLabel>
+              <Switch
+                mr="1rem"
+                name="isURL"
+                checked={values.isURL}
+                isChecked={values.isURL}
+                onChange={handleChange}
+              />
+              Do you have a URL for the image?
+            </FormLabel>
+          </FormControl>
 
           <br />
 
-          <input
-            id="imageFile"
-            name="imageFile"
-            type="file"
-            accept="image/*"
-            onChange={(event) => {
-              setFieldValue("imageFile", event.currentTarget.files[0]);
-            }}
-            className="form-control"
-          />
+          {values.isURL && (
+            <Field name="imageURL" validate={validateImageURL}>
+              {({ field, form }) => (
+                <FormControl
+                  isInvalid={form.errors.imageURL && form.touched.imageURL}
+                >
+                  <FormLabel htmlFor="imageURL">Image URL</FormLabel>
+                  <Input
+                    {...field}
+                    type="url"
+                    id="imageURL"
+                    placeholder="http://website.com/images/bridge.png"
+                    aria-describedby="url-info-text"
+                    onClick={() => setFieldValue("imageFile", null)}
+                  />
+                  <FormHelperText id="url-info-text">
+                    Make sure that the image is public (i.e. no login required)
+                  </FormHelperText>
+                  <FormErrorMessage>{form.errors.imageURL}</FormErrorMessage>
+                </FormControl>
+              )}
+            </Field>
+          )}
 
-          <br />
+          {!values.isURL && (
+            <FormControl>
+              <FormLabel>Upload Image</FormLabel>
+              <br />
+              <input
+                id="imageFile"
+                name="imageFile"
+                type="file"
+                accept="image/*"
+                onChange={(event) => {
+                  setFieldValue("imageFile", event.currentTarget.files[0]); // add must
+                  setFieldValue("imageURL", "");
+                }}
+                className="form-control"
+                aria-describedby="upload-info-text"
+              />
+              <FormHelperText id="upload-info-text">
+                {/* Info text if needed */}
+              </FormHelperText>
+            </FormControl>
+          )}
 
-          {formError && <Text color="crimson">{formError}</Text>}
+          {/* {formError && <Text color="crimson">{formError}</Text>}  */}
+
           <Button
             type="submit"
-            disabled={values.imageName === "" || values.imageFile === null}
+            disabled={
+              values.imageName === "" ||
+              (values.imageFile === null && values.imageURL === "")
+            }
             className="btn btn-primary"
             mt={4}
             isLoading={isSubmitting}
@@ -204,8 +274,9 @@ const NewBackgroundPage = () => {
         </Heading>
         <Text>
           {capitalize(consumer.name)} will be able to see this image as a
-          background in the lobby. If VR viewing is selected, the background
-          will be interactive.
+          background in the lobby. The image can be either static{" "}
+          <i>(normal image)</i> or VR 360° <i>(spherical image or panorama)</i>.
+          If VR 360 viewing is selected, the background will be interactive.
           <br />
           <br />
           Note: In the lobby there is always a set of default backgrounds which

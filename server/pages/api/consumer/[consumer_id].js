@@ -56,11 +56,18 @@ const handler = async (req, res) => {
     case "PUT":
       // ---------------- PUT
       try {
-        const { name, isCloudEnabled, isSnowEnabled } = body;
+        const {
+          name,
+          isCloudEnabled,
+          isSnowEnabled,
+          isWatsonTtsEnabled,
+        } = body;
 
         consumer.name = sanitizeName(name) || consumer.name;
         consumer.isCloudEnabled = isCloudEnabled || consumer.isCloudEnabled;
         consumer.isSnowEnabled = isSnowEnabled || consumer.isSnowEnabled;
+        consumer.isWatsonTtsEnabled =
+          isWatsonTtsEnabled || consumer.isWatsonTtsEnabled;
 
         await users.updateOne({ email }, { $set: user });
         return res.status(200).json({

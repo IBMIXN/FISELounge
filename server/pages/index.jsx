@@ -1,6 +1,6 @@
 import { useUser } from "../lib/hooks";
 
-import { Heading, List, ListIcon, ListItem } from "@chakra-ui/core";
+import { Heading, List, ListIcon, ListItem, Text } from "@chakra-ui/core";
 
 import { Container } from "../components/Container";
 import { Nav } from "../components/Nav";
@@ -8,7 +8,7 @@ import { Hero } from "../components/Hero";
 import { Main } from "../components/Main";
 import { Footer } from "../components/Footer";
 import { CTA } from "../components/CTA";
-import React from 'react'
+import React from "react";
 
 const IndexPage = () => {
   const user = useUser();
@@ -38,6 +38,9 @@ const IndexPage = () => {
           </ListItem>
         </List>
       </Main>
+      <Text mb="3rem">
+        <i>*Not supported on Internet Explorer & Opera Mini</i>
+      </Text>
       <Footer />
       {!user && <CTA />}
     </Container>

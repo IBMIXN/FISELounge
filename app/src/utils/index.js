@@ -1,4 +1,6 @@
 export { playAudio, resampleBufferToWav16kHz } from "./audioUtils";
+export { handleError } from "./errorHandler";
+export { translateEmergencyMessage } from "./languageUtils";
 
 export function encodeURI(json) {
   const formBody = Object.entries(json)

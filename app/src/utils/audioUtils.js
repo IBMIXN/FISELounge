@@ -9,7 +9,7 @@ export function playAudio(chunk) {
   window.audio.play();
 }
 
-export function resampleBufferToWav16kHz(audioContext, buffer) {
+export function resampleBufferToWav16kHz(fromSampleRate, buffer) {
   var w = new WaveFile();
 
   var int16Pcm = convert(
@@ -23,7 +23,7 @@ export function resampleBufferToWav16kHz(audioContext, buffer) {
     }
   );
 
-  w.fromScratch(1, audioContext.sampleRate, "16", [int16Pcm], {
+  w.fromScratch(1, fromSampleRate, "16", [int16Pcm], {
     container: "RIFF",
   });
   w.toSampleRate(16000);
