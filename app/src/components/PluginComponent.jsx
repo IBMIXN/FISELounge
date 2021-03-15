@@ -16,7 +16,7 @@ const PluginComponent = () => {
       title="iframeTest"
       frameborder="0"
       id="iframe"
-      scrolling="no"
+      scrolling="auto"
       objectFit="scale-down"
       style={iFrameStyle}
     ></iframe>
