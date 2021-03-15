@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`contact render component unit test 1`] = `
+<EmotionCssPropInternal
+  __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Contact"
+  __EMOTION_TYPE_PLEASE_DO_NOT_USE__="div"
+  css={
+    Object {
+      "map": undefined,
+      "name": "haddc6",
+      "next": undefined,
+      "styles": "
+      width: 100%;
+      height: 11em;
+      clip-path: circle();
+    ",
+      "toString": [Function],
+    }
+  }
+>
+  <EmotionCssPropInternal
+    __EMOTION_LABEL_PLEASE_DO_NOT_USE__="Contact"
+    __EMOTION_TYPE_PLEASE_DO_NOT_USE__="img"
+    alt="p"
+    css={
+      Object {
+        "map": undefined,
+        "name": "1njyuqr",
+        "next": undefined,
+        "styles": "
+        width: 100%;
+        object-fit: cover;
+      ",
+        "toString": [Function],
+      }
+    }
+  />
+</EmotionCssPropInternal>
+`;
