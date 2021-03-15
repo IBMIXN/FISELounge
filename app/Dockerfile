@@ -1,13 +1,12 @@
-FROM node:12
+FROM node:14
 
 WORKDIR /usr/src/app
 
-COPY ./package.json .
-COPY ./yarn.lock .
-
-RUN yarn install
 COPY . .
 
-EXPOSE 5000
+RUN yarn install
+RUN yarn build
+
+EXPOSE 3001
 
 CMD ["yarn", "start"]

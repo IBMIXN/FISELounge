@@ -29,9 +29,9 @@
     "wavefile": "^11.0.0"
   },
   "scripts": {
-    "dev": "react-scripts start",
+    "dev": "PORT=3001 react-scripts start",
     "build": "react-scripts build",
-    "start": "serve -s build",
+    "start": "serve -l 3001 -s build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

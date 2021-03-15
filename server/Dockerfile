@@ -1,12 +1,11 @@
-FROM node:12
+FROM node:14
 
 WORKDIR /usr/src/server
 
-COPY ./package.json .
-COPY ./yarn.lock .
+COPY . .
 
 RUN yarn install
-COPY . .
+RUN yarn build
 
 EXPOSE 3000
 
