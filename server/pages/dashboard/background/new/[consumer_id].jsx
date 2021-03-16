@@ -108,7 +108,7 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
         imageFile: null,
         imageName: "",
         imageURL: "",
-        isVR: "true",
+        isVR: "false",
         isURL: "true",
       }}
       onSubmit={handleFormSubmit}
