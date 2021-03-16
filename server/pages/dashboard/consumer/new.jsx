@@ -66,15 +66,20 @@ const NameForm = ({ router }) => {
     if (bool) {
       return (
         <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
-        {text}
-      </Text>
+          {text}
+        </Text>
       );
-    };
+    }
   };
 
   return (
     <Formik
-      initialValues={{ name: "", isCloudEnabled: true, isSnowEnabled: false }}
+      initialValues={{
+        name: "",
+        isCloudEnabled: true,
+        isSnowEnabled: false,
+        isWatsonTtsEnabled: true,
+      }}
       onSubmit={handleFormSubmit}
     >
       {({
@@ -107,7 +112,33 @@ const NameForm = ({ router }) => {
                 onBlur={handleBlur}
               />
               Enable IBM Watson Speech-to-text features?
-              {showWarningText(values.isCloudEnabled, "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)")}
+              {showWarningText(
+                values.isCloudEnabled,
+                "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+              )}
+            </FormLabel>
+          </FormControl>
+          <FormControl my="1rem">
+            <FormLabel>
+              <Checkbox
+                mr="1rem"
+                size="lg"
+                name="isWatsonTtsEnabled"
+                checked={values.isWatsonTtsEnabled}
+                isChecked={values.isWatsonTtsEnabled}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              Enable IBM Watson Speech-to-text features?
+              {showWarningText(
+                values.isWatsonTtsEnabled,
+                "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+              )}
+              {showWarningText(
+                !values.isWatsonTtsEnabled ||
+                  values.isWatsonTtsEnabled === "false",
+                "(Speech to text setting needs to be enabled in the broswer)"
+              )}
             </FormLabel>
           </FormControl>
           <FormControl my="1rem">
@@ -122,7 +153,10 @@ const NameForm = ({ router }) => {
                 onBlur={handleBlur}
               />
               Enable falling snow particles in the background?
-              {showWarningText(values.isSnowEnabled, "(Falling snow is not recommended for users with epilepsy or similar conditions)")}
+              {showWarningText(
+                values.isSnowEnabled,
+                "(Falling snow is not recommended for users with epilepsy or similar conditions)"
+              )}
             </FormLabel>
           </FormControl>
 
@@ -164,8 +198,8 @@ const NewConsumerPage = () => {
       <Footer />
     </Container>
   ) : (
-      <Loading />
-    );
+    <Loading />
+  );
 };
 
 export default NewConsumerPage;

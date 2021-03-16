@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render plugin component unit test 1`] = `
+<iframe
+  frameborder="0"
+  id="iframe"
+  objectFit="scale-down"
+  scrolling="auto"
+  src="undefined/plugins.html"
+  style={
+    Object {
+      "background": "#FFFFFF",
+      "border": "none",
+      "height": "100%",
+      "width": "100%",
+    }
+  }
+  title="iframeTest"
+/>
+`;

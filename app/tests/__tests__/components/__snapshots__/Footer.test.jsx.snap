@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`footer render component unit test 1`] = `
+<Flex
+  align="center"
+  as="footer"
+  direction="column"
+  justify="center"
+  overflowX="hidden"
+  py="4rem"
+  w="100vw"
+>
+  <Text
+    textAlign="center"
+  >
+    FISE Lounge was created by students at UCL
+  </Text>
+  <ForwardRef>
+    <a
+      href="https://ibm.com"
+    >
+      <Icon
+        color="grey.900"
+        h="50px"
+        m="1rem"
+        name="ibm"
+        w="200px"
+      />
+    </a>
+    <a
+      href="https://nhs.uk"
+    >
+      <Image
+        h="81px"
+        mx="auto"
+        src="/icons/nhs-inx-logo.png"
+        w="157px"
+      />
+    </a>
+    <a
+      href="https://ucl.ac.uk"
+    >
+      <Icon
+        color="gray.700"
+        h="50px"
+        m="1rem"
+        name="ucl"
+        w="200px"
+      />
+    </a>
+  </ForwardRef>
+  <ForwardRef
+    color="gray.400"
+    p="1rem"
+  >
+    <Text
+      textAlign="center"
+    >
+      In association with IBM, NHS & University College London.
+    </Text>
+    <Text
+      textAlign="center"
+    >
+      Supervised by John McNamara, Dean Mohamedally.
+    </Text>
+  </ForwardRef>
+</Flex>
+`;

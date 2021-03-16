@@ -2,18 +2,29 @@ import React from "react";
 import CommandButton from "./CommandButton";
 import PulsatingBlob from "./PulsatingBlob";
 import { Icon, Spinner, useTheme } from "@chakra-ui/core";
-import { encodeURI } from "../utils";
+import { encodeURI, translateEmergencyMessage } from "../utils";
 import RecorderComponent from "./RecorderComponent";
 
-const DEFAULT_MESSAGE = "Please, I am in need of your help. Contact me.";
+const DEFAULT_MESSAGE = translateEmergencyMessage();
 
-function VoiceClip({ onNotify }) {
+function VoiceClip({ toast }) {
   const theme = useTheme();
 
   const user = JSON.parse(localStorage.getItem("user"));
 
+  const showEmergencyToast = () => {
+    toast({
+      title: "EMERGENCY Recording Started",
+      description: "",
+      status: "error",
+      position: "top",
+      duration: 5000,
+      isClosable: false,
+    });
+  };
+
   const serverErrorToast = () => {
-    onNotify({
+    toast({
       title: "Something went wrong...",
       description: "Services did not respond, please try again.",
       status: "error",
@@ -36,7 +47,7 @@ function VoiceClip({ onNotify }) {
     )
       .then((res) => {
         if (res.ok) {
-          onNotify({
+          toast({
             title: "Emergency message sent succesfully",
             description:
               "Please, if needed contact local authorities and maintain your calm",
@@ -47,7 +58,7 @@ function VoiceClip({ onNotify }) {
         throw res;
       })
       .catch(async (err) => {
-        onNotify({
+        toast({
           title: "Message could not be send",
           description:
             "Please try again by pressing the bottom left emergency button",
@@ -91,7 +102,7 @@ function VoiceClip({ onNotify }) {
   const handleWatsonResponse = async ({ data }) => {
     const { text } = data;
     if (!text) {
-      onNotify({
+      toast({
         title: "We couldn't hear you... sending default emergency message.",
         description:
           "Please try moving somewhere quieter or speaking more loudly.",
@@ -103,7 +114,7 @@ function VoiceClip({ onNotify }) {
 
   const handleAskbobResponse = async ({ query, error }) => {
     if (error) {
-      onNotify({
+      toast({
         title: "Askbob couldn't understand you.",
         description:
           "Please try moving somewhere quieter or speaking more loudly.",
@@ -158,6 +169,7 @@ function VoiceClip({ onNotify }) {
         rendererOnDefault={rendererOnDefault}
         rendererOnRecording={rendererOnRecording}
         rendererOnLoading={rendererOnLoading}
+        onStartRecording={showEmergencyToast}
         onError={serverErrorToast}
       ></RecorderComponent>
     </CommandButton>

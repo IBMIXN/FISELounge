@@ -5,7 +5,7 @@ import { Spinner, Icon, useTheme } from "@chakra-ui/core";
 import CommandButton from "./CommandButton";
 import RecorderComponent from "./RecorderComponent";
 
-function VoiceCommand({ commands, onError }) {
+function VoiceCommand({ commands, toast }) {
   const { changeScene, makeCall, customResponse } = commands;
 
   const theme = useTheme();
@@ -13,7 +13,7 @@ function VoiceCommand({ commands, onError }) {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const errorResponseToast = () => {
-    onError({
+    toast({
       title: "We couldn't hear you.",
       description:
         "Please try moving somewhere quieter or speaking more loudly.",
@@ -22,11 +22,43 @@ function VoiceCommand({ commands, onError }) {
   };
 
   const serverErrorToast = () => {
-    onError({
+    toast({
       title: "Something went wrong...",
       description: "Services did not respond, please try again.",
       status: "error",
     });
+  };
+
+  const showFeedbackToast = (json, cloudEnabled) => {
+    if (!json) {
+      return;
+    }
+    if (cloudEnabled === "true" && json.data) {
+      const { text, reply } = json.data;
+      toast({
+        title: `You said "${text}"`,
+        description: reply,
+        status: "info",
+        position: "top",
+        isClosable: true,
+        duration: 6000,
+      });
+      return;
+    }
+    if (cloudEnabled !== "true" && json) {
+      const { query, messages, error } = json;
+      if (error) {
+        return;
+      }
+      toast({
+        title: `You said "${query}"`,
+        description: messages && messages[0] ? messages[0].text : "",
+        status: "info",
+        position: "top",
+        isClosable: true,
+        duration: 6000,
+      });
+    }
   };
 
   const fetchWatsonVoiceQuery = async (res) => {
@@ -58,7 +90,7 @@ function VoiceCommand({ commands, onError }) {
       errorResponseToast();
     } else if (action === "startCall" && !contact_id) {
       // No contact found
-      onError({
+      toast({
         title: "We don't know who that is.",
         description: "Sorry, we don't recognize that person.",
         status: "warning",
@@ -78,7 +110,7 @@ function VoiceCommand({ commands, onError }) {
           makeCall(contact_id);
           break;
         default:
-          errorResponseToast();
+          break;
       }
     }
   };
@@ -114,7 +146,7 @@ function VoiceCommand({ commands, onError }) {
           contactNames
         );
         if (bestMatchIndex === -1 || bestMatchIndex === null) {
-          onError({
+          toast({
             title: `"${query}"`,
             description: `Sorry, ${capitalize(
               contactToCall
@@ -175,6 +207,7 @@ function VoiceCommand({ commands, onError }) {
         rendererOnDefault={rendererOnDefault}
         rendererOnRecording={rendererOnRecording}
         rendererOnLoading={rendererOnLoading}
+        onFeedback={showFeedbackToast}
         onError={serverErrorToast}
       ></RecorderComponent>
     </CommandButton>

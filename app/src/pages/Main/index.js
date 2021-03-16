@@ -1,4 +1,2 @@
-import Main, { RecorderContext } from "./Main";
-
+import Main from "./Main";
 export default Main;
-export { RecorderContext };

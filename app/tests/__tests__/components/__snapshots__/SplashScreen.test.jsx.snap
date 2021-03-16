@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render unit test 1`] = `
+<Flex
+  align="center"
+  backgroundColor="gray.800"
+  backgroundPosition="center"
+  backgroundSize="cover"
+  direction="column"
+  justify="center"
+  left="0"
+  minHeight="100%"
+  minWidth="100%"
+  position="fixed"
+  top="0"
+>
+  <Text
+    color="white"
+    textAlign="center"
+  >
+    by UCL FISE Groups
+  </Text>
+  <ForwardRef>
+    <Icon
+      color="white"
+      h="50px"
+      m="1rem"
+      name="ibm"
+      w="200px"
+    />
+    <a
+      href="https://nhs.uk"
+    >
+      <Image
+        h="81px"
+        mb="1.2rem"
+        mt="1.2rem"
+        mx="auto"
+        src="/icons/nhs-inx-logo.png"
+        w="157px"
+      />
+    </a>
+    <Icon
+      color="gray.400"
+      h="50px"
+      m="1rem"
+      name="ucl"
+      w="200px"
+    />
+  </ForwardRef>
+  <Spinner
+    color="blue.500"
+    mt="2rem"
+    size="xl"
+    speed="0.6s"
+    thickness="5px"
+  />
+  <ForwardRef
+    color="gray.300"
+    p="1rem"
+  >
+    <Text
+      textAlign="center"
+    >
+      In association with IBM, NHS & University College London
+    </Text>
+    <Text
+      textAlign="center"
+    >
+      Supervised by John McNamara, Dean Mohamedally
+    </Text>
+  </ForwardRef>
+</Flex>
+`;

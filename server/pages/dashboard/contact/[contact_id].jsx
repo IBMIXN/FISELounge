@@ -22,6 +22,9 @@ import {
   Select,
   FormErrorMessage,
   Heading,
+  InputGroup,
+  InputLeftElement,
+  Icon,
 } from "@chakra-ui/core";
 
 import { Nav } from "../../../components/Nav";
@@ -163,7 +166,12 @@ const MakeChangesForm = ({
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.email && form.touched.email}>
                 <FormLabel htmlFor="email">Email address</FormLabel>
-                <Input {...field} id="email" placeholder="adam@example.org" />
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="email" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="adam@example.org" />
+                </InputGroup>
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
               </FormControl>
             )}
@@ -173,7 +181,12 @@ const MakeChangesForm = ({
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.phone && form.touched.phone}>
                 <FormLabel htmlFor="phone">Phone number</FormLabel>
-                <Input {...field} id="email" placeholder="+44767254891" />
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="phone" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="+44767254891" />
+                </InputGroup>
                 <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
             )}

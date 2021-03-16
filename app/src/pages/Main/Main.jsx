@@ -7,13 +7,12 @@ import "aframe";
 import "aframe-particle-system-component";
 import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
-import { playAudio } from "../../utils";
+import { playAudio, sleep } from "../../utils";
 import SplashScreen from "../../components/SplashScreen";
 import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import VoiceCommand from "../../components/VoiceCommand";
 import VoiceClip from "../../components/VoiceClip";
-import recorderReducer from "../../reducers/recorderReducer";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
@@ -31,13 +30,6 @@ const defaultBackground2 = {
   isVR: "true",
 };
 
-const initialRecorderState = {
-  recorderIsBlocked: true,
-  commandIsRecording: false,
-  clipIsRecording: false,
-};
-const RecorderContext = createContext(initialRecorderState);
-
 var displaySplashScreen = true;
 
 function Main() {
@@ -52,11 +44,9 @@ function Main() {
   const [call, setCall] = useState(false);
   const [openPlugin, setOpenPlugin] = useState(false);
   const [currentSceneIndex, setCurrentSceneIndex] = useState(0);
-  const [recorderState, recorderDispatch] = useReducer(
-    recorderReducer,
-    initialRecorderState
-  );
   const toast = useToast();
+
+  const synth = window.speechSynthesis;
 
   useEffect(() => {
     const otc = localStorage.getItem("otc");
@@ -141,7 +131,7 @@ function Main() {
       });
   };
 
-  const playTextToSpeech = async (text) => {
+  const playTextToSpeechWatson = async (text) => {
     await fetch(
       `${
         process.env.REACT_APP_SERVER_URL
@@ -173,6 +163,20 @@ function Main() {
           `Audio Response - ${err.status} ${err.statusText}: ${err.message}`
         );
       });
+  };
+
+  const speechToTextLocally = async (text) => {
+    if (synth.speaking) {
+      synth.cancel();
+      await sleep(1000);
+    }
+    if (text) {
+      const speakText = new SpeechSynthesisUtterance(text);
+      speakText.onerror = (e) => {
+        console.error("Speech to text failed: ", e);
+      };
+      synth.speak(speakText);
+    }
   };
 
   const showToast = ({
@@ -259,11 +263,12 @@ function Main() {
               primitive="a-sky"
               rotation="0 -140 0"
               src={scenes[currentSceneIndex].data}
+              crossorigin="anonymous"
             />
           </Scene>
         )}
         {scenes.length > 1 && (
-          <button onClick={handleChangeScene}>
+          <button aria-label="change-background" onClick={handleChangeScene}>
             <Box
               pos="absolute"
               top="0"
@@ -285,8 +290,8 @@ function Main() {
             </Box>
           </button>
         )}
-        {(
-          <button onClick={setOpenPlugin}>
+        {
+          <button onClick={setOpenPlugin} aria-label="open-plugin">
             <Box
               pos="absolute"
               bottom="0"
@@ -307,22 +312,22 @@ function Main() {
               />
             </Box>
           </button>
-        )}
-        <RecorderContext.Provider value={[recorderState, recorderDispatch]}>
-          <VoiceCommand
-            isCloudEnabled={user.isCloudEnabled === "true"}
-            commands={{
-              changeScene: handleChangeScene,
-              makeCall: handleMakeCall,
-              customResponse: playTextToSpeech,
-            }}
-            onError={showToast}
-          ></VoiceCommand>
-          <VoiceClip
-            isCloudEnabled={user.isCloudEnabled === "true"}
-            onNotify={showToast}
-          ></VoiceClip>
-        </RecorderContext.Provider>
+        }
+        <VoiceCommand
+          commands={{
+            changeScene: handleChangeScene,
+            makeCall: handleMakeCall,
+            customResponse:
+              user.isWatsonTtsEnabled === "true"
+                ? playTextToSpeechWatson
+                : speechToTextLocally,
+          }}
+          toast={showToast}
+        ></VoiceCommand>
+        <VoiceClip
+          isCloudEnabled={user.isCloudEnabled === "true"}
+          toast={showToast}
+        ></VoiceClip>
         {user.contacts && (
           <Box pos="absolute" bottom="20%" left="20vw" right="20vw">
             <Stack
@@ -337,6 +342,7 @@ function Main() {
                   <button
                     style={{ outline: "none" }}
                     onClick={() => handleMakeCall(contact._id)}
+                    aria-label="contact"
                   >
                     {contact.profileImage ? (
                       <Box
@@ -379,5 +385,4 @@ function Main() {
 
 const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 
-export { RecorderContext };
 export default Main;
