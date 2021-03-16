@@ -1,24 +1,40 @@
 # IBM FISE Lounge
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly to use in the current pandemic, where loneliness is becoming a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, where loneliness is becoming a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+
+> IBM FISE Ecosystem....
 
 ## Contributors:
 
-- Adam Peace (UCL) 
-- Emil Almazov (UCL)
-- Rikaz Rameez (UCL)
+This project has been developed by a group of students at University College London, supervised by Dr Dean Mohamedally (UCL) and John McNamara (IBM)
+
 - Daniel Javadinejad (UCL)
 - Radu Echim (UCL)
 - Adam Piwowarczyk (UCL)
 - Jeremy Lo Ying Ping (UCL)
 - Felipe Jin Li (UCL)
+- Jiaruo Gao (UCL)
 - Ak Ihoeghinlan (UCL)
+- Adam Peace (UCL)
+- Emil Almazov (UCL)
+- Rikaz Rameez (UCL)
+- Calin Hadarean (UCL)
+- Mohammad Syed (UCL)
+- Ernest Nkansah-Badu (UCL)
 
 This repository contains both the web app for FISE (in `/app`) as well as the dashboard and API (in `/server`)
 
+## Project Structure
+
+Add project tree
+
+# Docker Installation
+
 # Server Installation
 
-Ensure you have `yarn` installed
+Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
+
+Ensure you have `yarn` installed (npm also works)
 
 - `cd server`
 - `yarn install`
@@ -30,7 +46,7 @@ Ensure you have `yarn` installed
 
 # App Installation
 
-Ensure you have `yarn` installed
+Ensure you have `yarn` installed (npm also works)
 
 - `cd app`
 - `yarn install`
@@ -57,20 +73,26 @@ Ensure you have `yarn` installed
 ### User
 
 - The actual account administrator
-- They manage the *Consumer*'s FISE account and set it up on the *Consumer*'s device
-- They can add mutiple *Consumer*s and add multiple *Contact*s per *Consumer*
+- They manage the _Consumer_'s FISE account and set it up on the _Consumer_'s device
+- They can add mutiple *Consumer*s and add multiple *Contact*s per _Consumer_
 - This is the only person who ever accesses the Dashboard
 
 ### Consumer
 
-- The elderly person with difficulty contacting their relatives
+- The elderly person with difficulty contacting their relatives (example)
 - This person's data will show up on the FISE app
 - Can be related to multiple *Contact*s
 
 ### Contact
 
-- Someone the *Consumer* can call
+- Someone the _Consumer_ can call
 - Will receive an email when called through the app
+- Will receive an email containing emergency voice-clip when sent through the app
+
+If phone number provided:
+
+- Will receive an sms when called through the app
+- Will receive an sms containing emergency voice-clip when sent through the app
 
 ## Deploying the Server
 
@@ -82,7 +104,18 @@ Easiest way: Vercel
 
 Otherwise: Server
 
-- Follow the above instructions for *Server Installation* and expose port 3000
+- Follow the above instructions for _Server Installation_ and expose port 3000
+
+## Deploying the App
+
+Easiest way: Vercel
+
+- Connect repo to Vercel
+- Add all env variables that are in `/app/.env.local.example`
+
+Otherwise: App
+
+- Follow the above instructions for _App Installation_ and expose port of choice
 
 # Server API Routes
 
@@ -129,6 +162,13 @@ Revokes the current user's session
 
 Create a new consumer
 
+Paramaters:
+
+- name
+- isCloudEnabled
+- isSnowEnabled
+- isWatsonTtsEnabled
+
 Success: returns {message: ..., data: consumer}
 
 ## `/api/consumer/:consumer_id`
@@ -137,9 +177,20 @@ Success: returns {message: ..., data: consumer}
 
 Get the corresponding consumer data
 
+Success: returns {message: ..., data: consumer}
+
 ### PUT
 
 Update the corresponding consumer's data
+
+Parameters:
+
+- name
+- isCloudEnabled
+- isSnowEnabled
+- isWatsonTtsEnabled
+
+Success: returns {message: ..., data: consumer, consumer_id}
 
 ### DELETE
 
@@ -160,13 +211,25 @@ Parameters:
 - consumer_id
 - name
 - email
+- profileImage (should be `Base64` encoded)
 - relation
+- phone
+
+Success: returns {message: ..., data: newContact}
 
 ## `/api/contact/:contact_id`
 
 ### GET
 
 Get the corresponding contact data
+
+Success: returns {
+message: ...,
+data:
+contact,
+consumer_id,
+consumer_name,
+}
 
 ### PUT
 
@@ -176,7 +239,11 @@ Parameters:
 
 - [name]
 - [email]
+- profileImage (should be `Base64` encoded)
 - [relation]
+- phone
+
+Success returns...
 
 ### DELETE
 
@@ -206,17 +273,68 @@ Parameters:
 
 - `req.body` should be `Base64` encoded `audio/mp3`
 
+## `/api/backgrounds/`
+
+### POST
+
+Adds corresponding background to consumer's backgrounds
+
+Parameters:
+
+- imageFile (should be `Base64` encoded or `URL` string)
+- imageName
+- isVR
+- consumer_id
+
+### DELETE
+
+Deletes the corresponding background
+
+Parameters:
+
+- image_id
+- consumer_id
+
 # IBM Watson voice commands
 
 ## Setup
 
 - Register an IBM Cloud account
-- Create *Watson Assistant*, *Speech-To-Text* and *Text-To-Speech* resources
-- Add service credentials for respective resource in server `.env.local`. 
+- Create _Watson Assistant_, _Speech-To-Text_ and _Text-To-Speech_ resources
+- Add service credentials for respective resource in server `.env.local`.
 - For `WATSON_ASSISTANT_ID` only add key following ServiceId-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 - Launch Watson Assistant inside IBM Cloud
-- Create *dialog skill* by uploading `watson-skill.json`
+- Create _dialog skill_ by uploading `watson-skill.json` (change location)
 
 ## Valid commands
+
 - Changing background
 - Calling contact
+
+# AskBob voice commands
+
+## Setup
+
+- Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use above mentioned docker instalaltion
+- Ensure that the required deepspeech models are downloaded
+- Add the AskBob instance URL in `app/.env.local`
+- AskBob supports a rich set of plugins for custom commands,
+
+## Valid commands
+
+### Default
+
+- Changing background
+- Calling contact
+
+### AskBob-Plugins
+
+- What's the weather
+- Tell me a joke
+- [...]
+
+# Plugins
+
+IBM Fise Lounge has support for custom plugins and apps that can be loaded through an iframe. This includes most web-apps, videos, HTML5 apps. `app/public/plugins.html` `app/components/pluginComponent`.
+
+As a template the `plugins.html` renders a white page with a list of free games, coronavirus advice, and a live BBC news feed.
