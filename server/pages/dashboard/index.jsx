@@ -187,6 +187,7 @@ const DashboardPage = () => {
                         </Text>
                         <Tooltip label="Refresh OTC (Will log user out)">
                           <Button
+                            aria-label="Refresh otc"
                             m="0"
                             p="0"
                             size="1rem"

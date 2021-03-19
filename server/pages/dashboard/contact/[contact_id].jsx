@@ -185,7 +185,7 @@ const MakeChangesForm = ({
                   <InputLeftElement
                     children={<Icon name="phone" color="gray.300" />}
                   />
-                  <Input {...field} id="email" placeholder="+44767254891" />
+                  <Input {...field} id="phone" placeholder="+44767254891" />
                 </InputGroup>
                 <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
@@ -254,7 +254,7 @@ const MakeChangesForm = ({
             <FormLabel>Current Profile Picture</FormLabel>
           )}
           {currentProfileImage && (
-            <img src={currentProfileImage} width="100px" height="100x" />
+            <img src={currentProfileImage} width="100px" height="100x" alt="contact's profile image"/>
           )}
           {currentProfileImage && (
             <Field
