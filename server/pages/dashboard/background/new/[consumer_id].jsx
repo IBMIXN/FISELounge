@@ -112,17 +112,17 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
         isURL: "true",
       }}
       onSubmit={handleFormSubmit}
-      // validationSchema={yup.object().shape({
-      //   imageFile: yup
-      //     .mixed()
-      //     .notRequired() //fix
-      //     .test(
-      //       "fileType",
-      //       "Unsupported File Format",
-      //       (value) =>
-      //         !value || (value && SUPPORTED_FORMATS.includes(value.type))
-      //     ),
-      // })}
+      validationSchema={yup.object().shape({
+        imageFile: yup
+          .mixed()
+          .notRequired() //fix
+          .test(
+            "fileType",
+            "Unsupported File Format",
+            (value) =>
+              !value || (value && SUPPORTED_FORMATS.includes(value.type))
+          ),
+      })}
     >
       {({
         isSubmitting,
@@ -130,6 +130,8 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
         handleChange,
         setFieldValue,
         values,
+        errors,
+        touched,
       }) => (
         <form onSubmit={handleSubmit}>
           <Field name="imageName" validate={validateImageName}>
@@ -220,6 +222,9 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
               <FormHelperText id="upload-info-text">
                 {/* Info text if needed */}
               </FormHelperText>
+              {errors.imageFile && touched.imageFile ? (
+              <Text color="crimson">{errors.imageFile}</Text>
+              ) : null}
             </FormControl>
           )}
 

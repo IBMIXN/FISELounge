@@ -19,6 +19,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Text,
   Select,
   FormErrorMessage,
   Heading,
@@ -150,6 +151,8 @@ const MakeChangesForm = ({
         handleSubmit,
         setFieldValue,
         values,
+        errors,
+        touched,
       }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
@@ -284,7 +287,9 @@ const MakeChangesForm = ({
             className="form-control"
           />
           <br />
-
+          {errors.profileImage && touched.profileImage ? (
+              <Text color="crimson">{errors.profileImage}</Text>
+              ) : null}
           <Button
             mt={4}
             variantColor="blue"

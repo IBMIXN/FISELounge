@@ -140,6 +140,8 @@ const NameForm = ({ router }) => {
         handleSubmit,
         setFieldValue,
         values,
+        errors,
+        touched,
       }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
@@ -220,8 +222,11 @@ const NameForm = ({ router }) => {
             className="form-control"
           />
           <br />
+          {errors.profileImage && touched.profileImage ? (
+              <Text color="crimson">{errors.profileImage}</Text>
+              ) : null}
 
-          {formError && <Text color="crimson">{formError}</Text>}
+          {/* {formError && <Text color="crimson">{formError}</Text>} */}
           <Button
             mt={4}
             variantColor="blue"
