@@ -96,16 +96,11 @@ const handler = async (req, res) => {
                 },
               ],
             }),
-          })
-            .then((res) => {
-              console.log("SMS RES", JSON.stringify(res));
-              if (res.ok) {
-                smsSuccessful = true;
-              }
-            })
-            .catch((err) => {
-              console.log("SMS ERR", JSON.stringify(err));
-            });
+          }).then((res) => {
+            if (res.ok) {
+              smsSuccessful = true;
+            }
+          });
 
           let transporter = nodemailer.createTransport({
             host: process.env.EMAIL_HOST,
@@ -124,10 +119,10 @@ const handler = async (req, res) => {
             text: capitalize(text),
           };
 
-          transporter
+          await transporter
             .sendMail(message)
             .then((res) => {
-              if (res.ok) {
+              if (res.accepted && res.accepted.length > 0) {
                 emailSuccessful = true;
               }
             })
@@ -137,7 +132,7 @@ const handler = async (req, res) => {
 
           if (!smsSuccessful && !emailSuccessful) {
             return res
-              .status(200)
+              .status(500)
               .json({ message: "No emergency message was sent" });
           }
           return res.status(200).json({ message: "Invite Sent successfully" });

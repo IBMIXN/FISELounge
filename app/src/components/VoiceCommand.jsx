@@ -198,7 +198,12 @@ function VoiceCommand({ commands, toast }) {
   };
 
   return (
-    <CommandButton rounded="bottomLeft" top="0" right="0">
+    <CommandButton
+      rounded="bottomLeft"
+      top="0"
+      right="0"
+      ariaLabel="voice-command"
+    >
       <RecorderComponent
         askbobFetch={fetchAskbobVoiceQuery}
         askbobResponseHandler={handleAskbobResponse}

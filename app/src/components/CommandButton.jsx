@@ -12,6 +12,7 @@ const CommandButton = ({
   left,
   bottom,
   onClick,
+  ariaLabel,
   children,
 }) => {
   const getRoundedProp = (rounded) => {
@@ -22,7 +23,7 @@ const CommandButton = ({
         };
       case "bottomRight":
         return {
-          roundedBottomLeft: ROUNDNESS,
+          roundedBottomRight: ROUNDNESS,
         };
       case "topLeft":
         return {
@@ -41,7 +42,7 @@ const CommandButton = ({
   };
 
   return (
-    <button onClick={onClick} aria-label="on-click">
+    <button onClick={onClick} aria-label={ariaLabel}>
       <Box
         pos="absolute"
         top={top}

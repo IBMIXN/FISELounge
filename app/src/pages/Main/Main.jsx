@@ -17,6 +17,7 @@ import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
 import { Box, Icon, Image, Stack, Text, useToast } from "@chakra-ui/core";
+import CommandButton from "../../components/CommandButton";
 
 const TOAST_DURATION = 8000;
 
@@ -268,30 +269,30 @@ function Main() {
           </Scene>
         )}
         {scenes.length > 1 && (
-          <button aria-label="change-background" onClick={handleChangeScene}>
-            <Box
-              pos="absolute"
-              top="0"
-              left="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedBottomRight="70%"
-            >
-              <Icon
-                color="white"
-                name="repeat"
-                size="4rem"
-                m="1rem"
-                opacity="100%"
-              />
-            </Box>
-          </button>
+          <CommandButton
+            rounded="bottomRight"
+            top="0"
+            left="0"
+            onClick={handleChangeScene}
+            ariaLabel="change-background"
+          >
+            <Icon
+              color="white"
+              name="repeat"
+              size="4rem"
+              m="1rem"
+              opacity="100%"
+            />
+          </CommandButton>
         )}
         {
-          <button onClick={setOpenPlugin} aria-label="open-plugin">
+          <CommandButton
+            rounded="topLeft"
+            bottom="0"
+            right="0"
+            onClick={setOpenPlugin}
+            aria-label="open-plugin"
+          >
             <Box
               pos="absolute"
               bottom="0"
@@ -311,7 +312,7 @@ function Main() {
                 opacity="100%"
               />
             </Box>
-          </button>
+          </CommandButton>
         }
         <VoiceCommand
           commands={{
