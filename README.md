@@ -1,8 +1,16 @@
-# IBM FISE Lounge
+# IBM FISE Lounge - an interactive and privacy safe video-calling platform for those in social isolation
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, where loneliness is becoming a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf. 
 
-> IBM FISE Ecosystem....
+> The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](link).
+
+![alt text](docs/img/Multidevice.png)
+
+## Key Features:
+1. Privacy. IBM Watson or FISE AskBob
+2. Emergency messages via sms
+3. Extendable through plugins
+4. Interactive through 360 VR backgrounds
 
 ## Contributors:
 
@@ -12,23 +20,21 @@ This project has been developed by a group of students at University College Lon
 - Radu Echim (UCL)
 - Adam Piwowarczyk (UCL)
 - Jeremy Lo Ying Ping (UCL)
-- Felipe Jin Li (UCL)
 - Jiaruo Gao (UCL)
 - Ak Ihoeghinlan (UCL)
+- Calin Hadarean (UCL)
 - Adam Peace (UCL)
 - Emil Almazov (UCL)
 - Rikaz Rameez (UCL)
-- Calin Hadarean (UCL)
 - Mohammad Syed (UCL)
 - Ernest Nkansah-Badu (UCL)
 
-This repository contains both the web app for FISE (in `/app`) as well as the dashboard and API (in `/server`)
-
 ## Project Structure
 
-Add project tree
+This repository contains both the web app for FISE (in [`/app`](app)) as well as the dashboard and API (in [`/server`](server)). 
 
 # Docker Installation
+You can find our guide on how to install  
 
 # Server Installation
 
@@ -95,8 +101,15 @@ If phone number provided:
 - Will receive an sms containing emergency voice-clip when sent through the app
 
 ## Deploying the Server
+Overview
 
-Easiest way: Vercel
+Easiest way (local): Docker
+
+- Connect repo to Vercel
+- Add all env variables that are in `/server/.env.local.example`
+- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
+
+Easiest way (cloud): Vercel
 
 - Connect repo to Vercel
 - Add all env variables that are in `/server/.env.local.example`
@@ -106,9 +119,13 @@ Otherwise: Server
 
 - Follow the above instructions for _Server Installation_ and expose port 3000
 
-## Deploying the App
 
-Easiest way: Vercel
+
+# App Documentation
+## Deploying the App
+Easiest way (local): Docker
+
+Easiest way (cloud): Vercel
 
 - Connect repo to Vercel
 - Add all env variables that are in `/app/.env.local.example`
@@ -116,7 +133,6 @@ Easiest way: Vercel
 Otherwise: App
 
 - Follow the above instructions for _App Installation_ and expose port of choice
-
 # Server API Routes
 
 ## `/api/login`
