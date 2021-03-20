@@ -35,7 +35,6 @@ import * as yup from "yup";
 const SUPPORTED_FORMATS = ["image/jpg", "image/jpeg", "image/gif", "image/png"];
 
 const NewBackgroundForm = ({ consumer_id, router }) => {
-  // const [formError, setFormError] = useState("");
   const fileToBase64 = (inputFile) => {
     const tempFileReader = new FileReader();
 
@@ -115,7 +114,7 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
       validationSchema={yup.object().shape({
         imageFile: yup
           .mixed()
-          .notRequired() //fix
+          .notRequired()
           .test(
             "fileType",
             "Unsupported File Format",
@@ -227,8 +226,6 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
               ) : null}
             </FormControl>
           )}
-
-          {/* {formError && <Text color="crimson">{formError}</Text>}  */}
 
           <Button
             type="submit"

@@ -226,7 +226,6 @@ const NameForm = ({ router }) => {
               <Text color="crimson">{errors.profileImage}</Text>
               ) : null}
 
-          {/* {formError && <Text color="crimson">{formError}</Text>} */}
           <Button
             mt={4}
             variantColor="blue"

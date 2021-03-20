@@ -46,7 +46,7 @@ const MakeChangesForm = ({
   currentPhone,
   currentProfileImage,
 }) => {
-  var hasSelectedDeleteImage = false; // CHANGED NAME FROM deleteImg
+  var hasSelectedDeleteImage = false;
   const SUPPORTED_FORMATS = [
     "image/jpg",
     "image/jpeg",
