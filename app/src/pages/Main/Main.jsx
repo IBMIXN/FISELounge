@@ -1,7 +1,7 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 // eslint-disable-next-line
-import React, { useEffect, useState, useReducer, createContext } from "react";
+import React, { useEffect, useState } from "react";
 import { jsx, css } from "@emotion/core";
 import "aframe";
 import "aframe-particle-system-component";
@@ -13,11 +13,12 @@ import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import VoiceCommand from "../../components/VoiceCommand";
 import VoiceClip from "../../components/VoiceClip";
+import CommandButton from "../../components/CommandButton";
+import ContactList from "../../components/ContactList";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
-import { Box, Icon, Image, Stack, Text, useToast } from "@chakra-ui/core";
-import CommandButton from "../../components/CommandButton";
+import { Icon, useToast } from "@chakra-ui/core";
 
 const TOAST_DURATION = 8000;
 
@@ -293,25 +294,13 @@ function Main() {
             onClick={setOpenPlugin}
             aria-label="open-plugin"
           >
-            <Box
-              pos="absolute"
-              bottom="0"
-              right="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedTopLeft="70%"
-            >
-              <Icon
-                color="white"
-                name="external-link"
-                size="4rem"
-                m="1rem"
-                opacity="100%"
-              />
-            </Box>
+            <Icon
+              color="white"
+              name="external-link"
+              size="4rem"
+              m="1rem"
+              opacity="100%"
+            />
           </CommandButton>
         }
         <VoiceCommand
@@ -329,61 +318,12 @@ function Main() {
           isCloudEnabled={user.isCloudEnabled === "true"}
           toast={showToast}
         ></VoiceClip>
-        {user.contacts && (
-          <Box pos="absolute" bottom="20%" left="20vw" right="20vw">
-            <Stack
-              isInline
-              spacing="6rem"
-              display="flex"
-              flexDirection="row"
-              className="scrollable"
-            >
-              {user.contacts.map((contact, index) => (
-                <Box className="contactBox">
-                  <button
-                    style={{ outline: "none" }}
-                    onClick={() => handleMakeCall(contact._id)}
-                    aria-label="contact"
-                  >
-                    {contact.profileImage ? (
-                      <Box
-                        w="10rem"
-                        h="10rem"
-                        rounded="10%"
-                        bg={colors[index % colors.length]}
-                      >
-                        <Image
-                          rounded="10%"
-                          size="10rem"
-                          src={contact.profileImage}
-                          pointerEvents="none"
-                        />
-                      </Box>
-                    ) : (
-                      <Box
-                        w="10rem"
-                        h="10rem"
-                        rounded="10%"
-                        bg={colors[index % colors.length]}
-                      >
-                        <Text fontSize="6rem" lineHeight="10rem">
-                          {contact.name[0].toUpperCase()}
-                        </Text>
-                      </Box>
-                    )}
-                  </button>
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-        )}
+        <ContactList onContactClick={handleMakeCall}></ContactList>
       </div>
     </>
   ) : (
     <SplashScreen />
   );
 }
-
-const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 
 export default Main;
