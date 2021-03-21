@@ -6,6 +6,7 @@ import { useUser } from "../../../lib/hooks";
 import { fetcher, capitalize, validateName } from "../../../utils";
 import relations from "../../../utils/relations";
 import * as yup from "yup";
+import { useState } from "react";
 
 import {
   Badge,
@@ -217,7 +218,11 @@ const MakeChangesForm = ({
 };
 
 const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
+
+  const [isSubmitting, setIsLoading] = useState(false)
+
   const handleDeleteBackground = async (value) => {
+    setIsLoading(true);
     var imageToDelete = {
       image_id: value,
       consumer_id: consumer_id,
@@ -246,6 +251,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
         throw r;
       })
       .then(({ message, data }) => {
+        setIsLoading(false);
         router.replace(`/dashboard/consumer/${consumer_id}`);
       })
       .catch(async (err) => {
@@ -285,6 +291,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
             </TableCell>
             <TableCell textAlign="right">
               <IconButton
+                isLoading={isSubmitting}
                 aria-label="Delete background"
                 icon="delete"
                 variant="outline"
