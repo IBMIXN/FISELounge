@@ -13,11 +13,12 @@ import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
 import VoiceCommand from "../../components/VoiceCommand";
 import VoiceClip from "../../components/VoiceClip";
+import CommandButton from "../../components/CommandButton";
+import ContactList from "../../components/ContactList";
 import img1 from "../../assets/img1.jpeg";
 import img2 from "../../assets/img2.jpg";
 import { Redirect } from "react-router-dom";
-import { Box, Icon, Image, Stack, Text, useToast } from "@chakra-ui/core";
-import CommandButton from "../../components/CommandButton";
+import { Icon, useToast } from "@chakra-ui/core";
 
 const TOAST_DURATION = 8000;
 
@@ -317,63 +318,12 @@ function Main() {
           isCloudEnabled={user.isCloudEnabled === "true"}
           toast={showToast}
         ></VoiceClip>
-        {user.contacts && (
-          <Box pos="absolute" bottom="20%" left="20vw" right="20vw">
-            <Stack
-              isInline
-              spacing="6rem"
-              display="flex"
-              flexDirection="row"
-              className="scrollable"
-            >
-              {user.contacts.map((contact, index) => (
-                <Box className="contactBox">
-                  <button
-                    style={{ outline: "none" }}
-                    onClick={() => handleMakeCall(contact._id)}
-                    aria-label="contact"
-                  >
-                    {contact.profileImage ? (
-                      <Box
-                        w="10rem"
-                        h="10rem"
-                        rounded="10%"
-                        bg={colors[index % colors.length]}
-                        mb="15px"
-                      >
-                        <Image
-                          rounded="10%"
-                          size="10rem"
-                          src={contact.profileImage}
-                          pointerEvents="none"
-                        />
-                      </Box>
-                    ) : (
-                      <Box
-                        w="10rem"
-                        h="10rem"
-                        rounded="10%"
-                        bg={colors[index % colors.length]}
-                        mb="15px"
-                      >
-                        <Text fontSize="6rem" lineHeight="10rem">
-                          {contact.name[0].toUpperCase()}
-                        </Text>
-                      </Box>
-                    )}
-                  </button>
-                </Box>
-              ))}
-            </Stack>
-          </Box>
-        )}
+        <ContactList onContactClick={handleMakeCall}></ContactList>
       </div>
     </>
   ) : (
     <SplashScreen />
   );
 }
-
-const colors = ["yellow.50", "pink.300", "yellow.400", "red.500", "pink.800"];
 
 export default Main;
