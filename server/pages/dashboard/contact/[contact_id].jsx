@@ -19,6 +19,7 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Text,
   Select,
   FormErrorMessage,
   Heading,
@@ -45,7 +46,7 @@ const MakeChangesForm = ({
   currentPhone,
   currentProfileImage,
 }) => {
-  var hasSelectedDeleteImage = false; // CHANGED NAME FROM deleteImg
+  var hasSelectedDeleteImage = false;
   const SUPPORTED_FORMATS = [
     "image/jpg",
     "image/jpeg",
@@ -150,6 +151,8 @@ const MakeChangesForm = ({
         handleSubmit,
         setFieldValue,
         values,
+        errors,
+        touched,
       }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
@@ -185,7 +188,7 @@ const MakeChangesForm = ({
                   <InputLeftElement
                     children={<Icon name="phone" color="gray.300" />}
                   />
-                  <Input {...field} id="email" placeholder="+44767254891" />
+                  <Input {...field} id="phone" placeholder="+44767254891" />
                 </InputGroup>
                 <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
@@ -254,7 +257,7 @@ const MakeChangesForm = ({
             <FormLabel>Current Profile Picture</FormLabel>
           )}
           {currentProfileImage && (
-            <img src={currentProfileImage} width="100px" height="100x" />
+            <img src={currentProfileImage} width="100px" height="100x" alt="contact's profile image"/>
           )}
           {currentProfileImage && (
             <Field
@@ -284,7 +287,9 @@ const MakeChangesForm = ({
             className="form-control"
           />
           <br />
-
+          {errors.profileImage && touched.profileImage ? (
+              <Text color="crimson">{errors.profileImage}</Text>
+              ) : null}
           <Button
             mt={4}
             variantColor="blue"

@@ -145,7 +145,7 @@ const DashboardPage = () => {
           <ChakraLink href={process.env.NEXT_PUBLIC_FISE_WEB_APP_URL} textDecoration="underline">
             app
           </ChakraLink>
-          {` `} on their device and enter in their One-Time-Code given below.
+          {` `} on their device and enter in their One-Time-Code given below. To log out a user you need to refresh this code.
         </Text>
 
         <Box mt="3rem">
@@ -187,6 +187,7 @@ const DashboardPage = () => {
                         </Text>
                         <Tooltip label="Refresh OTC (Will log user out)">
                           <Button
+                            aria-label="Refresh otc"
                             m="0"
                             p="0"
                             size="1rem"
