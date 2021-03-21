@@ -15,6 +15,8 @@ const theme = {
     ...chakraTheme.colors,
     black: "#16161D",
     warningRed: "#ed2f2f",
+    blackGlass: "rgba(12, 12, 12, 0.45)",
+    whiteGlass: "rgba(255, 255, 255, 0.95)",
   },
   fonts,
   breakpoints,
@@ -76,7 +78,7 @@ const theme = {
     nhsX: {
       path: (
         <svg
-        fill="currentColor"
+          fill="currentColor"
           viewBox="0 0 631 325"
           xmlns="http://www.w3.org/2000/svg"
         >
