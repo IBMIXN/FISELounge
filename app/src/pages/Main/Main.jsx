@@ -1,7 +1,7 @@
 /** @jsx jsx */
 /** @jsxFrag React.Fragment */
 // eslint-disable-next-line
-import React, { useEffect, useState, useReducer, createContext } from "react";
+import React, { useEffect, useState } from "react";
 import { jsx, css } from "@emotion/core";
 import "aframe";
 import "aframe-particle-system-component";
@@ -293,25 +293,13 @@ function Main() {
             onClick={setOpenPlugin}
             aria-label="open-plugin"
           >
-            <Box
-              pos="absolute"
-              bottom="0"
-              right="0"
-              bg="rgba(12, 12, 12, 0.45)"
-              pr="1rem"
-              pb="1rem"
-              pt="0.5rem"
-              pl="0.5rem"
-              roundedTopLeft="70%"
-            >
-              <Icon
-                color="white"
-                name="external-link"
-                size="4rem"
-                m="1rem"
-                opacity="100%"
-              />
-            </Box>
+            <Icon
+              color="white"
+              name="external-link"
+              size="4rem"
+              m="1rem"
+              opacity="100%"
+            />
           </CommandButton>
         }
         <VoiceCommand
@@ -351,6 +339,7 @@ function Main() {
                         h="10rem"
                         rounded="10%"
                         bg={colors[index % colors.length]}
+                        mb="15px"
                       >
                         <Image
                           rounded="10%"
@@ -365,6 +354,7 @@ function Main() {
                         h="10rem"
                         rounded="10%"
                         bg={colors[index % colors.length]}
+                        mb="15px"
                       >
                         <Text fontSize="6rem" lineHeight="10rem">
                           {contact.name[0].toUpperCase()}
