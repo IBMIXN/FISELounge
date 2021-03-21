@@ -1,0 +1,204 @@
+{
+    "plugin": "concierge_entertainment",
+    "entities": [
+        "joke_category",
+        "news_search_term",
+        "WORK_OF_ART",
+        "book_category"
+    ],
+    "regexes": [
+        {
+            "regex_id": "news_search_term",
+            "examples":[
+                "(?:[A-Za-z]+ ){0,3}[A-Za-z]+"
+            ]
+        }
+    ],
+    "lookups": [
+        {
+            "lookup_id": "joke_category",
+            "examples": [
+                "computer",
+                "animal",
+                "doctor",
+                "food",
+                "science",
+                "knock knock",
+                "airplane"
+            ]
+        },
+        {
+            "lookup_id": "book_category",
+            "examples": [
+                "horror",
+                "fantasy",
+                "love",
+                "mystery",
+                "science fiction",
+                "classic",
+                "romance"
+            ]
+        }
+    ],
+    
+    "intents": [
+        {
+            "intent_id": "ask_joke",
+            "examples":[
+                "Tell me a joke",
+                "Tell me a funny joke",
+                "Tell me a dad joke",
+                "Tell me a pun",
+                "Tell me a [knock knock]{\"entity\":\"joke_category\"} joke please",
+                "Tell me a [food]{\"entity\":\"joke_category\"} joke please",
+                "Give me a [science]{\"entity\":\"joke_category\"} joke",
+                "Give me a [computer]{\"entity\":\"joke_category\"} joke",
+                "Give me an [animal]{\"entity\":\"joke_category\"} pun",
+                "Could you tell me a [science]{\"entity\":\"joke_category\"} joke",
+                "Could you tell me a [food]{\"entity\":\"joke_category\"} pun",
+                "Could you tell me a joke",
+                "Could you tell me a pun"
+            ]
+        },
+        {
+            "intent_id": "ask_news",
+            "examples":[
+                "Give me news about [american politics]{\"entity\":\"news_search_term\"}",
+                "Give me recent news about [the Perseverance rover]{\"entity\":\"news_search_term\"}",
+                "Give me some news about [Elon Musk]{\"entity\":\"news_search_term\"}",
+                "Tell me news about [covid]{\"entity\":\"news_search_term\"}",
+                "Tell me news about [Amazon]{\"entity\":\"news_search_term\"}",
+                "Tell me news about [Boris Johnson]{\"entity\":\"news_search_term\"}",
+                "What is the most recent news regarding [technology]{\"entity\":\"news_search_term\"}",
+                "What is the most recent news regarding [Google]{\"entity\":\"news_search_term\"}",
+                "Please tell me some news about [pandas]{\"entity\":\"news_search_term\"}",
+                "Please tell me recent news about [climate change]{\"entity\":\"news_search_term\"}",
+                "Please tell me news about [pandas]{\"entity\":\"news_search_term\"}",
+                "Is there any news about [The Paris Climate Agreement]{\"entity\":\"news_search_term\"}",
+                "Is there any recent news about [Bill Gates]{\"entity\":\"news_search_term\"}",
+                "Is there any news about [Boris Johnson]{\"entity\":\"news_search_term\"}",
+                "Could you give me some news about [London]{\"entity\":\"news_search_term\"}",
+                "Could you give me some recent news about [the covid vaccines]{\"entity\":\"news_search_term\"}"
+    
+            ]
+
+        },
+        {
+            "intent_id": "ask_book_category",
+            "examples":[
+                "Tell me about a [horror](book_category) story",
+                "Tell me about a [romance](book_category) story",
+                "Tell me about a [science fiction](book_category) story",
+                "Give me information about a [classic](book_category) book",
+                "Give me a brief summary about a [mystery](book_category) book",
+                "Give me a summary about a [fantasy](book_category) book",
+                "Read me a [romance](book_category) novel",
+                "Read me a [horror](book_category) novel",
+                "Could you read me a [science fiction](book_category) book",
+                "Could you read me a [classic](book_category) novel",
+                "Please read a [mystery](book_category) book",
+                "Please read a [horror](book_category) novel",
+                "Please read me a [romance](book_category) book",
+                "What is a good [mystery](book_category) book",
+                "What is a good [classic](book_category) story",
+                "What is a good [science fiction](book_category) novel"
+            ]
+        },
+        {
+            "intent_id": "ask_book",
+            "examples":[
+                "Tell me about the book [Frankenstein]{\"entity\":\"WORK_OF_ART\"}",
+                "Tell me about the story [Pride and Prejuidice]{\"entity\":\"WORK_OF_ART\"}",
+                "Tell me about the novel [Alice's Adventures in Wonderland]{\"entity\":\"WORK_OF_ART\"}",
+                "Give me information about the book [Dracula]{\"entity\":\"WORK_OF_ART\"}",
+                "Give me information about the story [The Scarlet Letter]{\"entity\":\"WORK_OF_ART\"}",
+                "Give me a summary of the novel [Metamorphosis]{\"entity\":\"WORK_OF_ART\"}",
+                "Read me the book [Great Expectations]{\"entity\":\"WORK_OF_ART\"}",
+                "Read me the book [The Strange Case of Dr Jekyll and Mr Hyde]{\"entity\":\"WORK_OF_ART\"}",
+                "Read me the book [The Great Gatsby]{\"entity\":\"WORK_OF_ART\"}",
+                "Could you read me [A Christmas Carol]{\"entity\":\"WORK_OF_ART\"}",
+                "Could you read me the book [The Adventures of Sherlock Holmes]{\"entity\":\"WORK_OF_ART\"}",
+                "Please read [Macbeth]{\"entity\":\"WORK_OF_ART\"}",
+                "Please read the book [Moby Dick]{\"entity\":\"WORK_OF_ART\"}",
+                "Please read the novel [The Picture of Dorian Gray]{\"entity\":\"WORK_OF_ART\"}",
+                "Who wrote [Romeo and Juliet]{\"entity\":\"WORK_OF_ART\"}",
+                "Who wrote the book [Beowulf]{\"entity\":\"WORK_OF_ART\"}",
+                "Could you tell me about the book [The Odyssey]{\"entity\":\"WORK_OF_ART\"}",
+                "Could you tell me about the novel [Peter Pan]{\"entity\":\"WORK_OF_ART\"}"
+            ]
+
+        },
+        {
+            "intent_id": "ask_read_book",
+            "examples":[
+                "Read the book out",
+                "Read that book",
+                "Read the book",
+                "Give me the book",
+                "Give me that book",
+                "Open the book",
+                "Please let me read that book",
+                "Please open the book",
+                "Please read the book",
+                "Could I read the book",
+                "Could you read the book out",
+                "I want to read the book",
+                "I would like to read the book"
+            ]
+
+        }
+
+    ],
+    "actions": [
+        "fetch_joke",
+        "fetch_news",
+        "fetch_book",
+        "fetch_book_category",
+        "fetch_read_book"
+    ],
+
+    "slots":[
+        {
+            "slot_id":"book_link",
+            "type":"text"
+        }
+    ],
+
+    "skills": [
+        {
+            "description": "Ask Concierge for a joke",
+            "intent": "ask_joke",
+            "actions": [
+                "fetch_joke"
+            ]
+        },
+        {
+            "description":"Ask Concierge for the news about a topic of choice",
+            "intent": "ask_news",
+            "actions":[
+                "fetch_news"
+            ]
+        },
+        {
+            "description":"Ask Concierge to provide information about a book matching a given search term",
+            "intent": "ask_book",
+            "actions":[
+                "fetch_book"
+            ]
+        },
+        {
+            "description":"Ask Concierge to provide a book within a given topic",
+            "intent": "ask_book_category",
+            "actions":[
+                "fetch_book_category"
+            ]
+        },
+        {
+            "description":"Ask Concierge to read the last searched book",
+            "intent": "ask_read_book",
+            "actions":[
+                "fetch_read_book"
+            ]
+        }
+    ]
+}

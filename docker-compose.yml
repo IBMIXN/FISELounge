@@ -1,7 +1,6 @@
 version: "3"
 services:
   fise-app:
-    image: rechim/fise-app:latest
     restart: always
     env_file:
       - ./app/.env.local
@@ -12,7 +11,6 @@ services:
     depends_on:
       - fise-server
   fise-server:
-    image: rechim/fise-server:latest
     restart: always
     env_file:
       - ./server/.env.local
@@ -31,7 +29,12 @@ services:
   askbob:
     build: ./askbob
     ports:
-  - "8000:8000"
+      - "8000:8000"
+  concierge:
+    build: ./concierge
+    ports:
+      - "8080:8080"
+      - "8100:8100"
 volumes:
   mongo-data:
     driver: local

@@ -1,0 +1,114 @@
+{
+    "plugin": "concierge_finance",
+    "entities": [
+        "ORG",
+        "GPE",
+        "charity_search_term"
+       
+    ],
+    "regexes": [
+        {
+            "regex_id": "charity_search_term",
+            "examples":[
+                "(?:[A-Za-z]+ ){0,4}[A-Za-z]+"
+            ]
+        } 
+    ],
+    "intents": [
+        {
+            "intent_id": "ask_stocks",
+            "examples":[
+                "What is the stock value for [IBM]{\"entity\":\"ORG\"}",
+                "What is the stock value for [GS]{\"entity\":\"ORG\"}",
+                "What is the stock value of [MS]{\"entity\":\"ORG\"}",
+                "Tell me the current stock value for [NKE]{\"entity\":\"ORG\"}",
+                "Tell me what the current stock value of [RMG.L]{\"entity\":\"ORG\"}",
+                "Tell me the current stock value of [BB]{\"entity\":\"ORG\"}",
+                "Give me the current stock value of [AMD]{\"entity\":\"ORG\"} please",
+                "Give me the current stock value of [CNA.L]{\"entity\":\"ORG\"} please",
+                "Give me the current stock value of [AAPL]{\"entity\":\"ORG\"} please",
+                "What is the value of [AMZN]{\"entity\":\"ORG\"} stock right now",
+                "What is the value of [NFLX]{\"entity\":\"ORG\"} stock ",
+                "What is the value of [SBUX]{\"entity\":\"ORG\"} stock currently",
+                "Tell me the stock value of [TSLA]{\"entity\":\"ORG\"}",
+                "Tell me the stock value of [LLOY.L]{\"entity\":\"ORG\"}",
+                "Could you tell me the stock value of [GM]{\"entity\":\"ORG\"}",
+                "Could you give me stock value of [Tesla]{\"entity\":\"ORG\"}"
+            ]
+        },
+        {
+            "intent_id": "ask_charity",
+            "examples":[
+                "Give me some information about the charity [Oxfam]{\"entity\":\"charity_search_term\"}",
+                "Give me some information about the charity [Cancer Research UK]{\"entity\":\"charity_search_term\"}",
+                "Give me some information about the charity [Samaritans]{\"entity\":\"charity_search_term\"}",
+                "What does the charity [British Red Cross]{\"entity\":\"charity_search_term\"}",
+                "What does the charity [RSPCA]{\"entity\":\"charity_search_term\"} ",
+                "What is the charity [WWF]{\"entity\":\"charity_search_term\"}",
+                "Tell me about the charity [Marie Curie]{\"entity\":\"charity_search_term\"}",
+                "Tell me a short summary about the charity [British Heart Foundation]{\"entity\":\"charity_search_term\"}",
+                "Please tell me about the charity [Age UK]{\"entity\":\"charity_search_term\"}",
+                "Please tell me about the charity [National Trust]{\"entity\":\"charity_search_term\"}",
+                "Please tell me a little bit about the charity [Children in Need]{\"entity\":\"charity_search_term\"}",
+                "Please give me information about the charity [Dogs Trust]{\"entity\":\"charity_search_term\"}",
+                "Please give me information about the charity [Salvation Army]{\"entity\":\"charity_search_term\"}",
+                "Give me a summary about the charity [Barnardo's]{\"entity\":\"charity_search_term\"}",
+                "Give me a quick summary about the charity [Comic Relief]{\"entity\":\"charity_search_term\"}",
+                "Give me a short summary about the charity [Woodland Trust]{\"entity\":\"charity_search_term\"}"
+            ]
+        },
+        {
+            "intent_id": "ask_charity_city",
+            "examples":[
+                "Give me the name of a charity in [London]{\"entity\":\"GPE\"}",
+                "Give me the name of a charity in the city [Manchester]{\"entity\":\"GPE\"}",
+                "Give me the name of a charity in [Liverpool]{\"entity\":\"GPE\"}",
+                "Tell me the name of a charity in the city of [New York]{\"entity\":\"GPE\"}",
+                "Tell me the name of a charity based in the city of [Oslo]{\"entity\":\"GPE\"}",
+                "Tell me the name of a charity in [Leeds]{\"entity\":\"GPE\"}",
+                "Please tell me the name of a charity based in [Berlin]{\"entity\":\"GPE\"}",
+                "Please tell me the name of a charity in [Paris]{\"entity\":\"GPE\"}",
+                "Please tell me the name of a charity stationed in [Rome]{\"entity\":\"GPE\"}",
+                "Are there any charities in [Brooklyn]{\"entity\":\"GPE\"}",
+                "Are there any charities based [Detroit]{\"entity\":\"GPE\"}",
+                "Are there any charities stationed in [Normandy]{\"entity\":\"GPE\"}",
+                "What is the name of a charity which is based in [Florence]{\"entity\":\"GPE\"}",
+                "What is the name of a charity which is based in the city of [Cologne]{\"entity\":\"GPE\"}",
+                "What is the name of a charity which is based in the city [Edinburgh]{\"entity\":\"GPE\"}",
+                "Please give me the name of a chairty which is based in the city of [Glasgow]{\"entity\":\"GPE\"}",
+                "Please give me the name of a chairty which is based in [Dublin]{\"entity\":\"GPE\"}",
+                "Please give me the name of a chairty which is based in the city [Stockholm]{\"entity\":\"GPE\"}"
+            ]
+
+        }
+    ],
+    "actions": [
+        "fetch_stocks",
+        "fetch_charity",
+        "fetch_charity_city"
+    ],
+    "skills": [
+        {
+            "description":"Ask Concierge for the current stock value of a company",
+            "intent": "ask_stocks",
+            "actions":[
+                "fetch_stocks"
+            ]
+        },
+        {
+            "description":"Ask Concierge about charities given a search field",
+            "intent": "ask_charity",
+            "actions":[
+                "fetch_charity"
+            ]
+        },
+        {
+            "description":"Ask Concierge for charities in a given city",
+            "intent": "ask_charity_city",
+            "actions":[
+                "fetch_charity_city"
+            ]
+        }
+        
+    ]
+}

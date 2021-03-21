@@ -135,7 +135,7 @@ function VoiceCommand({ commands, toast }) {
       await customResponse(askBobCustomObject.custom.Response);
       const steps = askBobCustomObject.custom.Steps;
       if (steps) {
-        for (step in steps) {
+        for (let step in steps) {
           await customResponse(step);
         }
       }
