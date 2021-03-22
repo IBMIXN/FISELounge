@@ -247,7 +247,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
         throw r;
       })
       .then(({ message, data }) => {
-        router.replace(`/dashboard/consumer/${consumer_id}`);
+        router.replace(`/dashboard`);
       })
       .catch(async (err) => {
         if (err instanceof Error) {
