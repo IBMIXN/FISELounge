@@ -217,6 +217,7 @@ const MakeChangesForm = ({
 };
 
 const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
+
   const handleDeleteBackground = async (value) => {
     var imageToDelete = {
       image_id: value,
@@ -246,7 +247,7 @@ const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
         throw r;
       })
       .then(({ message, data }) => {
-        router.replace(`/dashboard/consumer/${consumer_id}`);
+        router.replace(`/dashboard`);
       })
       .catch(async (err) => {
         if (err instanceof Error) {

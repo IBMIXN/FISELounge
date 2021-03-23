@@ -160,7 +160,12 @@ function VoiceClip({ toast }) {
   };
 
   return (
-    <CommandButton rounded="topRight" bottom="0" left="0">
+    <CommandButton
+      rounded="topRight"
+      bottom="0"
+      left="0"
+      ariaLabel="voice-command"
+    >
       <RecorderComponent
         askbobFetch={fetchAskbobVoiceQuery}
         askbobResponseHandler={handleAskbobResponse}

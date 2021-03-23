@@ -2,6 +2,7 @@
 /** @jsxFrag React.Fragment */
 import { jsx } from "@emotion/core";
 import { Box } from "@chakra-ui/core";
+import theme from "../theme";
 
 const ROUNDNESS = "70%";
 
@@ -12,6 +13,7 @@ const CommandButton = ({
   left,
   bottom,
   onClick,
+  ariaLabel,
   children,
 }) => {
   const getRoundedProp = (rounded) => {
@@ -22,7 +24,7 @@ const CommandButton = ({
         };
       case "bottomRight":
         return {
-          roundedBottomLeft: ROUNDNESS,
+          roundedBottomRight: ROUNDNESS,
         };
       case "topLeft":
         return {
@@ -41,14 +43,14 @@ const CommandButton = ({
   };
 
   return (
-    <button onClick={onClick} aria-label="on-click">
+    <button onClick={onClick} aria-label={ariaLabel}>
       <Box
         pos="absolute"
         top={top}
         bottom={bottom}
         right={right}
         left={left}
-        bg="rgba(12, 12, 12, 0.45)"
+        bg={theme.colors.blackGlass}
         pr="1rem"
         pb="1rem"
         pt="0.5rem"

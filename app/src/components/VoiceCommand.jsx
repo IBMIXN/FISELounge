@@ -128,8 +128,19 @@ function VoiceCommand({ commands, toast }) {
 
     messages = messages || [];
     const askBobTextObject = messages.find((msg) => msg.text);
-
     const askBobCustomObject = messages.find((msg) => msg.custom);
+
+    if (askBobCustomObject && askBobCustomObject.custom.Service_Type) {
+      // Concierge Response
+      await customResponse(askBobCustomObject.custom.Response);
+      const steps = askBobCustomObject.custom.Steps;
+      if (steps) {
+        for (let step in steps) {
+          await customResponse(step);
+        }
+      }
+      return;
+    }
     const intent = askBobCustomObject ? askBobCustomObject.custom.type : null;
 
     switch (intent) {
@@ -198,7 +209,12 @@ function VoiceCommand({ commands, toast }) {
   };
 
   return (
-    <CommandButton rounded="bottomLeft" top="0" right="0">
+    <CommandButton
+      rounded="bottomLeft"
+      top="0"
+      right="0"
+      ariaLabel="voice-command"
+    >
       <RecorderComponent
         askbobFetch={fetchAskbobVoiceQuery}
         askbobResponseHandler={handleAskbobResponse}

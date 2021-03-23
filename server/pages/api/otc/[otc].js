@@ -73,6 +73,10 @@ const handler = async (req, res) => {
         // ---------------- POST
         try {
           const { contact_id, sms } = body;
+
+          var smsSuccessful,
+            emailSuccessful = false;
+
           if (!contact_id) {
             return res.status(400).json({ message: "Missing Params" });
           }
@@ -99,7 +103,7 @@ const handler = async (req, res) => {
             }
           );
 
-          if (sms) {
+          if (sms && contact.phone) {
             await fetch(`${process.env.SMS_ENDPOINT}/send`, {
               method: "POST",
               headers: {
@@ -115,9 +119,11 @@ const handler = async (req, res) => {
                   process.env.JITSI_MEET_URL
                 }/${contact._id}`,
               }),
-            })
-              .then((res) => console.log("SMS RES", res))
-              .catch((err) => console.log("SMS ERR", err));
+            }).then((res) => {
+              if (res.ok) {
+                smsSuccessful = true;
+              }
+            });
           }
 
           let transporter = nodemailer.createTransport({
@@ -148,10 +154,21 @@ const handler = async (req, res) => {
             }">here</a> to join.<br /><br />Thanks,<br />FISE Lounge Team</p>`,
           };
 
-          transporter.sendMail(message).catch((err) => {
-            throw err;
+          await transporter.sendMail(message).then((res) => {
+            if (res.accepted && res.accepted.length > 0) {
+              emailSuccessful = true;
+            }
           });
-          return res.status(200).json({ message: "Invite Sent successfully" });
+
+          if (!smsSuccessful && !emailSuccessful) {
+            return res.status(500).json({
+              message: "Both email and sms services are not responding",
+            });
+          }
+
+          return res
+            .status(200)
+            .json({ message: "Invite email Sent successfully" });
         } catch (err) {
           console.error(`api.otc.consumer.POST: ${err}`);
           return res.status(500).json({ message: "Uncaught Server Error" });
