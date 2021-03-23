@@ -15,8 +15,8 @@ import VoiceCommand from "../../components/VoiceCommand";
 import VoiceClip from "../../components/VoiceClip";
 import CommandButton from "../../components/CommandButton";
 import ContactList from "../../components/ContactList";
-import img1 from "../../assets/img1.jpeg";
-import img2 from "../../assets/img2.jpg";
+import img1 from "../../assets/defaultBackground1.jpeg";
+import img2 from "../../assets/defaultBackground2.jpg";
 import { Redirect } from "react-router-dom";
 import { Icon, useToast } from "@chakra-ui/core";
 
@@ -29,7 +29,7 @@ const defaultBackground1 = {
 
 const defaultBackground2 = {
   data: img2,
-  isVR: "true",
+  isVR: "false",
 };
 
 var displaySplashScreen = true;

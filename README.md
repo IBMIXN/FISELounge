@@ -1,7 +1,7 @@
 # IBM FISE Lounge - an interactive and privacy safe video-calling platform for those in social isolation
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf. 
-
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+>
 > The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](link).
 
 ![alt text](docs/img/Multidevice.png)
@@ -31,16 +31,17 @@ This project has been developed by a group of students at University College Lon
 
 ## Project Structure
 
-This repository contains both the web app for FISE (in [`/app`](app)) as well as the dashboard and API (in [`/server`](server)). 
+This repository contains both the web app for FISE (in [`/app`](app)) as well as the dashboard and API (in [`/server`](server)).
+# Installation
 
-# Docker Installation
-You can find our guide on how to install  
+## Docker Installation
+We recommend that you to use docker for any local deployment and usage (reformulate). [explain why here... other FISE, mongodb etc.]. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here](LINK_TO_DOCKER_README)
 
-# Server Installation
 
+##  Server Installation
 Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
 
-Ensure you have `yarn` installed (npm also works)
+Ensure you have `yarn` installed (or npm)
 
 - `cd server`
 - `yarn install`
@@ -50,9 +51,9 @@ Ensure you have `yarn` installed (npm also works)
 - To build for production: `yarn build`
 - To serve production build: `yarn start`
 
-# App Installation
+##  App Installation
 
-Ensure you have `yarn` installed (npm also works)
+Ensure you have `yarn` installed (or npm)
 
 - `cd app`
 - `yarn install`
@@ -61,6 +62,41 @@ Ensure you have `yarn` installed (npm also works)
 - To begin development: `yarn dev`
 - To build for production: `yarn build`
 - To serve production build: `yarn start`
+
+# Deployment
+Note: There are many ways to deploy both the app and server, you are not restricted to using the services we mention. 
+## Deploying the Server
+
+
+Easiest way (local): Docker
+
+
+Easiest way (cloud): Vercel
+
+- Sign up / in to your Vercel account
+- Create a new project
+- Select "Import Git Repository" and import your copy of this repository.
+- Select the server folder (you should see a Next JS logo by the folder)
+- Add all env variables that are in `/server/.env.local.example`
+- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
+
+Otherwise (cloud): Azure, DigitalOcean, AWS, IBM Cloud etc.
+## Deploying the App
+
+Easiest way (local): Docker
+
+Easiest way (cloud): Vercel
+
+- Connect repo to Vercel
+- Add all env variables that are in `/app/.env.local.example`
+
+Otherwise (local):
+
+- Follow the above instructions for _App Installation_ and expose port of choice
+
+Otherwise (cloud): Azure and similiar
+
+- Follow the above instructions for _App Installation_ and expose port of choice
 
 # Server Documentation
 
@@ -100,39 +136,9 @@ If phone number provided:
 - Will receive an sms when called through the app
 - Will receive an sms containing emergency voice-clip when sent through the app
 
-## Deploying the Server
-Overview
-
-Easiest way (local): Docker
-
-- Connect repo to Vercel
-- Add all env variables that are in `/server/.env.local.example`
-- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
-
-Easiest way (cloud): Vercel
-
-- Connect repo to Vercel
-- Add all env variables that are in `/server/.env.local.example`
-- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
-
-Otherwise: Server
-
-- Follow the above instructions for _Server Installation_ and expose port 3000
-
-
-
 # App Documentation
-## Deploying the App
-Easiest way (local): Docker
 
-Easiest way (cloud): Vercel
 
-- Connect repo to Vercel
-- Add all env variables that are in `/app/.env.local.example`
-
-Otherwise: App
-
-- Follow the above instructions for _App Installation_ and expose port of choice
 # Server API Routes
 
 ## `/api/login`
@@ -320,12 +326,13 @@ Parameters:
 - Add service credentials for respective resource in server `.env.local`.
 - For `WATSON_ASSISTANT_ID` only add key following ServiceId-XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX
 - Launch Watson Assistant inside IBM Cloud
-- Create _dialog skill_ by uploading `watson-skill.json` (change location)
+- Create _dialog skill_ by uploading `watson_skill.json` that you find in the  `/server` folder
 
 ## Valid commands
+- Change background
+- Call [contact]
 
-- Changing background
-- Calling contact
+If you want any other _custom_ commands, you can create them with Watson's dialogue......
 
 # AskBob voice commands
 
@@ -336,21 +343,37 @@ Parameters:
 - Add the AskBob instance URL in `app/.env.local`
 - AskBob supports a rich set of plugins for custom commands,
 
-## Valid commands
+## Valid commands (update phrasing)
 
 ### Default
 
-- Changing background
-- Calling contact
+- Change background
+- Call [contact]
 
-### AskBob-Plugins
+### FISE Concierge Utilities
 
-- What's the weather
-- Tell me a joke
-- [...]
+- What's the weather at different locations
+- What's the air quality at different locations
+- What's the defintion of words
+- What's the synonym of words
+
+### FISE Concierge Food
+- Tell me a recipe for certain food
+- Tell me a recipe by ingredient
+- Tell me random recipe
+
+### FISE Concierge Food
+- Value of a stock
+- Charities in a location
+
+### FISE Concierge Food
+- Value of a stock
+- Charities in a location
 
 # Plugins
 
-IBM Fise Lounge has support for custom plugins and apps that can be loaded through an iframe. This includes most web-apps, videos, HTML5 apps. `app/public/plugins.html` `app/components/pluginComponent`.
+(IMAGE)
+
+FISE Lounge has support for custom plugins and apps that can be loaded through an iframe. This includes most web-apps, videos, HTML5 apps. `app/public/plugins.html` `app/components/pluginComponent`.
 
 As a template the `plugins.html` renders a white page with a list of free games, coronavirus advice, and a live BBC news feed.
