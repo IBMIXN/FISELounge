@@ -84,10 +84,10 @@ const handler = async (req, res) => {
           res.status(200).send(buffer);
           res.end();
         } catch (err) {
-          console.error(`api.otc.askbob.POST: ${err}`);
+          console.error(`api.otc.watson.text-to-speech.POST: ${err}`);
           return res
             .status(500)
-            .json({ message: "Uncaught Server Error", data: err });
+            .json({ message: "Uncaught Server Error", data: `${err}` });
         }
         break;
       case "GET":

@@ -5,7 +5,7 @@ import { Spinner, Icon, useTheme } from "@chakra-ui/core";
 import CommandButton from "./CommandButton";
 import RecorderComponent from "./RecorderComponent";
 
-function VoiceCommand({ commands, toast }) {
+function VoiceCommand({ commands, toast, onStartRecording }) {
   const { changeScene, makeCall, customResponse } = commands;
 
   const theme = useTheme();
@@ -135,11 +135,9 @@ function VoiceCommand({ commands, toast }) {
       await customResponse(askBobCustomObject.custom.Response);
       const steps = askBobCustomObject.custom.Steps;
       if (steps) {
-        for (let step in steps) {
-          await customResponse(step);
-        }
+        await customResponse(steps.join(". "));
+        return;
       }
-      return;
     }
     const intent = askBobCustomObject ? askBobCustomObject.custom.type : null;
 
@@ -223,6 +221,7 @@ function VoiceCommand({ commands, toast }) {
         rendererOnDefault={rendererOnDefault}
         rendererOnRecording={rendererOnRecording}
         rendererOnLoading={rendererOnLoading}
+        onStartRecording={onStartRecording}
         onFeedback={showFeedbackToast}
         onError={serverErrorToast}
       ></RecorderComponent>
