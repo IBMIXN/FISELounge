@@ -1,4 +1,9 @@
-export { playAudio, resampleBufferToWav16kHz } from "./audioUtils";
+export {
+  playAudio,
+  resampleBufferToWav16kHz,
+  stopAudio,
+  isAudioPlaying,
+} from "./audioUtils";
 export { handleError } from "./errorHandler";
 export { translateEmergencyMessage } from "./languageUtils";
 
