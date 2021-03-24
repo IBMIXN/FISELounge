@@ -1,11 +1,13 @@
 import React from "react";
 import { Box } from "@chakra-ui/core";
 import theme from "../theme";
-
-const domain = process.env.PUBLIC_URL + "/plugins.html";
+import Frame from "react-frame-component";
+import Plugin from "./Plugin";
 
 const PluginComponent = () => {
-  const iFrameStyle = {
+  const iframeId = "plugin-iframe";
+
+  const iframeStyle = {
     width: "100%",
     height: "100%",
     border: "none",
@@ -27,14 +29,15 @@ const PluginComponent = () => {
       roundedBottom="5px"
       roundedTop="5px"
     >
-      <iframe
-        src={domain}
+      <Frame
         title="iframeTest"
         frameborder="0"
-        id="iframe"
+        id={iframeId}
         objectFit="scale-down"
-        style={iFrameStyle}
-      ></iframe>
+        style={iframeStyle}
+      >
+        <Plugin iframeId={iframeId}></Plugin>
+      </Frame>
     </Box>
   );
 };
