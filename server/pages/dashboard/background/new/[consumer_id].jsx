@@ -155,8 +155,7 @@ const NewBackgroundForm = ({ consumer_id, router }) => {
                 mr="1rem"
                 size="lg"
                 name="isVR"
-                checked={values.isVR}
-                isChecked={values.isVR}
+                isChecked={values.isVR === true}
                 onChange={handleChange}
               />
               Enable VR-360-Viewing?
