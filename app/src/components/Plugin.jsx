@@ -1,5 +1,7 @@
 import React, { useEffect } from "react";
 
+const bbcFeedDivId = "bbc-feed";
+
 function Plugin({ iframeId }) {
   useEffect(() => {
     const iframeDoc = document.getElementById(iframeId).contentWindow.document;
@@ -20,8 +22,8 @@ function Plugin({ iframeId }) {
     bbcNewsFeedScript.async = true;
     bbcHealthFeedScript.async = true;
 
-    iframeDoc.body.appendChild(bbcNewsFeedScript);
-    iframeDoc.body.appendChild(bbcHealthFeedScript);
+    iframeDoc.getElementById(bbcFeedDivId).appendChild(bbcNewsFeedScript);
+    iframeDoc.getElementById(bbcFeedDivId).appendChild(bbcHealthFeedScript);
   });
 
   return (
@@ -76,8 +78,6 @@ function Plugin({ iframeId }) {
         </li>
       </ul>
 
-      <div id="bbc-feed"></div>
-
       <h1>
         {" "}
         <span role="img" aria-label="redball-emoji">
@@ -85,10 +85,22 @@ function Plugin({ iframeId }) {
         </span>{" "}
         BBC News Feeds
       </h1>
-      {/* <ul>
-        <script src="//rss.bloople.net/?url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Frss.xml&limit=5&type=js"></script>
-        <script src="//rss.bloople.net/?url=http%3A%2F%2Ffeeds.bbci.co.uk%2Fnews%2Fvideo_and_audio%2Fhealth%2Frss.xml&limit=5&type=js"></script>
-      </ul> */}
+
+      <div id={bbcFeedDivId}></div>
+
+      <h1>
+        <span role="img" aria-label="microphone-emoji">
+          🎤
+        </span>{" "}
+        AskBob Commands
+      </h1>
+      <ul>
+        <li>
+          <a href="https://askbobskillsviewer.netlify.app/?url=https%3A%2F%2Ffise.ukwest.cloudapp.azure.com%3A8001%2Fskills">
+            Askbob skills-viewer (list of commands)
+          </a>
+        </li>
+      </ul>
     </div>
   );
 }
