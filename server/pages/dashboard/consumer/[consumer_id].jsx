@@ -187,7 +187,7 @@ const MakeChangesForm = ({
           )}
           {showWarningText(
             !values.isWatsonTtsEnabled || values.isWatsonTtsEnabled === "false",
-            "(Speech to text setting needs to be enabled in the broswer)"
+            "(Speech to text setting might need to be enabled in the browser)"
           )}
           <Field
             name="isSnowEnabled"
@@ -217,7 +217,6 @@ const MakeChangesForm = ({
 };
 
 const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
-
   const handleDeleteBackground = async (value) => {
     var imageToDelete = {
       image_id: value,
