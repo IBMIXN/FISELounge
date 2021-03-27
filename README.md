@@ -1,6 +1,9 @@
 # IBM FISE Lounge - an interactive and privacy safe video-calling platform for those in social isolation
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
 >
 > The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
 
@@ -8,12 +11,13 @@
 
 ## Key Features:
 
-1. Option to Privacy. Use IBM Watson (cloud) or FISE AskBob (privacy) for voice commands.
-2. Reliable video-calling using the Jitsi API.
-3. Accesible invites through SMS or Email.
+1. Option to Privacy. Use IBM Watson (cloud) or FISE AskBob (localized and privacy-safe) for voice commands.
+2. Reliable video-calling using the open-soruce Jitsi API.
+3. Accessible invites through SMS or Email - users contacts do not need an account.
 4. Emergency messages via SMS.
 5. Extendable plugins (games, BBC news feed, etc.)
 6. Interactive and customizable 360-VR, static or URL backgrounds.
+7. Simple interface suitable for elderly - the UI is based on modern gerontological studies
 
 ## Contributors:
 
@@ -34,7 +38,7 @@ This project has been developed by a group of students at University College Lon
 
 ## Project Structure
 
-This repository contains both the web app for FISE (in [`/app`](app)) as well as the dashboard and API (in [`/server`](server)).
+This repository contains both the web app for FISE (in [`/app`](app)) as well as the administrative dashboard and API (in [`/server`](server)).
 
 Application is a React app ([`/app/`](app))
 
@@ -56,7 +60,7 @@ Server is a Next.js app ([`/server/`](server))
 - shared library files in [`./src/lib/`](server/src/lib)
 - environment file example [`./.env.local.example`](server/.env.local.example) (must be renamed to `.env.local` on deployment)
 
-Below is our System Architecture Diagram:
+Below is the System Architecture Diagram:
 
 ![alt text](docs/img/fise-sad-v4.png)
 
@@ -124,7 +128,7 @@ Otherwise (local):
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
-Otherwise (cloud): Azure and similiar
+Otherwise (cloud): Azure, AWS, IBM Cloud (Virtual Machines) and similiar
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
@@ -546,7 +550,8 @@ Success:
 - Change background
 - Call [contact name]
 
-If you want any other _custom_ commands, you can create them with Watson's dialogue......
+If you want any other _custom_ commands, you can create using IBM watson dialogues.
+Read [this](https://cloud.ibm.com/docs/assistant?topic=assistant-getting-started) guide to get started.
 
 # AskBob voice commands
 
@@ -554,10 +559,10 @@ If you want any other _custom_ commands, you can create them with Watson's dialo
 
 - Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use above mentioned docker instalaltion
 - Ensure that the required deepspeech models are downloaded
+- Ensure that FISE plugins are downloaded
 - Add the AskBob instance URL in `app/.env.local`
-- AskBob supports a rich set of plugins for custom commands,
 
-## Valid commands (update phrasing)
+## Valid commands
 
 ### Default
 
