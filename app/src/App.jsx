@@ -1,11 +1,16 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route, Redirect } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
 
 import theme from "./theme";
 import { ThemeProvider, CSSReset } from "@chakra-ui/core";
 
-import Main from "./Main";
-import Onboarding from "./Onboarding";
+import Main from "./pages/Main";
+import Onboarding from "./pages/Onboarding";
 
 export default function App() {
   return (

@@ -5,6 +5,15 @@ import { connectToDatabase } from "../../../utils/mongodb";
 import randomWords from "random-words";
 import { sanitizeName } from "../../../utils";
 
+// max size of each background image //TBD?
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: process.env.MAX_IMG_SIZE,
+    },
+  },
+};
+
 const handler = async (req, res) => {
   const session = await getSession(req);
   if (!session)
@@ -18,8 +27,6 @@ const handler = async (req, res) => {
     body,
     method,
   } = req;
-
-  const allowedKeys = ["name", ""];
 
   const { client } = await connectToDatabase();
   const db = await client.db(process.env.MONGODB_DB);
@@ -49,10 +56,18 @@ const handler = async (req, res) => {
     case "PUT":
       // ---------------- PUT
       try {
-        const { name, isCloudEnabled } = body;
+        const {
+          name,
+          isCloudEnabled,
+          isSnowEnabled,
+          isWatsonTtsEnabled,
+        } = body;
 
         consumer.name = sanitizeName(name) || consumer.name;
         consumer.isCloudEnabled = isCloudEnabled || consumer.isCloudEnabled;
+        consumer.isSnowEnabled = isSnowEnabled || consumer.isSnowEnabled;
+        consumer.isWatsonTtsEnabled =
+          isWatsonTtsEnabled || consumer.isWatsonTtsEnabled;
 
         await users.updateOne({ email }, { $set: user });
         return res.status(200).json({
@@ -94,6 +109,7 @@ const handler = async (req, res) => {
         return res.status(500).json({ message: "Uncaught Server Error" });
       }
       break;
+
     default:
       return res.status(405).json({ message: "This route does not exist" });
       break;

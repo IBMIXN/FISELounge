@@ -1,0 +1,53 @@
+@font-face {
+  font-family: Manrope;
+  font-weight: 800;
+  src: url(../fonts/Manrope-ExtraBold.ttf);
+}
+
+:root {
+  --warning-red: #b62121;
+}
+
+body {
+  user-select: none;
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: auto;
+}
+
+display-none {
+  display: none;
+}
+
+.scrollable {
+  overflow-y: auto;
+}
+
+.scrollable::-webkit-scrollbar {
+  width: 2px;
+}
+
+.scrollable::-webkit-scrollbar-track {
+  width: 2px;
+}
+
+.scrollable::-webkit-scrollbar-thumb {
+  background: rgba(51, 51, 51, 0.76);
+  border-radius: 5px;
+}
+
+.contactBox:first-child {
+  margin-left: auto;
+}
+
+.contactBox:last-child {
+  margin-right: auto;
+}
+
+.warning {
+  color: var(--warning-red);
+}

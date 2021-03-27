@@ -5,6 +5,7 @@ import { Formik, Field } from "formik";
 import { useUser } from "../../../lib/hooks";
 import { fetcher, capitalize, validateName } from "../../../utils";
 import relations from "../../../utils/relations";
+import * as yup from "yup";
 
 import {
   Badge,
@@ -25,6 +26,7 @@ import {
   ModalCloseButton,
   ModalBody,
   ModalFooter,
+  IconButton,
 } from "@chakra-ui/core";
 
 import {
@@ -85,6 +87,8 @@ const DeleteUserModal = ({ onClick, consumer_name }) => {
 const MakeChangesForm = ({
   currentName,
   isCloudEnabled,
+  isSnowEnabled,
+  isWatsonTtsEnabled,
   consumer_id,
   router,
 }) => {
@@ -127,22 +131,27 @@ const MakeChangesForm = ({
       });
   };
 
+  const showWarningText = (bool, text) => {
+    if (bool) {
+      return (
+        <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
+          {text}
+        </Text>
+      );
+    }
+  };
+
   return (
     <Formik
       initialValues={{
         name: capitalize(currentName),
         isCloudEnabled: isCloudEnabled === "true",
+        isSnowEnabled: isSnowEnabled === "true",
+        isWatsonTtsEnabled: isWatsonTtsEnabled === "true",
       }}
       onSubmit={handleFormSubmit}
     >
-      {({
-        isSubmitting,
-        getFieldProps,
-        handleChange,
-        handleBlur,
-        handleSubmit,
-        values,
-      }) => (
+      {({ isSubmitting, handleSubmit, values }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
             {({ field, form }) => (
@@ -153,7 +162,7 @@ const MakeChangesForm = ({
               </FormControl>
             )}
           </Field>
-
+          <br />
           <Field
             name="isCloudEnabled"
             type="checkbox"
@@ -161,6 +170,36 @@ const MakeChangesForm = ({
             label="Enable Cloud Features?"
             component={Checkbox}
           />
+          {showWarningText(
+            values.isCloudEnabled,
+            "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+          )}
+          <Field
+            name="isWatsonTtsEnabled"
+            type="checkbox"
+            checked={values.isWatsonTtsEnabled === true}
+            label="Enable Cloud Text to Speech Narration ?"
+            component={Checkbox}
+          />
+          {showWarningText(
+            values.isWatsonTtsEnabled,
+            "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+          )}
+          {showWarningText(
+            !values.isWatsonTtsEnabled || values.isWatsonTtsEnabled === "false",
+            "(Speech to text setting might need to be enabled in the browser)"
+          )}
+          <Field
+            name="isSnowEnabled"
+            type="checkbox"
+            checked={values.isSnowEnabled === true}
+            label={"Enable falling snow particles in the background?"}
+            component={Checkbox}
+          />
+          {showWarningText(
+            values.isSnowEnabled,
+            "(Falling snow is not recommended for users with epilepsy or similar conditions)"
+          )}
 
           <Button
             mt={4}
@@ -177,11 +216,107 @@ const MakeChangesForm = ({
   );
 };
 
+const BackgroundTable = ({ backgrounds, consumer_id, router }) => {
+  const handleDeleteBackground = async (value) => {
+    var imageToDelete = {
+      image_id: value,
+      consumer_id: consumer_id,
+    };
+
+    const formBody = Object.entries(imageToDelete)
+      .map(
+        ([key, value]) =>
+          encodeURIComponent(key) + "=" + encodeURIComponent(value)
+      )
+      .join("&");
+
+    const options = {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: formBody,
+    };
+
+    await fetch(`/api/background/`, options)
+      .then((r) => {
+        if (r.ok) {
+          return r.json();
+        }
+        throw r;
+      })
+      .then(({ message, data }) => {
+        router.replace(`/dashboard`);
+      })
+      .catch(async (err) => {
+        if (err instanceof Error) {
+          throw err;
+        }
+        throw await err.json().then((rJson) => {
+          console.error(
+            `HTTP ${err.status} ${err.statusText}: ${rJson.message}`
+          );
+          return;
+        });
+      });
+  };
+
+  return (
+    <Table>
+      <TableHead>
+        <TableRow>
+          <TableHeader>Background Name</TableHeader>
+          <TableHeader>VR - 360° - viewing</TableHeader>
+          <TableHeader />
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {backgrounds.map((image, i) => (
+          <TableRow bg={i % 2 === 0 ? "white" : "gray.50"} key={i}>
+            <TableCell>
+              <Text fontSize="sm" color="gray.600" as="a">
+                {capitalize(image.name)}
+              </Text>
+            </TableCell>
+            <TableCell>
+              <Text fontSize="sm" color="gray.600">
+                {capitalize(image.isVR)}
+              </Text>
+            </TableCell>
+            <TableCell textAlign="right">
+              <IconButton
+                aria-label="Delete background"
+                icon="delete"
+                variant="outline"
+                variantColor="red"
+                onClick={() => handleDeleteBackground(image._id)}
+              ></IconButton>
+            </TableCell>
+          </TableRow>
+        ))}
+        <TableRow bg="white">
+          <TableCell>
+            <Button
+              as="a"
+              href={`/dashboard/background/new/${consumer_id}`}
+              leftIcon="add"
+              color="gray.600"
+            >
+              Add a new background
+            </Button>
+          </TableCell>
+          <TableCell />
+          <TableCell />
+        </TableRow>
+      </TableBody>
+    </Table>
+  );
+};
+
 const ConsumerPage = () => {
   const router = useRouter();
   const user = useUser({ redirectTo: "/login" });
   const { consumer_id } = router.query;
-
   const { data: consumer } = useSWR(
     consumer_id && `/api/consumer/${consumer_id}`,
     fetcher
@@ -193,7 +328,7 @@ const ConsumerPage = () => {
     })
       .then((r) => {
         if (r.ok) {
-          router.replace("/dashboard");
+          router.replace(`/dashboard`);
           return;
         }
         throw r;
@@ -224,9 +359,13 @@ const ConsumerPage = () => {
         <Heading>Editing {capitalize(consumer.name)}'s Profile</Heading>
         <Text>
           To set up FISE Lounge on {capitalize(consumer.name)}'s device, go to
+          the
           {` `}
-          <ChakraLink href="https://app.fise.ml" textDecoration="underline">
-            app.fise.ml
+          <ChakraLink
+            href={`${process.env.NEXT_PUBLIC_FISE_WEB_APP_URL}`}
+            textDecoration="underline"
+          >
+            app
           </ChakraLink>
           {` `} and enter in the code:
           <br />
@@ -303,12 +442,23 @@ const ConsumerPage = () => {
             </TableBody>
           </Table>
         </Box>
+        <Heading size="lg">{capitalize(consumer.name)}'s Backgrounds</Heading>
+        <Box>
+          <BackgroundTable
+            router={router}
+            backgrounds={consumer.backgrounds}
+            consumer_id={consumer_id}
+          />
+        </Box>
+        <br></br>
         <Heading size="lg">Edit {capitalize(consumer.name)}'s Info</Heading>
         <MakeChangesForm
           router={router}
           consumer_id={consumer_id}
           currentName={capitalize(consumer.name)}
           isCloudEnabled={consumer.isCloudEnabled}
+          isSnowEnabled={consumer.isSnowEnabled}
+          isWatsonTtsEnabled={consumer.isWatsonTtsEnabled}
         />
         <Heading mt="3rem" size="lg" color="red.200">
           Danger Zone

@@ -62,9 +62,24 @@ const NameForm = ({ router }) => {
       });
   };
 
+  const showWarningText = (bool, text) => {
+    if (bool) {
+      return (
+        <Text style={{ fontWeight: "normal", fontStyle: "italic" }}>
+          {text}
+        </Text>
+      );
+    }
+  };
+
   return (
     <Formik
-      initialValues={{ name: "", isCloudEnabled: true }}
+      initialValues={{
+        name: "",
+        isCloudEnabled: true,
+        isSnowEnabled: false,
+        isWatsonTtsEnabled: true,
+      }}
       onSubmit={handleFormSubmit}
     >
       {({
@@ -96,7 +111,52 @@ const NameForm = ({ router }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              Enable IBM Watson Speech-to-text features?
+              Enable Cloud Features?
+              {showWarningText(
+                values.isCloudEnabled,
+                "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+              )}
+            </FormLabel>
+          </FormControl>
+          <FormControl my="1rem">
+            <FormLabel>
+              <Checkbox
+                mr="1rem"
+                size="lg"
+                name="isWatsonTtsEnabled"
+                checked={values.isWatsonTtsEnabled}
+                isChecked={values.isWatsonTtsEnabled}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              Enable Cloud Text to Speech Narration ?
+              {showWarningText(
+                values.isWatsonTtsEnabled,
+                "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
+              )}
+              {showWarningText(
+                !values.isWatsonTtsEnabled ||
+                  values.isWatsonTtsEnabled === "false",
+                "(Speech to text setting might need to be enabled in the browser)"
+              )}
+            </FormLabel>
+          </FormControl>
+          <FormControl my="1rem">
+            <FormLabel>
+              <Checkbox
+                mr="1rem"
+                size="lg"
+                name="isSnowEnabled"
+                checked={values.isSnowEnabled}
+                isChecked={values.isSnowEnabled}
+                onChange={handleChange}
+                onBlur={handleBlur}
+              />
+              Enable falling snow particles in the background?
+              {showWarningText(
+                values.isSnowEnabled,
+                "(Falling snow is not recommended for users with epilepsy or similar conditions)"
+              )}
             </FormLabel>
           </FormControl>
 

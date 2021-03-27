@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`render unit test 1`] = `
+<CommandButton
+  right="0"
+  rounded="bottomLeft"
+  top="0"
+>
+  <RecorderComponent
+    askbobFetch={[Function]}
+    askbobResponseHandler={[Function]}
+    onError={[Function]}
+    rendererOnDefault={[Function]}
+    rendererOnLoading={[Function]}
+    rendererOnRecording={[Function]}
+    watsonFetch={[Function]}
+    watsonResponseHandler={[Function]}
+  />
+</CommandButton>
+`;

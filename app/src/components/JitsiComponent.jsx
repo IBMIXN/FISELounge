@@ -7,6 +7,7 @@ const configOverwrite = {
   disableDeepLinking: true,
   enableWelcomePage: false,
   enableClosePage: false,
+  prejoinPageEnabled: false,
 };
 
 const interfaceConfigOverwrite = {
@@ -34,7 +35,7 @@ const interfaceConfigOverwrite = {
   VIDEO_QUALITY_LABEL_DISABLED: true,
   HIDE_KICK_BUTTON_FOR_GUESTS: true,
   SHOW_CHROME_EXTENSION_BANNER: false,
-  DEFAULT_BACKGROUND: '#1b607d'
+  DEFAULT_BACKGROUND: '#E5E6E4'
 };
 
 

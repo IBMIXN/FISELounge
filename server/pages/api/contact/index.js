@@ -27,10 +27,11 @@ const handler = async (req, res) => {
             consumer_id,
             name,
             email: contact_email_raw,
-            profileImage,
+            profileImage: profileImage,
             relation: relationStr,
+            phone: phone,
           } = body;
-
+          
           const contact_email = contact_email_raw.toLowerCase();
 
           const relation = relations.indexOf(relationStr.toLowerCase());
@@ -42,8 +43,10 @@ const handler = async (req, res) => {
             _id: uuid.v4(),
             name: sanitizeName(name),
             email: contact_email,
+            profileImage: profileImage,
             relation: relation,
-            profileImage: "",
+            profileImage: profileImage,
+            phone : phone
           };
 
           let consumer = user.consumers.find((c) => c._id === consumer_id);

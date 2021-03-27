@@ -7,8 +7,6 @@ import { IamAuthenticator } from "ibm-watson/auth";
 import { connectToDatabase } from "../../../../utils/mongodb";
 import stringSimilarity from "string-similarity";
 
-import relations from "../../../../utils/relations";
-
 const watsonId = process.env.WATSON_ASSISTANT_ID;
 
 const cors = Cors({
@@ -86,7 +84,7 @@ const handler = async (req, res) => {
             text: "",
           };
           const recognizeParams = {
-            audio: new Buffer(body, "base64"),
+            audio: Buffer.from(body, "base64"),
             contentType: "audio/mp3",
           };
 
@@ -94,6 +92,7 @@ const handler = async (req, res) => {
             action: "",
             contact_id: "",
             text: "",
+            reply: "",
           };
 
           // call stt api with the audio in request and add this to assistant input
@@ -117,32 +116,37 @@ const handler = async (req, res) => {
 
             data.text = transcript;
 
-            if (output.intents[0]) {
-              const { intent } = output.intents[0];
+            const intent =
+              output.intents && output.intents.length
+                ? output.intents[0].intent
+                : null;
 
-              switch (intent) {
-                case "Call_Contact":
-                  data.action = "startCall";
+            switch (intent) {
+              case "Call_Contact":
+                data.action = "startCall";
 
-                  const contactToCall = output.generic[0].text.toLowerCase();
+                const contactToCall = output.entities[0].value.toLowerCase();
+                data.reply = `Calling ${contactToCall}`;
 
-                  const contactNames = consumer.contacts.map((c) => c.name);
-                  const { bestMatchIndex } = stringSimilarity.findBestMatch(
-                    contactToCall,
-                    contactNames
-                  );
-                  const contact_id = consumer.contacts[bestMatchIndex]._id;
-                  data.contact_id = contact_id;
-                  break;
-                case "Change_Background":
-                  data.action = "changeBackground";
-                  break;
-                case "Start_Exercise":
-                  data.action = "startExercise";
-                  break;
-                default:
-                  break;
-              }
+                const contactNames = consumer.contacts.map((c) => c.name);
+                const { bestMatchIndex } = stringSimilarity.findBestMatch(
+                  contactToCall,
+                  contactNames
+                );
+                const contact_id = consumer.contacts[bestMatchIndex]._id;
+                data.contact_id = contact_id;
+                break;
+              case "Change_Background":
+                data.action = "changeBackground";
+                data.reply = "Changing background";
+                break;
+              case "Start_Exercise":
+                data.action = "startExercise";
+                data.reply = "Starting exercise";
+                break;
+              default:
+                data.action = "";
+                data.reply = "Watson couldn't understand your intent";
             }
           }
 

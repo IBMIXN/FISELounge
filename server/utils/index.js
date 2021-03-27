@@ -10,6 +10,9 @@ const email_regex = /(?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=
 
 const name_regex = /^[a-zA-Z\s]+$/i;
 
+// E.164 standard for phone number
+const phone_regex = /^\+[1-9]\d{1,14}$/;
+
 export function validateName(value) {
   let error = "";
   if (!value) {
@@ -46,8 +49,33 @@ export function validatePassword(value) {
 
 export function validateRelation(value) {
   let error = "";
-  if (!value) {
+  if (!value || value == "Select Relation") {
     error = "Choose a relation";
+  }
+  return error;
+}
+
+export function validatePhone(value) {
+  let error = "";
+  if (!value) {
+  } else if (!phone_regex.test(value)) {
+    error = "Invalid phone number, don't forget to include country code";
+  }
+  return error;
+}
+
+export function validateImageName(value) {
+  let error = "";
+  if (!value) {
+    error = "Required";
+  }
+  return error;
+}
+
+export function validateImageURL(value) {
+  let error = "";
+  if (!value) {
+    error = "Required";
   }
   return error;
 }

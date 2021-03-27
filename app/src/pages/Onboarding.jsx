@@ -1,4 +1,3 @@
-import React from "react";
 import { Redirect } from "react-router-dom";
 import { Formik, Field } from "formik";
 import {
@@ -14,12 +13,18 @@ import {
   Button,
   Box,
 } from "@chakra-ui/core";
-import { useState } from "react";
-import { useEffect } from "react";
 
-import Footer from "./components/Footer";
+import Footer from "../components/Footer";
+import SplashScreen from "../components/SplashScreen";
+import React, { useState, useEffect } from "react";
 
 function Onboarding() {
+  const [loaded, setLoading] = useState(false);
+
+  useEffect(() => {
+    setTimeout(() => setLoading(true), 6000);
+  }, []);
+
   const [userIsValid, setUserIsValid] = useState(false);
   const [error, setError] = useState("");
 
@@ -67,13 +72,13 @@ function Onboarding() {
       });
   };
 
-  return (
+  return loaded ? (
     <Flex direction="column" alignItems="center" justifyContent="flex-start">
       <Stack justifyContent="center" alignItems="center" height="25vh">
         <Heading fontSize="5vw">Welcome to FISE Lounge</Heading>
         {userIsValid && <Redirect to="/" />}
       </Stack>
-      <Box>
+      <Box maxWidth="90vw">
         <Formik initialValues={{ otc: "" }} onSubmit={handleFormSubmit}>
           {({
             isSubmitting,
@@ -126,20 +131,25 @@ function Onboarding() {
           above and press "Enter App".
         </Text>
         <Text color="gray.500">
-          Otherwise, please sign up for FISE Lounge at{" "}
+          Otherwise, please sign up for FISE Lounge{" "}
           <ChakraLink
             color="blue.600"
             textDecoration="underline"
-            href="https://fise.ml"
+            href={process.env.REACT_APP_SERVER_URL}
           >
-            fise.ml
+            here
           </ChakraLink>{" "}
           and return here when you have created a user and received a
           one-time-code.
         </Text>
+        <Text mt="2rem">
+          <i>*Not supported on Internet Explorer & Opera Mini</i>
+        </Text>
       </Stack>
       <Footer />
     </Flex>
+  ) : (
+    <SplashScreen />
   );
 }
 

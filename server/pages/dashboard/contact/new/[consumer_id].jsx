@@ -10,6 +10,7 @@ import {
   validateName,
   validateEmail,
   validateRelation,
+  validatePhone,
 } from "../../../../utils";
 
 import {
@@ -19,6 +20,9 @@ import {
   FormLabel,
   FormControl,
   Input,
+  InputGroup,
+  InputLeftElement,
+  Icon,
   Button,
   Select,
 } from "@chakra-ui/core";
@@ -29,11 +33,36 @@ import { Main } from "../../../../components/Main";
 import { Footer } from "../../../../components/Footer";
 import Breadcrumbs from "../../../../components/Breadcrumbs";
 import Loading from "../../../../components/Loading";
+import * as yup from "yup";
 
 const NameForm = ({ router }) => {
   const [formError, setFormError] = useState("");
+  const SUPPORTED_FORMATS = [
+    "image/jpg",
+    "image/jpeg",
+    "image/gif",
+    "image/png",
+  ];
+  const fileToBase64 = (inputFile) => {
+    const tempFileReader = new FileReader();
+
+    return new Promise((resolve, reject) => {
+      tempFileReader.onerror = () => {
+        tempFileReader.abort();
+        reject(new DOMException("Problem parsing background file."));
+      };
+
+      tempFileReader.onload = () => {
+        resolve(tempFileReader.result);
+      };
+      tempFileReader.readAsDataURL(inputFile);
+    });
+  };
 
   const handleFormSubmit = async (values, actions) => {
+    if (values.profileImage != "") {
+      values.profileImage = await fileToBase64(values.profileImage);
+    }
     const valuesToSend = { ...values, consumer_id: router.query.consumer_id };
     const formBody = Object.entries(valuesToSend)
       .map(
@@ -83,8 +112,25 @@ const NameForm = ({ router }) => {
 
   return (
     <Formik
-      initialValues={{ name: "", email: "", relation: "" }}
+      initialValues={{
+        name: "",
+        email: "",
+        phone: "",
+        relation: "",
+        profileImage: "",
+      }}
       onSubmit={handleFormSubmit}
+      validationSchema={yup.object().shape({
+        profileImage: yup
+          .mixed()
+          .notRequired()
+          .test(
+            "fileType",
+            "Unsupported File Format",
+            (value) =>
+              !value || (value && SUPPORTED_FORMATS.includes(value.type))
+          ),
+      })}
     >
       {({
         isSubmitting,
@@ -92,7 +138,10 @@ const NameForm = ({ router }) => {
         handleChange,
         handleBlur,
         handleSubmit,
+        setFieldValue,
         values,
+        errors,
+        touched,
       }) => (
         <form onSubmit={handleSubmit}>
           <Field name="name" validate={validateName}>
@@ -109,8 +158,28 @@ const NameForm = ({ router }) => {
             {({ field, form }) => (
               <FormControl isInvalid={form.errors.email && form.touched.email}>
                 <FormLabel htmlFor="email">Email address</FormLabel>
-                <Input {...field} id="email" placeholder="adam@example.org" />
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="email" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="adam@example.org" />
+                </InputGroup>
                 <FormErrorMessage>{form.errors.email}</FormErrorMessage>
+              </FormControl>
+            )}
+          </Field>
+          <br />
+          <Field name="phone" validate={validatePhone}>
+            {({ field, form }) => (
+              <FormControl isInvalid={form.errors.phone && form.touched.phone}>
+                <FormLabel htmlFor="phone">Phone number</FormLabel>
+                <InputGroup>
+                  <InputLeftElement
+                    children={<Icon name="phone" color="gray.300" />}
+                  />
+                  <Input {...field} id="email" placeholder="+44767254891" />
+                </InputGroup>
+                <FormErrorMessage>{form.errors.phone}</FormErrorMessage>
               </FormControl>
             )}
           </Field>
@@ -121,26 +190,42 @@ const NameForm = ({ router }) => {
             <Field
               as={Select}
               name="relation"
-              placeholder="Select Relation"
               validate={validateRelation}
             >
-              <option value="son">Their son</option>
-              <option value="daughter">Their daughter</option>
-              <option value="grandson">Their grandson</option>
-              <option value="granddaughter">Their granddaughter</option>
-              <option value="father">Their father</option>
-              <option value="mother">Their mother</option>
-              <option value="grandfather">Their grandfather</option>
-              <option value="grandmother">Their grandmother</option>
-              <option value="uncle">Their uncle</option>
-              <option value="aunt">Their aunt</option>
-              <option value="brother">Their brother</option>
-              <option value="sister">Their sister</option>
-              <option value="friend">Their friend</option>
+              <option default style={{ color: 'black' }}>Select Relation</option>
+              <option value="son" style={{ color: 'black' }} >Their son</option>
+              <option value="daughter" style={{ color: 'black' }} >Their daughter</option>
+              <option value="grandson" style={{ color: 'black' }}>Their grandson</option>
+              <option value="granddaughter" style={{ color: 'black' }}>Their granddaughter</option>
+              <option value="father" style={{ color: 'black' }}>Their father</option>
+              <option value="mother" style={{ color: 'black' }}>Their mother</option>
+              <option value="grandfather" style={{ color: 'black' }}>Their grandfather</option>
+              <option value="grandmother" style={{ color: 'black' }}>Their grandmother</option>
+              <option value="uncle" style={{ color: 'black' }}>Their uncle</option>
+              <option value="aunt" style={{ color: 'black' }}>Their aunt</option>
+              <option value="brother" style={{ color: 'black' }}>Their brother</option>
+              <option value="sister" style={{ color: 'black' }}>Their sister</option>
+              <option value="friend" style={{ color: 'black' }}>Their friend</option>
             </Field>
           </FormControl>
+          <br />
+          <FormLabel htmlFor="profileImage">Set Profile Picture</FormLabel>
+          <br />
+          <input
+            id="profileImage"
+            name="profileImage"
+            type="file"
+            accept="image/*"
+            onChange={(event) => {
+              setFieldValue("profileImage", event.currentTarget.files[0]);
+            }}
+            className="form-control"
+          />
+          <br />
+          {errors.profileImage && touched.profileImage ? (
+              <Text color="crimson">{errors.profileImage}</Text>
+              ) : null}
 
-          {formError && <Text color="crimson">{formError}</Text>}
           <Button
             mt={4}
             variantColor="blue"
