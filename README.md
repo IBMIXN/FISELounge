@@ -1,19 +1,23 @@
 # IBM FISE Lounge - an interactive and privacy safe video-calling platform for those in social isolation
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
+[![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
+
+> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
 >
-> The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](link).
+> The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
 
 ![alt text](docs/img/Multidevice.png)
 
 ## Key Features:
 
-1. Option to Privacy. Use IBM Watson (cloud) or FISE AskBob (privacy) for voice commands.
-2. Reliable video-calling using the Jitsi API.
-3. Accesible invites through SMS or Email.
+1. Option to Privacy. Use IBM Watson (cloud) or FISE AskBob (localized and privacy-safe) for voice commands.
+2. Reliable video-calling using the open-soruce Jitsi API.
+3. Accessible invites through SMS or Email - users contacts do not need an account.
 4. Emergency messages via SMS.
 5. Extendable plugins (games, BBC news feed, etc.)
 6. Interactive and customizable 360-VR, static or URL backgrounds.
+7. Simple interface suitable for elderly - the UI is based on modern gerontological studies
 
 ## Contributors:
 
@@ -34,7 +38,7 @@ This project has been developed by a group of students at University College Lon
 
 ## Project Structure
 
-This repository contains both the web app for FISE (in [`/app`](app)) as well as the dashboard and API (in [`/server`](server)).
+This repository contains both the web app for FISE (in [`/app`](app)) as well as the administrative dashboard and API (in [`/server`](server)).
 
 Application is a React app ([`/app/`](app))
 
@@ -56,7 +60,7 @@ Server is a Next.js app ([`/server/`](server))
 - shared library files in [`./src/lib/`](server/src/lib)
 - environment file example [`./.env.local.example`](server/.env.local.example) (must be renamed to `.env.local` on deployment)
 
-Below is our System Architecture Diagram:
+Below is the System Architecture Diagram:
 
 ![alt text](docs/img/fise-sad-v4.png)
 
@@ -64,7 +68,7 @@ Below is our System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here](/[repo]/tree/docker/docs/docker_installation/docker_installation.md).
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md).
 
 ## Server Installation
 
@@ -124,7 +128,7 @@ Otherwise (local):
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
-Otherwise (cloud): Azure and similiar
+Otherwise (cloud): Azure, AWS, IBM Cloud (Virtual Machines) and similiar
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
@@ -174,17 +178,33 @@ Application:
 - `REACT_APP_SERVER_URL`: URL of server (used as target URL for Server API request)
 - `REACT_APP_ASKBOB_URL`: URL of running Ask Bob instance (used as target URL for voice command requests)
 
+# Application Documentation
+
+## Features Overview
+
+- **Modern technologies** - Running on React.
+
+- **No complex login** - Consumers only need to enter their One-Time Code, which will be cached to the browser.
+- **Personalize your Lounge** - Customizable and interactive 360-VR, static or URL backgrounds, custom profile images for contacts.
+- **Research grade UI** - UI design based on gerontological research, optimized for improving
+  elderly's experience.
+- **Voice commands** - Responsive voice commands that provide consumers their personal AI assistant. The Ask Bob assistant option provides additional functionality while also implementing privacy measures.
+- **Extensible Plugins** - The lounge experience enables consumers to access BBC live news feed, online games such as chess, checkers, 70's TV Show Quiz, embedded videos and website pages from the Plugins panel. Moreover, plugins have been designed to allow further development and enable clients to modify the application to suit their needs.
+- **Reliable videocalling** - Consumers can call contact their dearest through the Jitsi video-calling API.
+- **Privacy-safe** - Privacy features that keep user data locally, far from cloud and external sources by running the application locally together with its services. If Ask Bob and local speech synthesis are enabled by the administrator, data will not leave the device.
+- **Integrated in FISE ecosystem** - Voice commands enbale consumers to access the feature rich APIs of the FISE ecosystem such as Concierge while also keeping privacy first.
+- **Simple installation process** - We provide detailed installation guide for deploying the application locally on devices. In addition, "one-click" installation scripts are provided to facilitate this process.
+
 # Server Documentation
 
 ## Overview
 
-- Running on NextJS 9 (different to Express, look it up and be familiar with ES5/ES6 syntax)
-- Auth handled by Passport
-- Storage in MongoDB (Can easily set up using Atlas)
-- All API routes at `localhost:3000/api/*`
-- All dashboard pages at `localhost:3000/*`
-- All API routes are "pages" in NextJS 9
-- All pages are in `/server/pages`, with API routes in `/server/pages/api` and the file path from pages corresponding to the actual path
+- **Modern technologies** - Running on NextJS 9 (different to Express, look it up and be familiar with ES5/ES6 syntax).
+
+- **Option rich dashboard** - Consumers' experience is easily customizable by the account administrator from the dashboard. Options include using Ask Bob or IBM Watson assitant services, using IBM Watson Text-to-Speech features or the WebAPI Speech Synthesizer available in most browsers, easily customize backgrounds and contacts data or profile images, etc.
+- **Privacy-safe** - Encrypted session cookies for holding sensitive information locally. Authentication handled by Passport and sign-up by the Crypto Node.js module. Storage in MongoDB can be deployed as a local service on the device, removing data exposure.
+- **API** - Enables option configuration and account creation by proxying client requests to our database.
+- **Email & SMS API** - Send SMS and email invitations for videocalling on consumer demand. In addition, our emergency system can alert the contacts of a consumer who is in need of help through the SMS & email API.
 
 ## Data Types
 
@@ -546,7 +566,8 @@ Success:
 - Change background
 - Call [contact name]
 
-If you want any other _custom_ commands, you can create them with Watson's dialogue......
+If you want any other _custom_ commands, you can create using IBM watson dialogues.
+Read [this](https://cloud.ibm.com/docs/assistant?topic=assistant-getting-started) guide to get started.
 
 # AskBob voice commands
 
@@ -554,10 +575,10 @@ If you want any other _custom_ commands, you can create them with Watson's dialo
 
 - Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use above mentioned docker instalaltion
 - Ensure that the required deepspeech models are downloaded
+- Ensure that FISE plugins are downloaded
 - Add the AskBob instance URL in `app/.env.local`
-- AskBob supports a rich set of plugins for custom commands,
 
-## Valid commands (update phrasing)
+## Valid commands
 
 ### Default
 
