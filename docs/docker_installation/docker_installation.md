@@ -32,6 +32,7 @@ That's it, you're done. Now it's only one final step left - _installing docker_.
 
 
 ### *And that's all, now you're done! Go back to the main folder and run the __docker.bat__*
+Altough make sure that you or somebody else has filled in all the required `.env.variables` in both `/server` and `/app` (read about this in the main folders readme document)
 
  # Extra steps
 
