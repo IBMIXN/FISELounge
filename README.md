@@ -67,8 +67,30 @@ Below is the System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docs/docker_installation`
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. Docker will install the app, server, FISE AskBob and FISE concierge together. If you're on a Windows device we have provided a batch file that will get everything up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docker_installation/docker_installation.md`.
 
+If you are currently in the docker branch, and you have docker installed, you can either run the `docker.bat` (Windows only), or write the following commands in your terminal:
+
+```
+docker-compose up
+```
+
+**Note: don't forget that you need to fill in the environment variables (`.env.files`) for both the `/server` and `/app` before running docker.** You can create the .env.files that need to be filled in by running `create-env-files.bat` (Windows only) or you can write the following in your terminal
+
+```
+cd app
+cp cp .env.local.example .env.local
+cd ..
+cd server
+cp .env.local.example .env.local
+```
+
+If you want to use the MongoDB database that is built inside the container the following credentials in `\server\env.local`
+
+```
+MONGODB_URI="mongodb://mongo:27017"
+MONGODB_DB="mongo"
+```
 ## Server Installation
 
 Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
