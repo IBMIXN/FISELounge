@@ -3,9 +3,9 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart, privacy-safe, and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
 >
-> The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
+> The application is a part of the integrated FISE Ecosystem that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
 
 ![alt text](docs/img/Multidevice.png)
 
@@ -27,7 +27,6 @@ This project has been developed by a group of students at University College Lon
 - Radu Echim (UCL)
 - Adam Piwowarczyk (UCL)
 - Jeremy Lo Ying Ping (UCL)
-- Jiaruo Gao (UCL)
 - Ak Ihoeghinlan (UCL)
 - Calin Hadarean (UCL)
 - Adam Peace (UCL)
@@ -68,7 +67,7 @@ Below is the System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md).
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docs/docker_installation`
 
 ## Server Installation
 
