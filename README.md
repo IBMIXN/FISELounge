@@ -27,7 +27,6 @@ This project has been developed by a group of students at University College Lon
 - Radu Echim (UCL)
 - Adam Piwowarczyk (UCL)
 - Jeremy Lo Ying Ping (UCL)
-- Jiaruo Gao (UCL)
 - Ak Ihoeghinlan (UCL)
 - Calin Hadarean (UCL)
 - Adam Peace (UCL)
@@ -68,7 +67,7 @@ Below is the System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md).
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docs/docker_installation`
 
 ## Server Installation
 
