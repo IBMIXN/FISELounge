@@ -3,9 +3,9 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
-> IBM FISE Lounge is an application that acts as a smart and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart, privacy-safe, and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
 >
-> The application is a part of the integrated [FISE Ecosystem](link) that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
+> The application is a part of the integrated FISE Ecosystem that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
 
 ![alt text](docs/img/Multidevice.png)
 
@@ -27,7 +27,6 @@ This project has been developed by a group of students at University College Lon
 - Radu Echim (UCL)
 - Adam Piwowarczyk (UCL)
 - Jeremy Lo Ying Ping (UCL)
-- Jiaruo Gao (UCL)
 - Ak Ihoeghinlan (UCL)
 - Calin Hadarean (UCL)
 - Adam Peace (UCL)
@@ -68,8 +67,30 @@ Below is the System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. If you're on a Windows device we have provided a batch file that will get everything (both app and server) up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md).
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. Docker will install the app, server, FISE AskBob and FISE concierge together. If you're on a Windows device we have provided a batch file that will get everything up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docker_installation/docker_installation.md`.
 
+If you are currently in the docker branch, and you have docker installed, you can either run the `docker.bat` (Windows only), or write the following commands in your terminal:
+
+```
+docker-compose up
+```
+
+**Note: don't forget that you need to fill in the environment variables (`.env.files`) for both the `/server` and `/app` before running docker.** You can create the .env.files that need to be filled in by running `create-env-files.bat` (Windows only) or you can write the following in your terminal
+
+```
+cd app
+cp cp .env.local.example .env.local
+cd ..
+cd server
+cp .env.local.example .env.local
+```
+
+If you want to use the MongoDB database that is built inside the container the following credentials in `\server\env.local`
+
+```
+MONGODB_URI="mongodb://mongo:27017"
+MONGODB_DB="mongo"
+```
 ## Server Installation
 
 Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
@@ -178,17 +199,33 @@ Application:
 - `REACT_APP_SERVER_URL`: URL of server (used as target URL for Server API request)
 - `REACT_APP_ASKBOB_URL`: URL of running Ask Bob instance (used as target URL for voice command requests)
 
+# Application Documentation
+
+## Features Overview
+
+- **Modern technologies** - Running on React.
+
+- **No complex login** - Consumers only need to enter their One-Time Code, which will be cached to the browser.
+- **Personalize your Lounge** - Customizable and interactive 360-VR, static or URL backgrounds, custom profile images for contacts.
+- **Research grade UI** - UI design based on gerontological research, optimized for improving
+  elderly's experience.
+- **Voice commands** - Responsive voice commands that provide consumers their personal AI assistant. The Ask Bob assistant option provides additional functionality while also implementing privacy measures.
+- **Extensible Plugins** - The lounge experience enables consumers to access BBC live news feed, online games such as chess, checkers, 70's TV Show Quiz, embedded videos and website pages from the Plugins panel. Moreover, plugins have been designed to allow further development and enable clients to modify the application to suit their needs.
+- **Reliable videocalling** - Consumers can call contact their dearest through the Jitsi video-calling API.
+- **Privacy-safe** - Privacy features that keep user data locally, far from cloud and external sources by running the application locally together with its services. If Ask Bob and local speech synthesis are enabled by the administrator, data will not leave the device.
+- **Integrated in FISE ecosystem** - Voice commands enbale consumers to access the feature rich APIs of the FISE ecosystem such as Concierge while also keeping privacy first.
+- **Simple installation process** - We provide detailed installation guide for deploying the application locally on devices. In addition, "one-click" installation scripts are provided to facilitate this process.
+
 # Server Documentation
 
 ## Overview
 
-- Running on NextJS 9 (different to Express, look it up and be familiar with ES5/ES6 syntax)
-- Auth handled by Passport
-- Storage in MongoDB (Can easily set up using Atlas)
-- All API routes at `localhost:3000/api/*`
-- All dashboard pages at `localhost:3000/*`
-- All API routes are "pages" in NextJS 9
-- All pages are in `/server/pages`, with API routes in `/server/pages/api` and the file path from pages corresponding to the actual path
+- **Modern technologies** - Running on NextJS 9 (different to Express, look it up and be familiar with ES5/ES6 syntax).
+
+- **Option rich dashboard** - Consumers' experience is easily customizable by the account administrator from the dashboard. Options include using Ask Bob or IBM Watson assitant services, using IBM Watson Text-to-Speech features or the WebAPI Speech Synthesizer available in most browsers, easily customize backgrounds and contacts data or profile images, etc.
+- **Privacy-safe** - Encrypted session cookies for holding sensitive information locally. Authentication handled by Passport and sign-up by the Crypto Node.js module. Storage in MongoDB can be deployed as a local service on the device, removing data exposure.
+- **API** - Enables option configuration and account creation by proxying client requests to our database.
+- **Email & SMS API** - Send SMS and email invitations for videocalling on consumer demand. In addition, our emergency system can alert the contacts of a consumer who is in need of help through the SMS & email API.
 
 ## Data Types
 
