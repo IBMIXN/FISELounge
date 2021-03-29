@@ -7,7 +7,7 @@ import "aframe";
 import "aframe-particle-system-component";
 import { Entity, Scene } from "aframe-react";
 import { Helmet } from "react-helmet";
-import { playAudio, sleep } from "../../utils";
+import { isAudioPlaying, playAudio, sleep, stopAudio } from "../../utils";
 import SplashScreen from "../../components/SplashScreen";
 import JitsiComponent from "../../components/JitsiComponent";
 import PluginComponent from "../../components/PluginComponent";
@@ -146,13 +146,21 @@ function Main() {
         body: `text=${text}`,
       }
     )
-      .then((res) => {
+      .then(async (res) => {
         if (res.ok) {
           const { body } = res;
           const reader = body.getReader();
-          reader.read().then((result) => {
-            playAudio(result.value);
-          });
+          var chunks = [];
+          let done, value;
+          while (!done) {
+            ({ value, done } = await reader.read());
+            if (done) {
+              break;
+            }
+            chunks = chunks.concat(value);
+          }
+          chunks = chunks.reduce((acc, val) => [...acc, ...val], []);
+          playAudio(new Uint8Array(chunks));
           return;
         }
         throw res;
@@ -167,7 +175,7 @@ function Main() {
       });
   };
 
-  const speechToTextLocally = async (text) => {
+  const playTextToSpeechLocally = async (text) => {
     if (synth.speaking) {
       synth.cancel();
       await sleep(1000);
@@ -178,6 +186,16 @@ function Main() {
         console.error("Speech to text failed: ", e);
       };
       synth.speak(speakText);
+    }
+  };
+
+  const stopSpeech = async () => {
+    if (user.isWatsonTtsEnabled === "true" && isAudioPlaying()) {
+      stopAudio();
+      return;
+    }
+    if (synth.speaking) {
+      synth.cancel();
     }
   };
 
@@ -310,9 +328,10 @@ function Main() {
             customResponse:
               user.isWatsonTtsEnabled === "true"
                 ? playTextToSpeechWatson
-                : speechToTextLocally,
+                : playTextToSpeechLocally,
           }}
           toast={showToast}
+          onStartRecording={stopSpeech}
         ></VoiceCommand>
         <VoiceClip
           isCloudEnabled={user.isCloudEnabled === "true"}

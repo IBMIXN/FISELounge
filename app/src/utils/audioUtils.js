@@ -4,9 +4,25 @@ import convert from "pcm-convert";
 export function playAudio(chunk) {
   const blob = new Blob([chunk], { type: "audio/wav" });
   const url = window.URL.createObjectURL(blob);
-  window.audio = new Audio();
-  window.audio.src = url;
-  window.audio.play();
+
+  if (!window.audioPlayer) {
+    window.audioPlayer = new Audio();
+  }
+  window.audioPlayer.src = url;
+  window.audioPlayer.play();
+}
+
+export function isAudioPlaying() {
+  if (window.audioPlayer && !window.audioPlayer.paused) {
+    return true;
+  }
+  return false;
+}
+
+export function stopAudio() {
+  if (window.audioPlayer) {
+    window.audioPlayer.pause();
+  }
 }
 
 export function resampleBufferToWav16kHz(fromSampleRate, buffer) {

@@ -111,7 +111,7 @@ const NameForm = ({ router }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              Enable IBM Watson Speech-to-text features?
+              Enable Cloud Features?
               {showWarningText(
                 values.isCloudEnabled,
                 "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
@@ -129,7 +129,7 @@ const NameForm = ({ router }) => {
                 onChange={handleChange}
                 onBlur={handleBlur}
               />
-              Enable IBM Watson Speech-to-text features?
+              Enable Cloud Text to Speech Narration ?
               {showWarningText(
                 values.isWatsonTtsEnabled,
                 "(Note that enabling cloud features is not Privacy safe due to voice data being used by IBM services)"
@@ -137,7 +137,7 @@ const NameForm = ({ router }) => {
               {showWarningText(
                 !values.isWatsonTtsEnabled ||
                   values.isWatsonTtsEnabled === "false",
-                "(Speech to text setting needs to be enabled in the broswer)"
+                "(Speech to text setting might need to be enabled in the browser)"
               )}
             </FormLabel>
           </FormControl>

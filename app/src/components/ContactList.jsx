@@ -36,6 +36,7 @@ function ContactList({ onContactClick }) {
                       src={contact.profileImage}
                       pointerEvents="none"
                       objectFit="cover"
+                      alt={contact.name || "profile"}
                     />
                   </Box>
                 ) : (

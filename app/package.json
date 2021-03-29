@@ -1,7 +1,8 @@
 {
   "name": "fise-web-app",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "private": true,
+  "license": "apgl-3.0",
   "dependencies": {
     "@chakra-ui/core": "^0.8.0",
     "@emotion/core": "^10.0.35",
@@ -20,6 +21,7 @@
     "pcm-convert": "^1.6.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
+    "react-frame-component": "^4.1.3",
     "react-helmet": "^6.0.0",
     "react-jutsu": "^2.2.0",
     "react-router-dom": "^5.2.0",
