@@ -88,8 +88,13 @@ cp .env.local.example .env.local
 If you want to use the MongoDB database that is built inside the container the following credentials in `\server\env.local`
 
 ```
-MONGODB_URI="mongodb://mongo:27017"
+MONGODB_URI="mongodb://mongo:27017" (or MONGODB_URI="mongdb://mongo:27017/mongo")
 MONGODB_DB="mongo"
+```
+
+If you want to use the AskBob that is built inside the container the following credentials in `\app\env.local`
+```
+REACT_APP_ASKBOB_URL="http://localhost:8000"
 ```
 ## Server Installation
 
