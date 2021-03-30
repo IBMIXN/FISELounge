@@ -93,9 +93,11 @@ MONGODB_DB="mongo"
 ```
 
 If you want to use the AskBob that is built inside the container the following credentials in `\app\env.local`
+
 ```
 REACT_APP_ASKBOB_URL="http://localhost:8000"
 ```
+
 ## Server Installation
 
 Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
@@ -128,7 +130,9 @@ Note: There are many ways to deploy both the app and server, you are not restric
 
 ## Deploying the Server
 
-Easiest way (local): Docker
+Easiest way recommended (local): Docker
+
+- Follow above guide for [Docker](#docker-installation)
 
 Easiest way (cloud): Vercel
 
@@ -139,24 +143,32 @@ Easiest way (cloud): Vercel
 - Add all env variables that are in `/server/.env.local.example`
 - (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
 
+Otherwise (local):
+
+- Follow the above instructions for [Server Installation](#server-installation) and expose port of choice
+
 Otherwise (cloud): Azure, DigitalOcean, AWS, IBM Cloud etc.
 
 ## Deploying the App
 
-Easiest way (local): Docker
+Easiest way recommended (local): Docker
+
+- Follow above guide for [Docker](#docker-installation)
 
 Easiest way (cloud): Vercel
 
-- Connect repo to Vercel
+- Sign up / in to your Vercel account
+- Create a new project
+- Select "Import Git Repository" and import your copy of this repository.
+- Select the server folder (you should see a React by the folder)
 - Add all env variables that are in `/app/.env.local.example`
+- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
 
 Otherwise (local):
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
 Otherwise (cloud): Azure, AWS, IBM Cloud (Virtual Machines) and similiar
-
-- Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
 ## Environment Variables
 
@@ -599,7 +611,9 @@ Read [this](https://cloud.ibm.com/docs/assistant?topic=assistant-getting-started
 
 ## Setup
 
-- Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use above mentioned docker instalaltion
+If you use our [docker](#docker-installation) it will install are required depenedencies automatically, there is no additional setup required except adding the Askbob domain in the `app/.env.local.` Read more about this in the docker installation section.
+
+- Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use our [docker](#docker-installation)
 - Ensure that the required deepspeech models are downloaded
 - Ensure that FISE plugins are downloaded
 - Add the AskBob instance URL in `app/.env.local`
