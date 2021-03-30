@@ -3,7 +3,7 @@
 [![License: AGPL v3](https://img.shields.io/badge/License-AGPL%20v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![contributions welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)](https://github.com/dwyl/esta/issues)
 
-> IBM FISE Lounge is an application that acts as a smart, privacy-safe, and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly relative's behalf.
+> IBM FISE Lounge is an application that acts as a smart, privacy-safe, and interactive video-calling platform for the elderly and others to use in the current pandemic, and other situations where social isolation is a major issue. It provides a simple interface with a standalone administrative dashboard for more tech-savvy relatives to set up the Lounge app and preferences on the elderly's behalf.
 >
 > The application is a part of the integrated FISE Ecosystem that includes [FISE AskBob](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) and [FISE Concierge](https://github.com/UCLComputerScience/COMP0016_2020_21_Team25).
 
@@ -67,7 +67,13 @@ Below is the System Architecture Diagram:
 
 ## Docker Installation
 
-We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. Docker will install the app, server, FISE AskBob and FISE concierge together. If you're on a Windows device we have provided a batch file that will get everything up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and enter `docs/docker_installation/docker_installation.md`.
+We recommend you to use docker for production deployment on user devices as it is privacy-safe due to all services running locally. Docker will install the app, server, FISE AskBob and FISE concierge together. If you're on a Windows device we have provided a batch file that will get everything up and running with one-click. You can find our guide on how to install and deploy docker [here in the docker branch](/[repo]/tree/docker/docs/docker_installation/docker_installation.md). If the link doesn't work, switch to the docker branch and go to `docs/docker_installation/docker_installation.md`.
+
+To switch to the docker branch you can write
+
+```
+git checkout docker
+```
 
 If you are currently in the docker branch, and you have docker installed, you can either run the `docker.bat` (Windows only), or write the following commands in your terminal:
 
@@ -88,9 +94,16 @@ cp .env.local.example .env.local
 If you want to use the MongoDB database that is built inside the container the following credentials in `\server\env.local`
 
 ```
-MONGODB_URI="mongodb://mongo:27017"
+MONGODB_URI="mongodb://mongo:27017" (or MONGODB_URI="mongdb://mongo:27017/mongo")
 MONGODB_DB="mongo"
 ```
+
+If you want to use the AskBob that is built inside the container the following credentials in `\app\env.local`
+
+```
+REACT_APP_ASKBOB_URL="http://localhost:8000"
+```
+
 ## Server Installation
 
 Note: Our documentation uses yarn commands, but npm will also work. You can compare yarn and npm commands in the yarn docs, [here](https://classic.yarnpkg.com/en/docs/migrating-from-npm#toc-cli-commands-comparison).
@@ -123,7 +136,9 @@ Note: There are many ways to deploy both the app and server, you are not restric
 
 ## Deploying the Server
 
-Easiest way (local): Docker
+Easiest way recommended (local): Docker
+
+- Follow above guide for [Docker](#docker-installation)
 
 Easiest way (cloud): Vercel
 
@@ -134,24 +149,32 @@ Easiest way (cloud): Vercel
 - Add all env variables that are in `/server/.env.local.example`
 - (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
 
+Otherwise (local):
+
+- Follow the above instructions for [Server Installation](#server-installation) and expose port of choice
+
 Otherwise (cloud): Azure, DigitalOcean, AWS, IBM Cloud etc.
 
 ## Deploying the App
 
-Easiest way (local): Docker
+Easiest way recommended (local): Docker
+
+- Follow above guide for [Docker](#docker-installation)
 
 Easiest way (cloud): Vercel
 
-- Connect repo to Vercel
+- Sign up / in to your Vercel account
+- Create a new project
+- Select "Import Git Repository" and import your copy of this repository.
+- Select the server folder (you should see a React by the folder)
 - Add all env variables that are in `/app/.env.local.example`
+- (NB: Adding `VERCEL_URL` will autopopulate based on whether the build is production or preview)
 
 Otherwise (local):
 
 - Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
 Otherwise (cloud): Azure, AWS, IBM Cloud (Virtual Machines) and similiar
-
-- Follow the above instructions for [App Installation](#app-installation) and expose port of choice
 
 ## Environment Variables
 
@@ -594,7 +617,9 @@ Read [this](https://cloud.ibm.com/docs/assistant?topic=assistant-getting-started
 
 ## Setup
 
-- Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use above mentioned docker instalaltion
+If you use our [docker](#docker-installation) it will install are required depenedencies automatically, there is no additional setup required except adding the Askbob domain in the `app/.env.local.` Read more about this in the docker installation section.
+
+- Follow AskBob's installation guide [here](https://github.com/UCL-COMP0016-2020-Team-39/AskBob) or use our [docker](#docker-installation)
 - Ensure that the required deepspeech models are downloaded
 - Ensure that FISE plugins are downloaded
 - Add the AskBob instance URL in `app/.env.local`
